@@ -1,3 +1,11 @@
+# Welcome to Access!
+
+## Development Setup Notes
+
+- npm add -D concurrently tailwindcss
+- npx tailwindcss init
+- npm install @tailwindcss/forms
+
 # Welcome to Remix!
 
 - [Remix Docs](https://remix.run/docs)
