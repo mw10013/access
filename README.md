@@ -5,6 +5,8 @@
 - npm add -D concurrently tailwindcss
 - npx tailwindcss init
 - npm install @tailwindcss/forms
+- npm add -D prisma
+- npm add @prisma/client
 
 # Welcome to Remix!
 
