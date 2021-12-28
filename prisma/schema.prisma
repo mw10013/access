@@ -20,5 +20,5 @@ model AccessPoint {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   heartbeatAt   DateTime?
-  heartbeatCnt  Int       @default(0)
+  heartbeats    Int       @default(0)
 }
