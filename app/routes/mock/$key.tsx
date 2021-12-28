@@ -1,6 +1,9 @@
 import type { LoaderFunction } from "remix";
-import { json } from "remix";
+import { useLoaderData } from "remix";
+import type { AccessPoint } from "@prisma/client";
 import { db } from "~/utils/db.server";
+
+type LoaderData = { accessPoint: AccessPoint };
 
 export const loader: LoaderFunction = async ({ params: { key } }) => {
   const accessPoint = await db.accessPoint.findUnique({
@@ -11,10 +14,11 @@ export const loader: LoaderFunction = async ({ params: { key } }) => {
       status: 404,
     });
   }
-  const updatedAccessPoint = await db.accessPoint.update({
-    where: { id: accessPoint.id },
-    data: { heartbeatAt: new Date(), heartbeats: { increment: 1 } },
-  });
-
-  return json({ accessPoint: updatedAccessPoint }, 200);
+  const data: LoaderData = { accessPoint };
+  return data;
 };
+
+export default function MockRoute() {
+  const { accessPoint } = useLoaderData<LoaderData>();
+  return <div>{accessPoint.key}</div>;
+}

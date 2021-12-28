@@ -1,5 +1,5 @@
 import type { LoaderFunction } from "remix";
-import { useLoaderData } from "remix";
+import { useLoaderData, Link } from "remix";
 import type { AccessPoint } from "@prisma/client";
 import { db } from "~/utils/db.server";
 
@@ -32,6 +32,12 @@ export default function Index() {
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
+                Code
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Heartbeats
               </th>
               <th
@@ -39,6 +45,9 @@ export default function Index() {
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
                 Heartbase At
+              </th>
+              <th scope="col" className="relative px-6 py-3">
+                <span className="sr-only">Mock</span>
               </th>
             </tr>
           </thead>
@@ -48,6 +57,9 @@ export default function Index() {
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {ap.key}
                 </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {ap.code}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                   {ap.heartbeats}
                 </td>
@@ -55,6 +67,14 @@ export default function Index() {
                   {ap.heartbeatAt
                     ? new Date(ap.heartbeatAt).toLocaleString("en-US")
                     : null}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <Link
+                    to={`/mock/${ap.key}`}
+                    className="text-indigo-600 hover:text-indigo-900"
+                  >
+                    Mock
+                  </Link>
                 </td>
               </tr>
             ))}
