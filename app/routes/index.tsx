@@ -6,7 +6,9 @@ import { db } from "~/utils/db.server";
 type LoaderData = { accessPoints: AccessPoint[] };
 
 export const loader: LoaderFunction = async ({ params }) => {
-  const accessPoints = await db.accessPoint.findMany();
+  const accessPoints = await db.accessPoint.findMany({
+    orderBy: { key: "asc" },
+  });
   const data: LoaderData = { accessPoints };
   return data;
 };
@@ -44,7 +46,7 @@ export default function Index() {
             {accessPoints.map((ap) => (
               <tr key={ap.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {ap.id}
+                  {ap.key}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                   {ap.heartbeats}

@@ -18,9 +18,9 @@
 
 ## Build Database From Scratch
 
-- npx prisma init --datasource-provider sqlite
+- delete/rename prisma/dev.db if it exists
 - npx prisma db push
-- node --require esbuild-register prisma/seed.ts
+- npx prisma db seed
 
 ## Development Setup Notes
 

@@ -16,7 +16,8 @@ datasource db {
 
 model AccessPoint {
   id            Int       @id @default(autoincrement())
-  key           String    @unique 
+  key           String    @unique
+  code          String
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   heartbeatAt   DateTime?
