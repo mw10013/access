@@ -4,6 +4,23 @@
 
 - node >= 14
 - .env file in root with DATABASE_URL="file:./dev.db"
+- git clone https://github.com/mw10013/access.git
+- npm install
+- copy dev.db to prisma folder or Build Database From Scratch
+- npm run dev
+- localhost:3000
+- localhost:3000/heartbeat/key1
+- localhost:3000/heartbeat/key2
+
+## Browse Database
+
+- npx prisma studio
+
+## Build Database From Scratch
+
+- npx prisma init --datasource-provider sqlite
+- npx prisma db push
+- node --require esbuild-register prisma/seed.ts
 
 ## Development Setup Notes
 
