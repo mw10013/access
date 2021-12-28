@@ -1,0 +1,11 @@
+import { PrismaClient } from "@prisma/client";
+const db = new PrismaClient();
+
+async function seed() {
+  await Promise.all([
+    db.accessPoint.create({ data: { key: "key1" } }),
+    db.accessPoint.create({ data: { key: "key2" } }),
+  ]);
+}
+
+seed();

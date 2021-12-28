@@ -1,5 +1,10 @@
 # Welcome to Access!
 
+## Setup
+
+- node >= 14
+- .env file in root with DATABASE_URL="file:./dev.db"
+
 ## Development Setup Notes
 
 - npm add -D concurrently tailwindcss
@@ -7,6 +12,11 @@
 - npm install @tailwindcss/forms
 - npm add -D prisma
 - npm add @prisma/client
+- npx prisma init --datasource-provider sqlite
+- npx prisma db push
+- npm add -D esbuild-register
+- node --require esbuild-register prisma/seed.ts
+- npx prisma studio
 
 # Welcome to Remix!
 
