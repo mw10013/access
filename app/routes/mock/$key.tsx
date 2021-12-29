@@ -31,6 +31,9 @@ export default function MockRoute() {
       <div className="m-4 bg-white shadow sm:rounded-lg">
         <div className="px-4 py-5 sm:p-6">
           <h3 className="text-lg leading-6 font-medium text-gray-900">Code</h3>
+          <div className="mt-2 max-w-xl text-sm text-gray-500">
+            <p>Http post to /access/:key with code.</p>
+          </div>
           <form className="mt-1 sm:flex sm:items-center">
             <div className="w-full sm:max-w-xs">
               <label htmlFor="code" className="sr-only">
@@ -55,6 +58,25 @@ export default function MockRoute() {
           </form>
         </div>
       </div>
+      <div className="m-4 bg-white shadow sm:rounded-lg">
+        <div className="px-4 py-5 sm:p-6">
+          <h3 className="text-lg leading-6 font-medium text-gray-900">
+            Heartbeat
+          </h3>
+          <div className="mt-2 max-w-xl text-sm text-gray-500">
+            <p>Http get /heartbeat/:key.</p>
+          </div>
+          <button
+            type="button"
+            className="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-2 sm:ml-3- sm:w-auto sm:text-sm"
+            onClick={() => console.log("heartbeat")}
+          >
+            Heartbeat
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
+
+// className="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"

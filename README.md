@@ -33,7 +33,7 @@
 - npx prisma db push
 - npm add -D esbuild-register
 - node --require esbuild-register prisma/seed.ts
-- npx prisma studio
+- npm add react-query
 
 # Welcome to Remix!
 
