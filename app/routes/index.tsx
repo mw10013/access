@@ -17,13 +17,11 @@ export const loader: LoaderFunction = async () => {
 };
 
 function Dashboard() {
-  // const { accessPoints } = useLoaderData<LoaderData>();
   const query = useQuery(
     "accessPoints",
     () => fetch("/api/accesspoint/all").then((res) => res.json()),
-    { refetchInterval: 5000 }
+    { initialData: useLoaderData<LoaderData>(), refetchInterval: 5000 }
   );
-  const { accessPoints } = query.data ?? {};
   return (
     <div className="p-8 bg-white">
       <div className="max-w-7xl mx-auto">
@@ -61,34 +59,32 @@ function Dashboard() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {!accessPoints
-              ? null
-              : accessPoints.map((ap) => (
-                  <tr key={ap.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {ap.key}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {ap.code}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                      {ap.heartbeats}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {ap.heartbeatAt
-                        ? new Date(ap.heartbeatAt).toLocaleString("en-US")
-                        : null}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <Link
-                        to={`/mock/${ap.key}`}
-                        className="text-indigo-600 hover:text-indigo-900"
-                      >
-                        Mock
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
+            {query.data.accessPoints.map((ap: AccessPoint) => (
+              <tr key={ap.id}>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {ap.key}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {ap.code}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                  {ap.heartbeats}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {ap.heartbeatAt
+                    ? new Date(ap.heartbeatAt).toLocaleString("en-US")
+                    : null}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <Link
+                    to={`/mock/${ap.key}`}
+                    className="text-indigo-600 hover:text-indigo-900"
+                  >
+                    Mock
+                  </Link>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
