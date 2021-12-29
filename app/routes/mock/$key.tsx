@@ -87,7 +87,6 @@ function Heartbeat({
   accessPointKey: AccessPoint["key"];
 }) {
   const mutation = useMutation(() =>
-    // fetch(`/api/accesspoint/heartbeat/${key}`).then((res) => res.json())
     fetch(
       new Request(`/api/accesspoint/heartbeat`, {
         method: "POST",
