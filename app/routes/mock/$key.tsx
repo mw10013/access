@@ -22,46 +22,10 @@ export const loader: LoaderFunction = async ({ params: { key } }) => {
   return data;
 };
 
-function Connectivity({
-  accessPointKey: key,
-}: {
-  accessPointKey: AccessPoint["id"];
-}) {
-  const mutation = useMutation(() =>
-    fetch(`/heartbeat/${key}`).then((res) => res.json())
-  );
-  return (
-    <div className="m-4 bg-white shadow sm:rounded-lg">
-      <div className="px-4 py-5 sm:p-6">
-        <h3 className="text-lg leading-6 font-medium text-gray-900">
-          Connectivity
-        </h3>
-        <div className="mt-2 max-w-xl text-sm text-gray-500">
-          <p>Http get /heartbeat/:key ie. /heartbeat/{key}.</p>
-        </div>
-        <button
-          type="button"
-          className="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-2 sm:ml-3- sm:w-auto sm:text-sm"
-          onClick={() => mutation.mutate()}
-        >
-          Heartbeat
-        </button>
-        {mutation.isLoading ? null : mutation.isError ? (
-          <div>An error occurred: {mutation.error.message}</div>
-        ) : mutation.isSuccess ? (
-          <div className="mt-2">
-            <pre>{JSON.stringify(mutation.data, null, 2)}</pre>
-          </div>
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
 function Access({
   accessPointKey: key,
 }: {
-  accessPointKey: AccessPoint["id"];
+  accessPointKey: AccessPoint["key"];
 }) {
   const [code, setCode] = React.useState("");
   const mutation = useMutation(() =>
@@ -78,7 +42,7 @@ function Access({
       <div className="px-4 py-5 sm:p-6">
         <h3 className="text-lg leading-6 font-medium text-gray-900">Access</h3>
         <div className="mt-2 max-w-xl text-sm text-gray-500">
-          <p>{`Http post to /access with body { key: "${key}", code: "nnn" }.`}</p>
+          <p>{`Http post to /api/accesspoint/access with body { key: "${key}", code: "nnn" }.`}</p>
         </div>
         <form className="mt-2 sm:flex sm:items-center">
           <div className="w-full sm:max-w-xs">
@@ -117,6 +81,90 @@ function Access({
   );
 }
 
+function Heartbeat({
+  accessPointKey: key,
+}: {
+  accessPointKey: AccessPoint["key"];
+}) {
+  const mutation = useMutation(() =>
+    // fetch(`/api/accesspoint/heartbeat/${key}`).then((res) => res.json())
+    fetch(
+      new Request(`/api/accesspoint/heartbeat`, {
+        method: "POST",
+        body: JSON.stringify({ key }),
+      })
+    ).then((res) => res.json())
+  );
+  return (
+    <div className="m-4 bg-white shadow sm:rounded-lg">
+      <div className="px-4 py-5 sm:p-6">
+        <h3 className="text-lg leading-6 font-medium text-gray-900">
+          Heartbeat
+        </h3>
+        <div className="mt-2 max-w-xl text-sm text-gray-500">
+          <p>
+            {`Http post to /api/accesspoint/heartbeat with body { key: "${key}" }.`}
+          </p>
+        </div>
+        <button
+          type="button"
+          className="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-2 sm:ml-3- sm:w-auto sm:text-sm"
+          onClick={() => mutation.mutate()}
+        >
+          Heartbeat
+        </button>
+        {mutation.isLoading ? null : mutation.isError ? (
+          <div>An error occurred: {mutation.error.message}</div>
+        ) : mutation.isSuccess ? (
+          <div className="mt-2">
+            <pre>{JSON.stringify(mutation.data, null, 2)}</pre>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+function Connectivity({
+  accessPointKey: key,
+}: {
+  accessPointKey: AccessPoint["key"];
+}) {
+  const mutation = useMutation(() =>
+    fetch(`/api/accesspoint/heartbeat/${key}`).then((res) => res.json())
+  );
+  return (
+    <div className="m-4 bg-white shadow sm:rounded-lg">
+      <div className="px-4 py-5 sm:p-6">
+        <h3 className="text-lg leading-6 font-medium text-gray-900">
+          Connectivity
+        </h3>
+        <div className="mt-2 max-w-xl text-sm text-gray-500">
+          <p>
+            Deprecated http get /api/accesspoint/heartbeat/:key ie.
+            /api/accesspoint/heartbeat/
+            {key} for connectivity test.
+          </p>
+        </div>
+        <button
+          type="button"
+          className="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-2 sm:ml-3- sm:w-auto sm:text-sm"
+          onClick={() => mutation.mutate()}
+        >
+          Heartbeat
+        </button>
+        {mutation.isLoading ? null : mutation.isError ? (
+          <div>An error occurred: {mutation.error.message}</div>
+        ) : mutation.isSuccess ? (
+          <div className="mt-2">
+            <pre>{JSON.stringify(mutation.data, null, 2)}</pre>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 export default function MockRoute() {
   const { accessPoint } = useLoaderData<LoaderData>();
   return (
@@ -126,6 +174,7 @@ export default function MockRoute() {
           Mock <span className="text-md text-gray-400">{accessPoint.key}</span>
         </h1>
         <Access accessPointKey={accessPoint.key} />
+        <Heartbeat accessPointKey={accessPoint.key} />
         <Connectivity accessPointKey={accessPoint.key} />
       </div>
     </QueryClientProvider>
