@@ -70,7 +70,10 @@ function Access({
           </button>
         </form>
         {mutation.isLoading ? null : mutation.isError ? (
-          <div>An error occurred: {mutation.error.message}</div>
+          <div>
+            An error occurred:{" "}
+            {mutation.error instanceof Error ? mutation.error.message : null}
+          </div>
         ) : mutation.isSuccess ? (
           <div className="mt-2">
             <pre>{JSON.stringify(mutation.data, null, 2)}</pre>
@@ -113,7 +116,10 @@ function Heartbeat({
           Heartbeat
         </button>
         {mutation.isLoading ? null : mutation.isError ? (
-          <div>An error occurred: {mutation.error.message}</div>
+          <div>
+            An error occurred:{" "}
+            {mutation.error instanceof Error ? mutation.error.message : null}
+          </div>
         ) : mutation.isSuccess ? (
           <div className="mt-2">
             <pre>{JSON.stringify(mutation.data, null, 2)}</pre>
@@ -153,7 +159,10 @@ function Connectivity({
           Heartbeat
         </button>
         {mutation.isLoading ? null : mutation.isError ? (
-          <div>An error occurred: {mutation.error.message}</div>
+          <div>
+            An error occurred:{" "}
+            {mutation.error instanceof Error ? mutation.error.message : null}
+          </div>
         ) : mutation.isSuccess ? (
           <div className="mt-2">
             <pre>{JSON.stringify(mutation.data, null, 2)}</pre>

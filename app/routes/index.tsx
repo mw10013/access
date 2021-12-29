@@ -26,7 +26,7 @@ function Dashboard() {
     <div className="p-8 bg-white">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-2xl font-bold leading-7 text-gray-900">Access</h1>
-        <table className="max-width-md divide-y divide-gray-200">
+        <table className="mt-4 max-width-md divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
               <th
