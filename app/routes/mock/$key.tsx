@@ -22,7 +22,11 @@ export const loader: LoaderFunction = async ({ params: { key } }) => {
   return data;
 };
 
-function Heartbeat({ accessPointKey: key }: { accessPointKey: string }) {
+function Connectivity({
+  accessPointKey: key,
+}: {
+  accessPointKey: AccessPoint["id"];
+}) {
   const mutation = useMutation(() =>
     fetch(`/heartbeat/${key}`).then((res) => res.json())
   );
@@ -30,7 +34,7 @@ function Heartbeat({ accessPointKey: key }: { accessPointKey: string }) {
     <div className="m-4 bg-white shadow sm:rounded-lg">
       <div className="px-4 py-5 sm:p-6">
         <h3 className="text-lg leading-6 font-medium text-gray-900">
-          Heartbeat
+          Connectivity
         </h3>
         <div className="mt-2 max-w-xl text-sm text-gray-500">
           <p>Http get /heartbeat/:key ie. /heartbeat/{key}.</p>
@@ -54,50 +58,75 @@ function Heartbeat({ accessPointKey: key }: { accessPointKey: string }) {
   );
 }
 
+function Access({
+  accessPointKey: key,
+}: {
+  accessPointKey: AccessPoint["id"];
+}) {
+  const [code, setCode] = React.useState("");
+  const mutation = useMutation(() =>
+    fetch(
+      new Request(`/api/accesspoint/access`, {
+        method: "POST",
+        body: JSON.stringify({ key, code }),
+      })
+    ).then((res) => res.json())
+  );
+
+  return (
+    <div className="m-4 bg-white shadow sm:rounded-lg">
+      <div className="px-4 py-5 sm:p-6">
+        <h3 className="text-lg leading-6 font-medium text-gray-900">Access</h3>
+        <div className="mt-2 max-w-xl text-sm text-gray-500">
+          <p>{`Http post to /access with body { key: "${key}", code: "nnn" }.`}</p>
+        </div>
+        <form className="mt-2 sm:flex sm:items-center">
+          <div className="w-full sm:max-w-xs">
+            <label htmlFor="code" className="sr-only">
+              Code
+            </label>
+            <input
+              type="text"
+              name="code"
+              id="code"
+              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+            />
+          </div>
+          <button
+            type="submit"
+            className="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+            onClick={(e) => {
+              e.preventDefault();
+              mutation.mutate();
+            }}
+          >
+            Access
+          </button>
+        </form>
+        {mutation.isLoading ? null : mutation.isError ? (
+          <div>An error occurred: {mutation.error.message}</div>
+        ) : mutation.isSuccess ? (
+          <div className="mt-2">
+            <pre>{JSON.stringify(mutation.data, null, 2)}</pre>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 export default function MockRoute() {
   const { accessPoint } = useLoaderData<LoaderData>();
-  const [code, setCode] = React.useState("");
   return (
     <QueryClientProvider client={queryClient}>
       <div className="p-8">
         <h1 className="text-2xl font-bold leading-7 text-gray-900">
           Mock <span className="text-md text-gray-400">{accessPoint.key}</span>
         </h1>
-
-        <div className="m-4 bg-white shadow sm:rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <h3 className="text-lg leading-6 font-medium text-gray-900">
-              Code
-            </h3>
-            <div className="mt-2 max-w-xl text-sm text-gray-500">
-              <p>Http post to /access/:key with code.</p>
-            </div>
-            <form className="mt-1 sm:flex sm:items-center">
-              <div className="w-full sm:max-w-xs">
-                <label htmlFor="code" className="sr-only">
-                  Code
-                </label>
-                <input
-                  type="text"
-                  name="code"
-                  id="code"
-                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                />
-              </div>
-              <button
-                type="button"
-                className="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                onClick={() => console.log({ code })}
-              >
-                Access
-              </button>
-            </form>
-          </div>
-        </div>
-
-        <Heartbeat accessPointKey={accessPoint.key} />
+        <Access accessPointKey={accessPoint.key} />
+        <Connectivity accessPointKey={accessPoint.key} />
       </div>
     </QueryClientProvider>
   );
