@@ -15,5 +15,5 @@ export const action: ActionFunction = async ({ request, params }) => {
       status: 404,
     });
   }
-  return json({ access: code === accessPoint.code ? "grant" : "deny" }, 200);
+  return json({ access: accessPoint.code !== "" && code === accessPoint.code ? "grant" : "deny" }, 200);
 };

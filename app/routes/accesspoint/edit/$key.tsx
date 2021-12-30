@@ -43,15 +43,11 @@ type ActionData = {
   };
 };
 
-const badRequest = (data: ActionData) => json(data, { status: 400 });
-
 export const action: ActionFunction = async ({ request, params: { key } }) => {
   const form = await request.formData();
-  const code = form.get("code");
+  const code = form.get("code") ?? "";
   if (typeof code !== "string") {
-    return badRequest({
-      formError: `Form not submitted correctly.`,
-    });
+    return { formError: `Form not submitted correctly.` };
   }
 
   const fieldErrors = {
@@ -59,7 +55,6 @@ export const action: ActionFunction = async ({ request, params: { key } }) => {
   };
   const fields = { code };
   if (Object.values(fieldErrors).some(Boolean)) {
-    // return badRequest({ fieldErrors, fields });
     return { fieldErrors, fields };
   }
 
@@ -94,7 +89,7 @@ export default function EditRoute() {
           <div>
             <div>
               <h3 className="text-lg leading-6 font-medium text-gray-900">
-                Access Point {accessPoint?.key}
+                Access Point {accessPoint?.key} {actionData?.formError}
               </h3>
               <p className="mt-1 text-sm text-gray-500"></p>
             </div>
