@@ -77,7 +77,13 @@ function Dashboard() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <Link
-                    to={`/mock/${ap.key}`}
+                    to={`/accesspoint/edit/${ap.key}`}
+                    className="text-indigo-600 hover:text-indigo-900"
+                  >
+                    Edit
+                  </Link>{" "}
+                  <Link
+                    to={`/accesspoint/mock/${ap.key}`}
                     className="text-indigo-600 hover:text-indigo-900"
                   >
                     Mock
