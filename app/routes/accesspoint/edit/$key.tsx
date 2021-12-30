@@ -1,6 +1,6 @@
 import * as React from "react";
-import type { LoaderFunction } from "remix";
-import { useLoaderData, Form } from "remix";
+import type { ActionFunction, LoaderFunction } from "remix";
+import { useActionData, useLoaderData, Form, json, redirect } from "remix";
 import type { AccessPoint } from "@prisma/client";
 import { db } from "~/utils/db.server";
 
@@ -19,16 +19,82 @@ export const loader: LoaderFunction = async ({ params: { key } }) => {
   return data;
 };
 
+function validateCode(code: string) {
+  if (code.length > 0) {
+    if (!/^\d+$/.test(code)) {
+      return "Code must contain only digits.";
+    }
+    if (code.length < 3) {
+      return "Code must have at least 3 digits";
+    }
+    if (code.length > 8) {
+      return "Code must have no more than 8 digits.";
+    }
+  }
+}
+
+type ActionData = {
+  formError?: string;
+  fieldErrors?: {
+    code: string | undefined;
+  };
+  fields?: {
+    code: string;
+  };
+};
+
+const badRequest = (data: ActionData) => json(data, { status: 400 });
+
+export const action: ActionFunction = async ({ request, params: { key } }) => {
+  const form = await request.formData();
+  const code = form.get("code");
+  if (typeof code !== "string") {
+    return badRequest({
+      formError: `Form not submitted correctly.`,
+    });
+  }
+
+  const fieldErrors = {
+    code: validateCode(code),
+  };
+  const fields = { code };
+  if (Object.values(fieldErrors).some(Boolean)) {
+    // return badRequest({ fieldErrors, fields });
+    return { fieldErrors, fields };
+  }
+
+  const accessPoint = await db.accessPoint.findUnique({
+    where: { key },
+  });
+  if (!accessPoint) {
+    throw new Response("Key not found.", {
+      status: 404,
+    });
+  }
+
+  await db.accessPoint.update({
+    where: { id: accessPoint.id },
+    data: { code },
+  });
+  return redirect(`/`);
+};
+
 export default function EditRoute() {
   const { accessPoint } = useLoaderData<LoaderData>();
+  const actionData = useActionData<ActionData>();
   return (
     <div className="p-8">
-      <Form method="post" className="space-y-8 divide-y divide-gray-200">
+      <Form
+        reloadDocument
+        replace
+        method="post"
+        className="space-y-8 divide-y divide-gray-200"
+      >
         <div className="space-y-8 divide-y divide-gray-200">
           <div>
             <div>
               <h3 className="text-lg leading-6 font-medium text-gray-900">
-                Access Point {accessPoint.key}
+                Access Point {accessPoint?.key}
               </h3>
               <p className="mt-1 text-sm text-gray-500"></p>
             </div>
@@ -41,14 +107,27 @@ export default function EditRoute() {
                 >
                   Code
                 </label>
+
                 <div className="mt-1 flex rounded-md shadow-sm">
                   <input
                     type="text"
                     name="code"
                     id="code"
+                    defaultValue={
+                      actionData ? actionData?.fields?.code : accessPoint.code
+                    }
                     className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
                   />
                 </div>
+                {actionData?.fieldErrors?.code ? (
+                  <p
+                    className="mt-2 text-sm text-red-600"
+                    role="alert"
+                    id="code-error"
+                  >
+                    {actionData.fieldErrors.code}
+                  </p>
+                ) : null}
               </div>
             </div>
           </div>
@@ -102,7 +181,7 @@ export default function EditRoute() {
                       htmlFor="push-nothing"
                       className="ml-3 block text-sm font-medium text-gray-700"
                     >
-                      Remote nly
+                      Remote Only
                     </label>
                   </div>
                 </div>
@@ -113,12 +192,12 @@ export default function EditRoute() {
 
         <div className="pt-5">
           <div className="flex justify-end">
-            <button
+            {/* <button
               type="button"
               className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Cancel
-            </button>
+            </button> */}
             <button
               type="submit"
               className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
