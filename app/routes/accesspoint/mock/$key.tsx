@@ -97,7 +97,13 @@ function Heartbeat({ accessPoint }: { accessPoint: AccessPoint }) {
         method: "POST",
         body: JSON.stringify({ key, config }),
       })
-    ).then((res) => res.json())
+    ).then(async (res) => {
+      if (res.ok) {
+        return await res.json();
+      } else {
+        throw new Error(await res.text());
+      }
+    })
   );
   return (
     <div className="m-4 bg-white shadow sm:rounded-lg">

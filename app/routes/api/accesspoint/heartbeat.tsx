@@ -4,9 +4,8 @@ import { db } from "~/utils/db.server";
 
 export const action: ActionFunction = async ({ request }) => {
   const { key, config } = await request.json();
-  console.dir({ key, config });
   const accessPoint =
-    key &&
+    typeof key === "string" &&
     (await db.accessPoint.findUnique({
       where: { key },
     }));
@@ -16,23 +15,25 @@ export const action: ActionFunction = async ({ request }) => {
     });
   }
 
+  const { code } = config;
+  if (
+    typeof code !== "string" ||
+    (code.length > 0 &&
+      (code.length < 3 || code.length > 8 || !/^\d+$/.test(code)))
+  ) {
+    throw new Response("Malformed code", { status: 400 });
+  }
+
   const updatedAccessPoint = await db.accessPoint.update({
     where: { id: accessPoint.id },
     data: { heartbeatAt: new Date(), heartbeats: { increment: 1 } },
   });
 
-  // const user = await prisma.user.upsert({
-  //   where: { id: 1 },
-  //   update: { email: 'alice@prisma.io' },
-  //   create: { email: 'alice@prisma.io' },
-  // })
-
   const cachedConfig = await db.accessPointCachedConfig.upsert({
     where: { accessPointId: accessPoint.id },
-    update: { code: config.code },
-    create: { accessPointId: accessPoint.id, code: config.code}
-  })
-
+    update: { code },
+    create: { accessPointId: accessPoint.id, code },
+  });
 
   return json({ accessPoint: updatedAccessPoint, cachedConfig }, 200);
 };
