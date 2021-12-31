@@ -1,7 +1,7 @@
 import * as React from "react";
 import type { ActionFunction, LoaderFunction } from "remix";
 import { useActionData, redirect, Form, useLoaderData } from "remix";
-import type { AccessPoint } from "@prisma/client";
+import type { AccessPoint, AccessPointCachedConfig } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { QueryClient, QueryClientProvider, useMutation } from "react-query";
 
@@ -84,16 +84,18 @@ function Access({
   );
 }
 
-function Heartbeat({
-  accessPointKey: key,
-}: {
-  accessPointKey: AccessPoint["key"];
-}) {
-  const mutation = useMutation(() =>
+function Heartbeat({ accessPoint }: { accessPoint: AccessPoint }) {
+  const { key } = accessPoint;
+  const [code, setCode] = React.useState("");
+  const mutation = useMutation<
+    unknown,
+    Error,
+    { key: AccessPoint["key"]; config: Partial<AccessPointCachedConfig> }
+  >(({ key, config }) =>
     fetch(
       new Request(`/api/accesspoint/heartbeat`, {
         method: "POST",
-        body: JSON.stringify({ key }),
+        body: JSON.stringify({ key, config }),
       })
     ).then((res) => res.json())
   );
@@ -108,18 +110,34 @@ function Heartbeat({
             {`Http post to /api/accesspoint/heartbeat with body { key: "${key}" }.`}
           </p>
         </div>
+        <div className="mt-2">
+          <label
+            htmlFor="heartbeatCode"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Code
+          </label>
+
+          <div className="mt-1 flex rounded-md shadow-sm">
+            <input
+              type="text"
+              name="heartbeatCode"
+              id="heartbeatCode"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
+            />
+          </div>
+        </div>
         <button
           type="button"
           className="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-2 sm:ml-3- sm:w-auto sm:text-sm"
-          onClick={() => mutation.mutate()}
+          onClick={() => mutation.mutate({ key, config: { code } })}
         >
           Heartbeat
         </button>
         {mutation.isLoading ? null : mutation.isError ? (
-          <div>
-            An error occurred:{" "}
-            {mutation.error instanceof Error ? mutation.error.message : null}
-          </div>
+          <div>{`An error occurred: ${mutation.error.message}`}</div>
         ) : mutation.isSuccess ? (
           <div className="mt-2">
             <pre>{JSON.stringify(mutation.data, null, 2)}</pre>
@@ -182,7 +200,7 @@ export default function MockRoute() {
           Mock <span className="text-md text-gray-400">{accessPoint.key}</span>
         </h1>
         <Access accessPointKey={accessPoint.key} />
-        <Heartbeat accessPointKey={accessPoint.key} />
+        <Heartbeat accessPoint={accessPoint} />
         <Connectivity accessPointKey={accessPoint.key} />
       </div>
     </QueryClientProvider>

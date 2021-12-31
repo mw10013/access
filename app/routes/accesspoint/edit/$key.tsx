@@ -111,7 +111,7 @@ export default function EditRoute() {
                     defaultValue={
                       actionData ? actionData?.fields?.code : accessPoint.code
                     }
-                    className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
+                    className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
                   />
                 </div>
                 {actionData?.fieldErrors?.code ? (
