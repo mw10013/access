@@ -21,7 +21,10 @@ export const action: ActionFunction = async ({ request }) => {
     (code.length > 0 &&
       (code.length < 3 || code.length > 8 || !/^\d+$/.test(code)))
   ) {
-    throw new Response("Malformed code", { status: 400 });
+    throw new Response(
+      `Malformed code. Code must be a string containing 3 to 8 digits or empty string.`,
+      { status: 400 }
+    );
   }
 
   const updatedAccessPoint = await db.accessPoint.update({
@@ -35,5 +38,13 @@ export const action: ActionFunction = async ({ request }) => {
     create: { accessPointId: accessPoint.id, code },
   });
 
-  return json({ accessPoint: updatedAccessPoint, cachedConfig }, 200);
+  return json(
+    {
+      techNote: `accessPoint and cachedConfig are for reference only and deprecated. config is the only thing relevant.`,
+      accessPoint: updatedAccessPoint,
+      cachedConfig,
+      config: { code: updatedAccessPoint.code },
+    },
+    200
+  );
 };

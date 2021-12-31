@@ -143,7 +143,7 @@ function Heartbeat({ accessPoint }: { accessPoint: AccessPoint }) {
           Heartbeat
         </button>
         {mutation.isLoading ? null : mutation.isError ? (
-          <div>{`An error occurred: ${mutation.error.message}`}</div>
+          <div className="mt-2">{`Error: ${mutation.error.message}`}</div>
         ) : mutation.isSuccess ? (
           <div className="mt-2">
             <pre>{JSON.stringify(mutation.data, null, 2)}</pre>
