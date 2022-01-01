@@ -1,27 +1,31 @@
+import * as React from "react";
 import type { LoaderFunction } from "remix";
-import { useLoaderData, Link } from "remix";
-import type { AccessPoint } from "@prisma/client";
+import { useLoaderData, Link, useNavigate } from "remix";
+import { Prisma } from '@prisma/client'
 import { db } from "~/utils/db.server";
-import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 
-const queryClient = new QueryClient();
-
-type LoaderData = { accessPoints: AccessPoint[] };
+type LoaderData = { accessPoints: Prisma.AccessPointGetPayload<{include: {cachedConfig: true}}>[] };
 
 export const loader: LoaderFunction = async () => {
   const accessPoints = await db.accessPoint.findMany({
+    include: { cachedConfig: true },
     orderBy: { key: "asc" },
   });
   const data: LoaderData = { accessPoints };
   return data;
 };
 
-function Dashboard() {
-  const query = useQuery(
-    "accessPoints",
-    () => fetch("/api/accesspoint/all").then((res) => res.json()),
-    { initialData: useLoaderData<LoaderData>(), refetchInterval: 5000 }
-  );
+export default function Index() {
+  const { accessPoints } = useLoaderData<LoaderData>();
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    const intervalId = setInterval(
+      () => navigate(".", { replace: true }),
+      5000
+    );
+    return () => clearInterval(intervalId);
+  }, [navigate]);
   return (
     <div className="p-8 bg-white">
       <div className="max-w-7xl mx-auto">
@@ -45,6 +49,18 @@ function Dashboard() {
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
+                Connection
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Config
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Heartbeats
               </th>
               <th
@@ -59,13 +75,19 @@ function Dashboard() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {query.data.accessPoints.map((ap: AccessPoint) => (
+            {accessPoints.map((ap) => (
               <tr key={ap.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {ap.key}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {ap.code}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {ap.heartbeatAt ? typeof ap.heartbeatAt : `DISCONNECTED`}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {ap.cachedConfig?.code}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                   {ap.heartbeats}
@@ -95,13 +117,5 @@ function Dashboard() {
         </table>
       </div>
     </div>
-  );
-}
-
-export default function Index() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Dashboard />
-    </QueryClientProvider>
   );
 }
