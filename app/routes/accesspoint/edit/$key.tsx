@@ -33,27 +33,41 @@ function validateCode(code: string) {
   }
 }
 
+function validateAccessCheckPolicy(accessCheckPolicy: string) {
+  if (
+    !["manager-first", "manager-only", "point-only"].some(
+      (el) => el === accessCheckPolicy
+    )
+  ) {
+    return "Access check policy must be manager-first, manager-only, or point-only.";
+  }
+}
+
 type ActionData = {
   formError?: string;
   fieldErrors?: {
     code: string | undefined;
+    accessCheckPolicy: string | undefined;
   };
   fields?: {
     code: string;
+    accessCheckPolicy: string;
   };
 };
 
 export const action: ActionFunction = async ({ request, params: { key } }) => {
   const form = await request.formData();
   const code = form.get("code") ?? "";
-  if (typeof code !== "string") {
+  const accessCheckPolicy = form.get("accessCheckPolicy");
+  if (typeof code !== "string" || typeof accessCheckPolicy !== "string") {
     return { formError: `Form not submitted correctly.` };
   }
 
   const fieldErrors = {
     code: validateCode(code),
+    accessCheckPolicy: validateAccessCheckPolicy(accessCheckPolicy),
   };
-  const fields = { code };
+  const fields = { code, accessCheckPolicy };
   if (Object.values(fieldErrors).some(Boolean)) {
     return { fieldErrors, fields };
   }
@@ -69,7 +83,7 @@ export const action: ActionFunction = async ({ request, params: { key } }) => {
 
   await db.accessPoint.update({
     where: { id: accessPoint.id },
-    data: { code },
+    data: { code, accessCheckPolicy },
   });
   return redirect(`/`);
 };
@@ -132,51 +146,63 @@ export default function EditRoute() {
               <fieldset className="mt-6-">
                 <div>
                   <legend className="text-base font-medium text-gray-900">
-                    Access Request Policy
+                    Access Check Policy
                   </legend>
                   <p className="text-sm text-gray-500"></p>
                 </div>
                 <div className="mt-4 space-y-4">
                   <div className="flex items-center">
                     <input
-                      id="push-everything"
-                      name="access-request-policy"
+                      id="acpManagerFirst"
+                      name="accessCheckPolicy"
+                      value="manager-first"
                       type="radio"
+                      defaultChecked={
+                        accessPoint.accessCheckPolicy === "manager-first"
+                      }
                       className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
                     />
                     <label
-                      htmlFor="push-everything"
+                      htmlFor="acpManagerFirst"
                       className="ml-3 block text-sm font-medium text-gray-700"
                     >
-                      Remote Local
+                      Manager First
                     </label>
                   </div>
                   <div className="flex items-center">
                     <input
-                      id="push-email"
-                      name="access-request-policy"
+                      id="acpManagerOnly"
+                      name="accessCheckPolicy"
+                      value="manager-only"
                       type="radio"
+                      defaultChecked={
+                        accessPoint.accessCheckPolicy === "manager-only"
+                      }
                       className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
                     />
                     <label
-                      htmlFor="push-email"
+                      htmlFor="acpManagerOnly"
                       className="ml-3 block text-sm font-medium text-gray-700"
                     >
-                      Local Only
+                      Manager Only
                     </label>
                   </div>
                   <div className="flex items-center">
                     <input
-                      id="push-nothing"
-                      name="access-request-policy"
+                      id="acpPointOnly"
+                      name="accessCheckPolicy"
+                      value="point-only"
                       type="radio"
+                      defaultChecked={
+                        accessPoint.accessCheckPolicy === "point-only"
+                      }
                       className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
                     />
                     <label
-                      htmlFor="push-nothing"
+                      htmlFor="acpPointOnly"
                       className="ml-3 block text-sm font-medium text-gray-700"
                     >
-                      Remote Only
+                      Point Only
                     </label>
                   </div>
                 </div>
