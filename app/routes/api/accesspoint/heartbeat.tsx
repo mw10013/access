@@ -51,9 +51,6 @@ export const action: ActionFunction = async ({ request }) => {
 
   return json(
     {
-      techNote: `accessPoint and cachedConfig are for reference only and deprecated. config is the only thing relevant.`,
-      accessPoint: updatedAccessPoint,
-      cachedConfig,
       config: {
         code: updatedAccessPoint.code,
         accessCheckPolicy: updatedAccessPoint.accessCheckPolicy,

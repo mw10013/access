@@ -126,7 +126,7 @@ function Heartbeat({
         </h3>
         <div className="mt-2 max-w-xl text-sm text-gray-500">
           <p>
-            {`Http post to /api/accesspoint/heartbeat with body { key: "${key}" }.`}
+            {`Http post to /api/accesspoint/heartbeat. See dev network tab for format of body. }.`}
           </p>
         </div>
         <div className="mt-2">
@@ -136,6 +136,9 @@ function Heartbeat({
           >
             Code
           </label>
+          <div className="mt-1 max-w-xl text-sm text-gray-500">
+            <p>{`3-8 digits | blank`}</p>
+          </div>
           <div className="mt-1 flex rounded-md shadow-sm">
             <input
               type="text"
@@ -154,6 +157,9 @@ function Heartbeat({
           >
             Access Check Policy
           </label>
+          <div className="mt-1 max-w-xl text-sm text-gray-500">
+            <p>{`manager-first | manager-only | point-only`}</p>
+          </div>
           <div className="mt-1 flex rounded-md shadow-sm">
             <input
               type="text"
