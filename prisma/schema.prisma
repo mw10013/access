@@ -14,11 +14,11 @@ model AccessPoint {
   id                Int       @id @default(autoincrement())
   key               String    @unique
   code              String    @default("")
+  accessCheckPolicy String    @default("manager-only")
+  cachedConfig      AccessPointCachedConfig?
+  heartbeatAt       DateTime?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
-  heartbeatAt       DateTime?
-  cachedConfig      AccessPointCachedConfig?
-  accessCheckPolicy String    @default("manager-only")
 }
 
 model AccessPointCachedConfig {
@@ -28,5 +28,4 @@ model AccessPointCachedConfig {
   accessPoint       AccessPoint @relation(fields: [accessPointId], references: [id])
   accessPointId     Int       @unique
   cachedAt          DateTime  @updatedAt
-
 }

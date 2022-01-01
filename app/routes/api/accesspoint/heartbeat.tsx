@@ -45,7 +45,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   const cachedConfig = await db.accessPointCachedConfig.upsert({
     where: { accessPointId: accessPoint.id },
-    update: { code },
+    update: { code, accessCheckPolicy },
     create: { accessPointId: accessPoint.id, code, accessCheckPolicy },
   });
 
@@ -54,7 +54,10 @@ export const action: ActionFunction = async ({ request }) => {
       techNote: `accessPoint and cachedConfig are for reference only and deprecated. config is the only thing relevant.`,
       accessPoint: updatedAccessPoint,
       cachedConfig,
-      config: { code: updatedAccessPoint.code },
+      config: {
+        code: updatedAccessPoint.code,
+        accessCheckPolicy: updatedAccessPoint.accessCheckPolicy,
+      },
     },
     200
   );

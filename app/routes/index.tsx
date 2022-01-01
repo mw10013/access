@@ -111,7 +111,13 @@ export default function Index() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {ap.cachedConfig &&
-                  _.isEqual({ code: ap.cachedConfig.code }, { code: ap.code })
+                  _.isEqual(
+                    {
+                      code: ap.cachedConfig.code,
+                      accessCheckPolicy: ap.cachedConfig.accessCheckPolicy,
+                    },
+                    { code: ap.code, accessCheckPolicy: ap.accessCheckPolicy }
+                  )
                     ? "Saved"
                     : "Pending"}
                 </td>
