@@ -1,10 +1,15 @@
 import * as React from "react";
 import type { LoaderFunction } from "remix";
 import { useLoaderData, Link, useNavigate } from "remix";
-import { Prisma } from '@prisma/client'
+import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
+import * as _ from "lodash";
 
-type LoaderData = { accessPoints: Prisma.AccessPointGetPayload<{include: {cachedConfig: true}}>[] };
+type LoaderData = {
+  accessPoints: Prisma.AccessPointGetPayload<{
+    include: { cachedConfig: true };
+  }>[];
+};
 
 export const loader: LoaderFunction = async () => {
   const accessPoints = await db.accessPoint.findMany({
@@ -87,7 +92,10 @@ export default function Index() {
                   {ap.heartbeatAt ? typeof ap.heartbeatAt : `DISCONNECTED`}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {ap.cachedConfig?.code}
+                  {ap.cachedConfig &&
+                  _.isEqual({ code: ap.cachedConfig.code }, { code: ap.code })
+                    ? "Saved"
+                    : "Pending"}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                   {ap.heartbeats}

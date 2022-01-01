@@ -34,6 +34,7 @@
 - node --require esbuild-register prisma/seed.ts
 - npm add react-query
 - npm add lodash
+- npm add -D @types/lodash
 
 # Welcome to Remix!
 
