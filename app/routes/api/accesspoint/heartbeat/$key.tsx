@@ -14,6 +14,7 @@ export const loader: LoaderFunction = async ({ params: { key } }) => {
   const updatedAccessPoint = await db.accessPoint.update({
     where: { id: accessPoint.id },
     data: { heartbeatAt: new Date() },
+    include: { cachedConfig: true },
   });
 
   return json({ accessPoint: updatedAccessPoint }, 200);
