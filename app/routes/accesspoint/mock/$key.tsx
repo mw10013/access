@@ -2,16 +2,22 @@ import * as React from "react";
 import type { ActionFunction, LoaderFunction } from "remix";
 import { useActionData, redirect, Form, useLoaderData } from "remix";
 import type { AccessPoint, AccessPointCachedConfig } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { QueryClient, QueryClientProvider, useMutation } from "react-query";
 
 const queryClient = new QueryClient();
 
-type LoaderData = { accessPoint: AccessPoint };
+type LoaderData = {
+  accessPoint: Prisma.AccessPointGetPayload<{
+    include: { cachedConfig: true };
+  }>;
+};
 
 export const loader: LoaderFunction = async ({ params: { key } }) => {
   const accessPoint = await db.accessPoint.findUnique({
     where: { key },
+    include: { cachedConfig: true },
   });
   if (!accessPoint) {
     throw new Response("Key not found.", {
@@ -84,9 +90,13 @@ function Access({
   );
 }
 
-function Heartbeat({ accessPoint }: { accessPoint: AccessPoint }) {
+function Heartbeat({
+  accessPoint,
+}: {
+  accessPoint: LoaderData["accessPoint"];
+}) {
   const { key } = accessPoint;
-  const [code, setCode] = React.useState("");
+  const [code, setCode] = React.useState(accessPoint.cachedConfig?.code);
   const mutation = useMutation<
     unknown,
     Error,
