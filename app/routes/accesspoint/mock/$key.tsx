@@ -1,6 +1,6 @@
 import * as React from "react";
-import type { ActionFunction, LoaderFunction } from "remix";
-import { useActionData, redirect, Form, useLoaderData } from "remix";
+import type { LoaderFunction } from "remix";
+import { useLoaderData } from "remix";
 import type { AccessPoint, AccessPointCachedConfig } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
@@ -96,9 +96,9 @@ function Heartbeat({
   accessPoint: LoaderData["accessPoint"];
 }) {
   const { key } = accessPoint;
-  const [code, setCode] = React.useState(accessPoint.cachedConfig?.code);
+  const [code, setCode] = React.useState(accessPoint.cachedConfig?.code ?? "");
   const [accessCheckPolicy, setAccessCheckPolicy] = React.useState(
-    accessPoint.cachedConfig?.accessCheckPolicy
+    accessPoint.cachedConfig?.accessCheckPolicy ?? ""
   );
   const mutation = useMutation<
     unknown,
@@ -137,7 +137,7 @@ function Heartbeat({
             Code
           </label>
           <div className="mt-1 max-w-xl text-sm text-gray-500">
-            <p>{`3-8 digits | blank`}</p>
+            <p>{`3-8 digits | empty string`}</p>
           </div>
           <div className="mt-1 flex rounded-md shadow-sm">
             <input

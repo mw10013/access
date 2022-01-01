@@ -16,6 +16,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const { code, accessCheckPolicy } = config;
+  console.log({ code, type: typeof code });
   if (
     typeof code !== "string" ||
     (code.length > 0 &&
