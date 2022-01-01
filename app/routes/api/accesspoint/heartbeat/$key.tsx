@@ -13,7 +13,7 @@ export const loader: LoaderFunction = async ({ params: { key } }) => {
   }
   const updatedAccessPoint = await db.accessPoint.update({
     where: { id: accessPoint.id },
-    data: { heartbeatAt: new Date(), heartbeats: { increment: 1 } },
+    data: { heartbeatAt: new Date() },
   });
 
   return json({ accessPoint: updatedAccessPoint }, 200);

@@ -15,7 +15,7 @@ export const action: ActionFunction = async ({ request }) => {
     });
   }
 
-  const { code } = config;
+  const { code, accessCheckPolicy } = config;
   if (
     typeof code !== "string" ||
     (code.length > 0 &&
@@ -27,15 +27,26 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
+  if (
+    accessCheckPolicy !== "manager-only" &&
+    accessCheckPolicy !== "manager-first" &&
+    accessCheckPolicy !== "point-only"
+  ) {
+    throw new Response(
+      `accessCheckPolicy must be "manager-only" | "manager-first" | "point-only".`,
+      { status: 400 }
+    );
+  }
+
   const updatedAccessPoint = await db.accessPoint.update({
     where: { id: accessPoint.id },
-    data: { heartbeatAt: new Date(), heartbeats: { increment: 1 } },
+    data: { heartbeatAt: new Date() },
   });
 
   const cachedConfig = await db.accessPointCachedConfig.upsert({
     where: { accessPointId: accessPoint.id },
     update: { code },
-    create: { accessPointId: accessPoint.id, code },
+    create: { accessPointId: accessPoint.id, code, accessCheckPolicy },
   });
 
   return json(

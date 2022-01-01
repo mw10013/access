@@ -148,7 +148,12 @@ function Heartbeat({
         <button
           type="button"
           className="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-2 sm:ml-3- sm:w-auto sm:text-sm"
-          onClick={() => mutation.mutate({ key, config: { code } })}
+          onClick={() =>
+            mutation.mutate({
+              key,
+              config: { code, accessCheckPolicy: "point-only" },
+            })
+          }
         >
           Heartbeat
         </button>

@@ -11,21 +11,22 @@ datasource db {
 }
 
 model AccessPoint {
-  id            Int       @id @default(autoincrement())
-  key           String    @unique
-  code          String    @default("")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  heartbeatAt   DateTime?
-  heartbeats    Int       @default(0)
-  cachedConfig  AccessPointCachedConfig?
+  id                Int       @id @default(autoincrement())
+  key               String    @unique
+  code              String    @default("")
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  heartbeatAt       DateTime?
+  cachedConfig      AccessPointCachedConfig?
+  accessCheckPolicy String    @default("manager-only")
 }
 
 model AccessPointCachedConfig {
-  id            Int       @id @default(autoincrement())
-  code          String    @default("")
-  accessPoint   AccessPoint @relation(fields: [accessPointId], references: [id])
-  accessPointId Int       @unique
-  cachedAt      DateTime  @updatedAt
+  id                Int       @id @default(autoincrement())
+  code              String    @default("")
+  accessCheckPolicy String  
+  accessPoint       AccessPoint @relation(fields: [accessPointId], references: [id])
+  accessPointId     Int       @unique
+  cachedAt          DateTime  @updatedAt
 
 }

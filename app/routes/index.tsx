@@ -68,6 +68,12 @@ export default function Index() {
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
+                Policy
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Connection
               </th>
               <th
@@ -76,12 +82,7 @@ export default function Index() {
               >
                 Config
               </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Heartbeats
-              </th>
+
               <th
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -103,6 +104,9 @@ export default function Index() {
                   {ap.code}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {ap.accessCheckPolicy}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {connectionStatus(ap.heartbeatAt)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -110,9 +114,6 @@ export default function Index() {
                   _.isEqual({ code: ap.cachedConfig.code }, { code: ap.code })
                     ? "Saved"
                     : "Pending"}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                  {ap.heartbeats}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {ap.heartbeatAt
