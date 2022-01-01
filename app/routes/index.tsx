@@ -1,6 +1,7 @@
 import * as React from "react";
 import type { LoaderFunction } from "remix";
 import { useLoaderData, Link, useNavigate } from "remix";
+import type { AccessPoint } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import * as _ from "lodash";
@@ -19,6 +20,19 @@ export const loader: LoaderFunction = async () => {
   const data: LoaderData = { accessPoints };
   return data;
 };
+
+function connectionStatus(heartbeatAt: AccessPoint["heartbeatAt"]) {
+  if (heartbeatAt) {
+    const deltaMs = Date.now() - new Date(heartbeatAt).getTime();
+    if (deltaMs < 5 * 1000) {
+      return "Live";
+    }
+    if (deltaMs < 10 * 1000) {
+      return "Dying";
+    }
+  }
+  return "Dead";
+}
 
 export default function Index() {
   const { accessPoints } = useLoaderData<LoaderData>();
@@ -89,7 +103,7 @@ export default function Index() {
                   {ap.code}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {ap.heartbeatAt ? typeof ap.heartbeatAt : `DISCONNECTED`}
+                  {connectionStatus(ap.heartbeatAt)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {ap.cachedConfig &&
