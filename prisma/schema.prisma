@@ -14,6 +14,7 @@ model AccessPoint {
   id                Int       @id @default(autoincrement())
   key               String    @unique
   code              String    @default("")
+  codes             AccessPointCode[]
   accessCheckPolicy String    @default("cloud-only")
   cachedConfig      AccessPointCachedConfig?
   heartbeatAt       DateTime?
@@ -21,11 +22,21 @@ model AccessPoint {
   updatedAt         DateTime  @updatedAt
 }
 
+model AccessPointCode {
+  id                Int         @id @default(autoincrement())
+  name              String      @default("")
+  code              String      @default("")
+  enabled           Boolean     @default(false)
+  accessPoint       AccessPoint @relation(fields: [accessPointId], references: [id])
+  accessPointId     Int     
+}
+
 model AccessPointCachedConfig {
-  id                Int       @id @default(autoincrement())
-  code              String    @default("")
+  id                Int         @id @default(autoincrement())
+  code              String      @default("")
+  codes             String      @default("")
   accessCheckPolicy String  
   accessPoint       AccessPoint @relation(fields: [accessPointId], references: [id])
-  accessPointId     Int       @unique
-  cachedAt          DateTime  @updatedAt
+  accessPointId     Int         @unique
+  cachedAt          DateTime    @updatedAt
 }
