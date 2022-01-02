@@ -14,10 +14,13 @@ export default function IdRoute() {
         <div className="">ID: {id}</div>
         <nav className="mt-5 flex-1 space-y-1 flex flex-col">
           <Link to=".">Overview</Link>
+          <Link to="mock">Mock</Link>
           <Link to="raw">Raw</Link>
         </nav>
       </div>
-      <Outlet />
+      <div className="flex-1">
+        <Outlet />
+      </div>
     </div>
   );
 }

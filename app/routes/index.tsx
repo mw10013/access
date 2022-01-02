@@ -133,23 +133,11 @@ export default function Index() {
                     View
                   </Link>{" "}
                   <Link
-                    to={`/accesspoint/detail/${ap.key}`}
-                    className="text-indigo-600 hover:text-indigo-900"
-                  >
-                    Detail
-                  </Link>{" "}
-                  <Link
                     to={`/accesspoint/edit/${ap.key}`}
                     className="text-indigo-600 hover:text-indigo-900"
                   >
                     Edit
                   </Link>{" "}
-                  <Link
-                    to={`/accesspoint/mock/${ap.key}`}
-                    className="text-indigo-600 hover:text-indigo-900"
-                  >
-                    Mock
-                  </Link>
                 </td>
               </tr>
             ))}

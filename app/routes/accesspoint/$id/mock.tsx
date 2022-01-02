@@ -14,13 +14,13 @@ type LoaderData = {
   }>;
 };
 
-export const loader: LoaderFunction = async ({ params: { key } }) => {
+export const loader: LoaderFunction = async ({ params: { id } }) => {
   const accessPoint = await db.accessPoint.findUnique({
-    where: { key },
+    where: { id: Number(id) },
     include: { cachedConfig: true },
   });
   if (!accessPoint) {
-    throw new Response("Key not found.", {
+    throw new Response("Access point not found.", {
       status: 404,
     });
   }
@@ -28,17 +28,13 @@ export const loader: LoaderFunction = async ({ params: { key } }) => {
   return data;
 };
 
-function Access({
-  accessPointKey: key,
-}: {
-  accessPointKey: AccessPoint["key"];
-}) {
+function Access({ accessPoint: { id } }: { accessPoint: AccessPoint }) {
   const [code, setCode] = React.useState("");
   const mutation = useMutation(() =>
     fetch(
       new Request(`/api/accesspoint/access`, {
         method: "POST",
-        body: JSON.stringify({ key, code }),
+        body: JSON.stringify({ id, code }),
       })
     ).then((res) => res.json())
   );
@@ -48,7 +44,7 @@ function Access({
       <div className="px-4 py-5 sm:p-6">
         <h3 className="text-lg leading-6 font-medium text-gray-900">Access</h3>
         <div className="mt-2 max-w-xl text-sm text-gray-500">
-          <p>{`Http post to /api/accesspoint/access with body { key: "${key}", code: "nnn" }.`}</p>
+          <p>{`Http post to /api/accesspoint/access with body { id: "${id}", code: "nnn" }.`}</p>
         </div>
         <form className="mt-2 sm:flex sm:items-center">
           <div className="w-full sm:max-w-xs">
@@ -95,7 +91,7 @@ function Heartbeat({
 }: {
   accessPoint: LoaderData["accessPoint"];
 }) {
-  const { key } = accessPoint;
+  const { id } = accessPoint;
   const [code, setCode] = React.useState(accessPoint.cachedConfig?.code ?? "");
   const [accessCheckPolicy, setAccessCheckPolicy] = React.useState(
     accessPoint.cachedConfig?.accessCheckPolicy ?? ""
@@ -103,12 +99,12 @@ function Heartbeat({
   const mutation = useMutation<
     unknown,
     Error,
-    { key: AccessPoint["key"]; config: Partial<AccessPointCachedConfig> }
-  >(({ key, config }) =>
+    { id: AccessPoint["id"]; config: Partial<AccessPointCachedConfig> }
+  >(({ id, config }) =>
     fetch(
       new Request(`/api/accesspoint/heartbeat`, {
         method: "POST",
-        body: JSON.stringify({ key, config }),
+        body: JSON.stringify({ id, config }),
       })
     ).then(async (res) => {
       if (res.ok) {
@@ -178,7 +174,7 @@ function Heartbeat({
             onClick={(e) => {
               e.preventDefault();
               mutation.mutate({
-                key,
+                id,
                 config: { code, accessCheckPolicy },
               });
             }}
@@ -198,11 +194,7 @@ function Heartbeat({
   );
 }
 
-function Connectivity({
-  accessPointKey: key,
-}: {
-  accessPointKey: AccessPoint["key"];
-}) {
+function Connectivity({ accessPoint: { key } }: { accessPoint: AccessPoint }) {
   const mutation = useMutation(() =>
     fetch(`/api/accesspoint/heartbeat/${key}`).then((res) => res.json())
   );
@@ -216,7 +208,8 @@ function Connectivity({
           <p>
             Deprecated http get /api/accesspoint/heartbeat/:key ie.
             /api/accesspoint/heartbeat/
-            {key} for connectivity test.
+            {key} for connectivity test. Key is deprecated as id for access
+            points in api in favor of id.
           </p>
         </div>
         <button
@@ -246,12 +239,10 @@ export default function MockRoute() {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="p-8">
-        <h1 className="text-2xl font-bold leading-7 text-gray-900">
-          Mock <span className="text-md text-gray-400">{accessPoint.key}</span>
-        </h1>
-        <Access accessPointKey={accessPoint.key} />
+        <h1 className="text-2xl font-bold leading-7 text-gray-900">Mock</h1>
+        <Access accessPoint={accessPoint} />
         <Heartbeat accessPoint={accessPoint} />
-        <Connectivity accessPointKey={accessPoint.key} />
+        <Connectivity accessPoint={accessPoint} />
       </div>
     </QueryClientProvider>
   );

@@ -3,14 +3,15 @@ import { json } from "remix";
 import { db } from "~/utils/db.server";
 
 export const action: ActionFunction = async ({ request }) => {
-  const { key, config } = await request.json();
+  const { id, config } = await request.json();
   const accessPoint =
-    typeof key === "string" &&
+    typeof id === "number" &&
     (await db.accessPoint.findUnique({
-      where: { key },
+      where: { id },
     }));
+  console.log({ accessPoint });
   if (!accessPoint) {
-    throw new Response("Key not found.", {
+    throw new Response("Access point not found.", {
       status: 404,
     });
   }

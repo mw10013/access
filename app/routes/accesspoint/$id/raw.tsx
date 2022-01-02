@@ -37,8 +37,9 @@ export default function RawlRoute() {
   }, [navigate]);
 
   return (
-    <div>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+    <div className="p-8">
+      <h1 className="text-2xl font-bold leading-7 text-gray-900">Raw</h1>
+      <pre className="mt-4">{JSON.stringify(data, null, 2)}</pre>
     </div>
   );
 }
