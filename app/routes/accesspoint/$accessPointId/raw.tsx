@@ -10,10 +10,12 @@ type LoaderData = {
   }>;
 };
 
-export const loader: LoaderFunction = async ({ params: { id } }) => {
+export const loader: LoaderFunction = async ({
+  params: { accessPointId: id },
+}) => {
   const accessPoint = await db.accessPoint.findUnique({
     where: { id: Number(id) },
-    include: { codes: true, cachedConfig: true },
+    include: { codes: { orderBy: { name: "asc" } }, cachedConfig: true },
   });
   if (!accessPoint) {
     throw new Response("Access point not found.", {

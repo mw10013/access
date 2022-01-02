@@ -89,7 +89,7 @@ export default function Index() {
                 Heartbase At
               </th>
               <th scope="col" className="relative px-6 py-3">
-                <span className="sr-only">Mock</span>
+                <span className="sr-only">View</span>
               </th>
             </tr>
           </thead>

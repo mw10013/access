@@ -14,7 +14,7 @@ type LoaderData = {
   }>;
 };
 
-export const loader: LoaderFunction = async ({ params: { id } }) => {
+export const loader: LoaderFunction = async ({ params: { accessPointId: id } }) => {
   const accessPoint = await db.accessPoint.findUnique({
     where: { id: Number(id) },
     include: { cachedConfig: true },

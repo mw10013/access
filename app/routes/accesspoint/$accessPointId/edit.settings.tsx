@@ -6,7 +6,7 @@ import { db } from "~/utils/db.server";
 
 type LoaderData = { accessPoint: AccessPoint };
 
-export const loader: LoaderFunction = async ({ params: { id } }) => {
+export const loader: LoaderFunction = async ({ params: { accessPointId: id } }) => {
   const accessPoint =
     typeof id === "string" &&
     (await db.accessPoint.findUnique({
@@ -57,7 +57,7 @@ type ActionData = {
   };
 };
 
-export const action: ActionFunction = async ({ request, params: { id } }) => {
+export const action: ActionFunction = async ({ request, params: { accessPointId: id } }) => {
   const form = await request.formData();
   const code = form.get("code") ?? "";
   const accessCheckPolicy = form.get("accessCheckPolicy");

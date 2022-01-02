@@ -6,7 +6,7 @@ import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 
 export default function IdRoute() {
-  const { id } = useParams();
+  const { accessPointId: id } = useParams();
   return (
     <div className="min-h-[640px] flex">
       <div className="flex flex-col w-64 pt-5 pb-4 px-4">
