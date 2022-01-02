@@ -1,5 +1,6 @@
 import {
   Links,
+  Link,
   LiveReload,
   Meta,
   Outlet,
@@ -27,6 +28,13 @@ export default function App() {
         <Links />
       </head>
       <body>
+        <nav className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center">
+            <h1 className="text-2xl font-bold leading-7 text-gray-900">
+              <Link to=".">Access</Link>
+            </h1>
+          </div>
+        </nav>
         <Outlet />
         <ScrollRestoration />
         <Scripts />

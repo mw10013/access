@@ -46,9 +46,8 @@ export default function Index() {
     return () => clearInterval(intervalId);
   }, [navigate]);
   return (
-    <div className="p-8 bg-white">
+    <div className="p-4 bg-white">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-bold leading-7 text-gray-900">Access</h1>
         <table className="mt-4 max-width-md divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -56,7 +55,7 @@ export default function Index() {
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Key
+                Id
               </th>
               <th
                 scope="col"
@@ -98,7 +97,7 @@ export default function Index() {
             {accessPoints.map((ap) => (
               <tr key={ap.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {ap.key}
+                  {ap.id}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {ap.code}
