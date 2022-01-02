@@ -6,5 +6,9 @@ import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 
 export default function IdIndex() {
-  return <div>ID Index</div>;
+  return (
+    <div className="p-8">
+      <h1 className="text-2xl font-bold leading-7 text-gray-900">Overview</h1>
+    </div>
+  );
 }

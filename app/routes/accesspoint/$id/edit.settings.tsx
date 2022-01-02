@@ -6,12 +6,14 @@ import { db } from "~/utils/db.server";
 
 type LoaderData = { accessPoint: AccessPoint };
 
-export const loader: LoaderFunction = async ({ params: { key } }) => {
-  const accessPoint = await db.accessPoint.findUnique({
-    where: { key },
-  });
+export const loader: LoaderFunction = async ({ params: { id } }) => {
+  const accessPoint =
+    typeof id === "string" &&
+    (await db.accessPoint.findUnique({
+      where: { id: Number(id) },
+    }));
   if (!accessPoint) {
-    throw new Response("Key not found.", {
+    throw new Response("Access point not found.", {
       status: 404,
     });
   }
@@ -55,7 +57,7 @@ type ActionData = {
   };
 };
 
-export const action: ActionFunction = async ({ request, params: { key } }) => {
+export const action: ActionFunction = async ({ request, params: { id } }) => {
   const form = await request.formData();
   const code = form.get("code") ?? "";
   const accessCheckPolicy = form.get("accessCheckPolicy");
@@ -73,10 +75,10 @@ export const action: ActionFunction = async ({ request, params: { key } }) => {
   }
 
   const accessPoint = await db.accessPoint.findUnique({
-    where: { key },
+    where: { id: Number(id) },
   });
   if (!accessPoint) {
-    throw new Response("Key not found.", {
+    throw new Response("Access point not found.", {
       status: 404,
     });
   }
@@ -85,14 +87,17 @@ export const action: ActionFunction = async ({ request, params: { key } }) => {
     where: { id: accessPoint.id },
     data: { code, accessCheckPolicy },
   });
-  return redirect(`/`);
+  return redirect("..");
 };
 
-export default function EditRoute() {
+export default function EditSettingsRoute() {
   const { accessPoint } = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
   return (
     <div className="p-8">
+      <h1 className="text-2xl font-bold leading-7 text-gray-900">
+        Edit Settings
+      </h1>
       <Form
         reloadDocument
         replace
@@ -103,7 +108,7 @@ export default function EditRoute() {
           <div>
             <div>
               <h3 className="text-lg leading-6 font-medium text-gray-900">
-                Access Point {accessPoint?.key} {actionData?.formError}
+                {actionData?.formError}
               </h3>
               <p className="mt-1 text-sm text-gray-500"></p>
             </div>
