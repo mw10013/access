@@ -14,7 +14,7 @@ model AccessPoint {
   id                Int       @id @default(autoincrement())
   key               String    @unique
   code              String    @default("")
-  accessCheckPolicy String    @default("manager-only")
+  accessCheckPolicy String    @default("cloud-only")
   cachedConfig      AccessPointCachedConfig?
   heartbeatAt       DateTime?
   createdAt         DateTime  @default(now())

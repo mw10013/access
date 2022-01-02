@@ -155,7 +155,7 @@ function Heartbeat({
               Access Check Policy
             </label>
             <div className="mt-1 max-w-xl text-sm text-gray-500">
-              <p>{`manager-first | manager-only | point-only`}</p>
+              <p>{`cloud-first | cloud-only | point-only`}</p>
             </div>
             <div className="mt-1 flex rounded-md shadow-sm">
               <input

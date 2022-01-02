@@ -30,12 +30,12 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   if (
-    accessCheckPolicy !== "manager-only" &&
-    accessCheckPolicy !== "manager-first" &&
+    accessCheckPolicy !== "cloud-only" &&
+    accessCheckPolicy !== "cloud-first" &&
     accessCheckPolicy !== "point-only"
   ) {
     throw new Response(
-      `accessCheckPolicy must be "manager-only" | "manager-first" | "point-only".`,
+      `accessCheckPolicy must be "cloud-only" | "cloud-first" | "point-only".`,
       { status: 400 }
     );
   }

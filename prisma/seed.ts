@@ -7,7 +7,7 @@ async function seed() {
       data: {
         key: "key1",
         code: "13795",
-        accessCheckPolicy: "manager-first",
+        accessCheckPolicy: "cloud-first",
         heartbeatAt: new Date(),
         cachedConfig: {
           create: { code: "111", accessCheckPolicy: "point-only" },

@@ -37,11 +37,11 @@ function validateCode(code: string) {
 
 function validateAccessCheckPolicy(accessCheckPolicy: string) {
   if (
-    !["manager-first", "manager-only", "point-only"].some(
+    !["cloud-first", "cloud-only", "point-only"].some(
       (el) => el === accessCheckPolicy
     )
   ) {
-    return "Access check policy must be manager-first, manager-only, or point-only.";
+    return "Access check policy must be cloud-first, cloud-only, or point-only.";
   }
 }
 
@@ -158,38 +158,38 @@ export default function EditSettingsRoute() {
                 <div className="mt-4 space-y-4">
                   <div className="flex items-center">
                     <input
-                      id="acpManagerFirst"
+                      id="acpCloudFirst"
                       name="accessCheckPolicy"
-                      value="manager-first"
+                      value="cloud-first"
                       type="radio"
                       defaultChecked={
-                        accessPoint.accessCheckPolicy === "manager-first"
+                        accessPoint.accessCheckPolicy === "cloud-first"
                       }
                       className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
                     />
                     <label
-                      htmlFor="acpManagerFirst"
+                      htmlFor="acpCloudFirst"
                       className="ml-3 block text-sm font-medium text-gray-700"
                     >
-                      Manager First
+                      Cloud First
                     </label>
                   </div>
                   <div className="flex items-center">
                     <input
-                      id="acpManagerOnly"
+                      id="acpCloudOnly"
                       name="accessCheckPolicy"
-                      value="manager-only"
+                      value="cloud-only"
                       type="radio"
                       defaultChecked={
-                        accessPoint.accessCheckPolicy === "manager-only"
+                        accessPoint.accessCheckPolicy === "cloud-only"
                       }
                       className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
                     />
                     <label
-                      htmlFor="acpManagerOnly"
+                      htmlFor="acpCloudOnly"
                       className="ml-3 block text-sm font-medium text-gray-700"
                     >
-                      Manager Only
+                      Cloud Only
                     </label>
                   </div>
                   <div className="flex items-center">
