@@ -11,7 +11,9 @@ type LoaderData = {
   }>;
 };
 
-export const loader: LoaderFunction = async ({ params: { accessPointId: id } }) => {
+export const loader: LoaderFunction = async ({
+  params: { accessPointId: id },
+}) => {
   const accessPoint = await db.accessPoint.findUnique({
     where: { id: Number(id) },
     include: { codes: { orderBy: { name: "asc" } }, cachedConfig: true },
@@ -59,6 +61,9 @@ export default function IdIndex() {
                   >
                     Enabled
                   </th>
+                  <th scope="col" className="relative px-6 py-3">
+                    <span className="sr-only">Edit</span>
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -72,6 +77,14 @@ export default function IdIndex() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {code.enabled ? "Enabled" : "Disabled"}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <Link
+                        to={`code/${code.id}/edit`}
+                        className="text-indigo-600 hover:text-indigo-900"
+                      >
+                        Edit
+                      </Link>{" "}
                     </td>
                   </tr>
                 ))}

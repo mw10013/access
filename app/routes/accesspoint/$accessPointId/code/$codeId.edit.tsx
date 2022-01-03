@@ -1,24 +1,35 @@
 import * as React from "react";
 import type { ActionFunction, LoaderFunction } from "remix";
 import { useActionData, useLoaderData, Form, json, redirect } from "remix";
+import type { AccessPointCode } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 
-type LoaderData = { accessPoint: Prisma.AccessPointGetPayload<{
+type LoaderData = {
+  accessPoint: Prisma.AccessPointGetPayload<{
     include: { codes: true };
-  }>; };
+  }>;
+  code: AccessPointCode;
+};
 
-export const loader: LoaderFunction = async ({ params: { accessPointId: id } }) => {
-    const accessPoint = await db.accessPoint.findUnique({
-        where: { id: Number(id) },
-        include: { codes: { orderBy: { name: "asc" } }, cachedConfig: true },
-      });
-      if (!accessPoint) {
-        throw new Response("Access point not found.", {
-          status: 404,
-        });
-      }
-      const data: LoaderData = { accessPoint };
+export const loader: LoaderFunction = async ({
+  params: { accessPointId: accessPointIdParam, codeId },
+}) => {
+  const accessPointId = Number(accessPointIdParam);
+  const accessPoint = await db.accessPoint.findUnique({
+    where: { id: Number(accessPointId) },
+    include: { codes: { where: { accessPointId, id: Number(codeId) } } },
+  });
+  if (!accessPoint) {
+    throw new Response("Access point not found.", {
+      status: 404,
+    });
+  }
+  if (!accessPoint.codes[0]) {
+    throw new Response("Code not found.", { status: 404 });
+  }
+  const data: LoaderData = { accessPoint, code: accessPoint.codes[0] };
+  console.log({ fn: "loader" });
   return data;
 };
 
@@ -36,69 +47,80 @@ function validateCode(code: string) {
   }
 }
 
-function validateAccessCheckPolicy(accessCheckPolicy: string) {
-  if (
-    !["cloud-first", "cloud-only", "point-only"].some(
-      (el) => el === accessCheckPolicy
-    )
-  ) {
-    return "Access check policy must be cloud-first, cloud-only, or point-only.";
-  }
-}
-
 type ActionData = {
   formError?: string;
   fieldErrors?: {
-    code: string | undefined;
-    accessCheckPolicy: string | undefined;
+    name?: string | undefined;
+    code?: string | undefined;
+    enabled?: string | undefined;
   };
-  fields?: {
-    code: string;
-    accessCheckPolicy: string;
-  };
+  fieldValues?: any;
 };
 
-export const action: ActionFunction = async ({ request, params: { accessPointId: id } }) => {
-  const form = await request.formData();
-  const code = form.get("code") ?? "";
-  const accessCheckPolicy = form.get("accessCheckPolicy");
-  if (typeof code !== "string" || typeof accessCheckPolicy !== "string") {
+export const action: ActionFunction = async ({
+  request,
+  params: { accessPointId, codeId },
+}) => {
+  const formData = await request.formData();
+  const rawCode = formData.get("code");
+  console.log({
+    fn: "action",
+    rawCode: formData.get("code"),
+    type: typeof rawCode,
+    entries: [...formData.entries()],
+  });
+  const code = formData.get("code") ?? "";
+  if (typeof code !== "string") {
     return { formError: `Form not submitted correctly.` };
   }
-
+  /*
   const fieldErrors = {
     code: validateCode(code),
-    accessCheckPolicy: validateAccessCheckPolicy(accessCheckPolicy),
   };
-  const fields = { code, accessCheckPolicy };
   if (Object.values(fieldErrors).some(Boolean)) {
-    return { fieldErrors, fields };
+    const actionData: ActionData = {
+      fieldErrors,
+      formData: Object.fromEntries(formData),
+    };
+    return actionData;
   }
-
+*/
+  /*
   const accessPoint = await db.accessPoint.findUnique({
-    where: { id: Number(id) },
+    where:, codeId: Number(id) },
   });
   if (!accessPoint) {
     throw new Response("Access point not found.", {
       status: 404,
     });
   }
+*/
+  //   await db.accessPoint.update({
+  //     where: { id: accessPoint.id },
+  //     data: { code },
+  //   });
+  //   return redirect("..");
 
-  await db.accessPoint.update({
-    where: { id: accessPoint.id },
-    data: { code, accessCheckPolicy },
+  //   return null;
+  const actionData: ActionData = { fieldValues: Object.fromEntries(formData) };
+  console.log({
+    fn: "action: return",
+    actionData,
   });
-  return redirect("..");
+  return actionData;
 };
 
-export default function EditSettingsRoute() {
-  const { accessPoint } = useLoaderData<LoaderData>();
+export default function EditCodeRoute() {
+  const { code } = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
+  console.log({
+    fn: "EditCodeRoute",
+    code,
+    actionData,
+  });
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold leading-7 text-gray-900">
-        Edit Settings
-      </h1>
+      <h1 className="text-2xl font-bold leading-7 text-gray-900">Edit Code</h1>
       <Form
         reloadDocument
         replace
@@ -117,6 +139,37 @@ export default function EditSettingsRoute() {
             <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
               <div className="sm:col-span-4">
                 <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Name
+                </label>
+
+                <div className="mt-1 flex rounded-md shadow-sm">
+                  <input
+                    type="text"
+                    name="name"
+                    id="name"
+                    defaultValue={
+                      actionData ? actionData?.fieldValues?.name : code.name
+                    }
+                    className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
+                  />
+                </div>
+                {actionData?.fieldErrors?.name ? (
+                  <p
+                    className="mt-2 text-sm text-red-600"
+                    role="alert"
+                    id="code-error"
+                  >
+                    {actionData.fieldErrors.name}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+            <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+              <div className="sm:col-span-4">
+                <label
                   htmlFor="code"
                   className="block text-sm font-medium text-gray-700"
                 >
@@ -129,7 +182,7 @@ export default function EditSettingsRoute() {
                     name="code"
                     id="code"
                     defaultValue={
-                      actionData ? actionData?.fields?.code : accessPoint.code
+                      actionData ? actionData?.fieldValues?.code : code.code
                     }
                     className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
                   />
@@ -145,9 +198,36 @@ export default function EditSettingsRoute() {
                 ) : null}
               </div>
             </div>
-          </div>
 
-          <div className="pt-8">
+            <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+              <div className="relative flex items-start">
+                <div className="flex items-center h-5">
+                  <input
+                    id="enabled"
+                    name="enabled"
+                    type="checkbox"
+                    defaultChecked={
+                      actionData
+                        ? actionData?.fieldValues?.enabled
+                        : code.enabled
+                    }
+                    className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                  />
+                </div>
+                <div className="ml-3 text-sm">
+                  <label
+                    htmlFor="enabled"
+                    className="font-medium text-gray-700"
+                  >
+                    Enabled
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div></div>
+
+          {/* <div className="pt-8">
             <div className="mt-6-">
               <fieldset className="mt-6-">
                 <div>
@@ -214,7 +294,7 @@ export default function EditSettingsRoute() {
                 </div>
               </fieldset>
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="pt-5">
