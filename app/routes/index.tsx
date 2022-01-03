@@ -15,7 +15,7 @@ type LoaderData = {
 export const loader: LoaderFunction = async () => {
   const accessPoints = await db.accessPoint.findMany({
     include: { cachedConfig: true },
-    orderBy: { key: "asc" },
+    orderBy: { id: "asc" },
   });
   const data: LoaderData = { accessPoints };
   return data;
@@ -61,12 +61,6 @@ export default function Index() {
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Code
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
                 Policy
               </th>
               <th
@@ -81,13 +75,6 @@ export default function Index() {
               >
                 Config
               </th>
-
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Heartbase At
-              </th>
               <th scope="col" className="relative px-6 py-3">
                 <span className="sr-only">View</span>
               </th>
@@ -98,9 +85,6 @@ export default function Index() {
               <tr key={ap.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {ap.id}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {ap.code}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {ap.accessCheckPolicy}
@@ -119,11 +103,6 @@ export default function Index() {
                   )
                     ? "Saved"
                     : "Pending"}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {ap.heartbeatAt
-                    ? new Date(ap.heartbeatAt).toLocaleString("en-US")
-                    : null}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <Link

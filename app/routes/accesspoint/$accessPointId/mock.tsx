@@ -105,7 +105,12 @@ function Heartbeat({
   const mutation = useMutation<
     unknown,
     Error,
-    { id: AccessPoint["id"]; config: Pick<AccessPointCachedConfig, "accessCheckPolicy"> & { codes: string[]} }
+    {
+      id: AccessPoint["id"];
+      config: Pick<AccessPointCachedConfig, "accessCheckPolicy"> & {
+        codes: string[];
+      };
+    }
   >(({ id, config }) =>
     fetch(
       new Request(`/api/accesspoint/heartbeat`, {
@@ -153,7 +158,7 @@ function Heartbeat({
               />
             </div>
           </div>
-          
+
           <div className="mt-2">
             <label
               htmlFor="cachedAccessCheckPolicy"
@@ -183,8 +188,11 @@ function Heartbeat({
               mutation.mutate({
                 id,
                 config: {
-                  // MDN: When the string is empty, split() returns an array containing one empty string, rather than an empty array. 
-                  codes: codes.trim().split(/\s+/).filter((el) => el.length > 0),
+                  // MDN: When the string is empty, split() returns an array containing one empty string, rather than an empty array.
+                  codes: codes
+                    .trim()
+                    .split(/\s+/)
+                    .filter((el) => el.length > 0),
                   accessCheckPolicy,
                 },
               });
@@ -205,9 +213,9 @@ function Heartbeat({
   );
 }
 
-function Connectivity({ accessPoint: { key } }: { accessPoint: AccessPoint }) {
+function Connectivity({ accessPoint: { id } }: { accessPoint: AccessPoint }) {
   const mutation = useMutation(() =>
-    fetch(`/api/accesspoint/heartbeat/${key}`).then((res) => res.json())
+    fetch(`/api/accesspoint/${id}/heartbeat`).then((res) => res.json())
   );
   return (
     <div className="m-4 bg-white shadow sm:rounded-lg">
@@ -217,10 +225,9 @@ function Connectivity({ accessPoint: { key } }: { accessPoint: AccessPoint }) {
         </h3>
         <div className="mt-2 max-w-xl text-sm text-gray-500">
           <p>
-            Deprecated http get /api/accesspoint/heartbeat/:key ie.
-            /api/accesspoint/heartbeat/
-            {key} for connectivity test. Key is deprecated as id for access
-            points in api in favor of id.
+            Deprecated http get /api/accesspoint/:id/heartbeatie.
+            /api/accesspoint/{id}/heartbeat for connectivity test. WARNING: id
+            instead of key.
           </p>
         </div>
         <button
