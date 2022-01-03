@@ -9,15 +9,14 @@ export const action: ActionFunction = async ({ request }) => {
     (await db.accessPoint.findUnique({
       where: { id },
     }));
-  console.log({ accessPoint });
   if (!accessPoint) {
     throw new Response("Access point not found.", {
       status: 404,
     });
   }
 
-  const { code, accessCheckPolicy } = config;
-  console.log({ code, type: typeof code });
+  const { codes, code, accessCheckPolicy } = config;
+  console.log({ codes });
   if (
     typeof code !== "string" ||
     (code.length > 0 &&

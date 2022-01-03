@@ -14,7 +14,9 @@ type LoaderData = {
   }>;
 };
 
-export const loader: LoaderFunction = async ({ params: { accessPointId: id } }) => {
+export const loader: LoaderFunction = async ({
+  params: { accessPointId: id },
+}) => {
   const accessPoint = await db.accessPoint.findUnique({
     where: { id: Number(id) },
     include: { cachedConfig: true },
@@ -93,6 +95,11 @@ function Heartbeat({
 }) {
   const { id } = accessPoint;
   const [code, setCode] = React.useState(accessPoint.cachedConfig?.code ?? "");
+  const [codes, setCodes] = React.useState(() =>
+    accessPoint.cachedConfig
+      ? JSON.parse(accessPoint.cachedConfig.codes).join(" ")
+      : ""
+  );
   const [accessCheckPolicy, setAccessCheckPolicy] = React.useState(
     accessPoint.cachedConfig?.accessCheckPolicy ?? ""
   );
@@ -126,6 +133,27 @@ function Heartbeat({
           </p>
         </div>
         <form>
+          <div className="mt-2">
+            <label
+              htmlFor="cachedCodes"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Codes
+            </label>
+            <div className="mt-1 max-w-xl text-sm text-gray-500">
+              <p>{`3-8 digit codes separated by space | empty string`}</p>
+            </div>
+            <div className="mt-1 flex rounded-md shadow-sm">
+              <input
+                type="text"
+                name="cachedCodes"
+                id="cachedCodes"
+                value={codes}
+                onChange={(e) => setCodes(e.target.value)}
+                className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
+              />
+            </div>
+          </div>
           <div className="mt-2">
             <label
               htmlFor="cachedCode"
@@ -175,7 +203,11 @@ function Heartbeat({
               e.preventDefault();
               mutation.mutate({
                 id,
-                config: { code, accessCheckPolicy },
+                config: {
+                  codes: codes.trim().split(/\s+/),
+                  code,
+                  accessCheckPolicy,
+                },
               });
             }}
           >

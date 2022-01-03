@@ -34,7 +34,7 @@ model AccessPointCode {
 model AccessPointCachedConfig {
   id                Int         @id @default(autoincrement())
   code              String      @default("")
-  codes             String      @default("")
+  codes             String      @default("[]") // json array of strings
   accessCheckPolicy String  
   accessPoint       AccessPoint @relation(fields: [accessPointId], references: [id])
   accessPointId     Int         @unique
