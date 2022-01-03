@@ -8,13 +8,19 @@ import * as _ from "lodash";
 
 type LoaderData = {
   accessPoints: Prisma.AccessPointGetPayload<{
-    include: { cachedConfig: true };
+    include: { codes: true; cachedConfig: true };
   }>[];
 };
 
 export const loader: LoaderFunction = async () => {
   const accessPoints = await db.accessPoint.findMany({
-    include: { cachedConfig: true },
+    include: {
+      codes: {
+        where: { code: { not: "" }, enabled: true },
+        orderBy: { code: "asc" },
+      },
+      cachedConfig: true,
+    },
     orderBy: { id: "asc" },
   });
   const data: LoaderData = { accessPoints };
@@ -61,6 +67,12 @@ export default function Index() {
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
+                Codes
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Policy
               </th>
               <th
@@ -87,6 +99,9 @@ export default function Index() {
                   {ap.id}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {ap.codes.map((el) => el.code).join(" ")}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {ap.accessCheckPolicy}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -96,9 +111,13 @@ export default function Index() {
                   {ap.cachedConfig &&
                   _.isEqual(
                     {
+                      codes: new Set(JSON.parse(ap.cachedConfig.codes)),
                       accessCheckPolicy: ap.cachedConfig.accessCheckPolicy,
                     },
-                    { accessCheckPolicy: ap.accessCheckPolicy }
+                    {
+                      codes: new Set(ap.codes.map((el) => el.code)),
+                      accessCheckPolicy: ap.accessCheckPolicy,
+                    }
                   )
                     ? "Saved"
                     : "Pending"}
