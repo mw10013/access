@@ -26,9 +26,9 @@ export const loader: LoaderFunction = async ({
   return data;
 };
 
-export default function RawlRoute() {
+export default function RawRoute() {
   const data = useLoaderData<LoaderData>();
-  const [poll, setPoll] = React.useState(true);
+  const [poll, setPoll] = React.useState(false);
   const navigate = useNavigate();
 
   React.useEffect(() => {

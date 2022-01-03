@@ -9,6 +9,11 @@ export const action: ActionFunction = async ({ request }) => {
     typeof id === "number" &&
     (await db.accessPoint.findUnique({
       where: { id },
+      include: {
+        codes: {
+          where: { code: { not: "" }, enabled: true },
+        },
+      },
     }));
   if (!accessPoint) {
     throw new Response("Access point not found.", {
@@ -17,8 +22,9 @@ export const action: ActionFunction = async ({ request }) => {
   }
   return json(
     {
-      access:
-        accessPoint.code !== "" && code === accessPoint.code ? "grant" : "deny",
+      access: accessPoint.codes.some((el) => el.code === code)
+        ? "grant"
+        : "deny",
     },
     200
   );
