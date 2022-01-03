@@ -60,14 +60,24 @@ type ActionData = {
 export const action: ActionFunction = async ({
   request,
   params: { accessPointId, codeId },
-}) => {
+}): Promise<Response | ActionData> => {
   const formData = await request.formData();
   const rawCode = formData.get("code");
   console.log({
     fn: "action",
+    hasCode: formData.has("code"),
+    hasName: formData.has("name"),
     rawCode: formData.get("code"),
-    type: typeof rawCode,
+    rawCodeAll: formData.getAll("code"),
+    rawName: formData.get("name"),
+    rawNameAll: formData.getAll("name"),
+    rawHidden1: formData.get("hidden1"),
+    rawHidden2: formData.get("hidden2"),
+    rawHidden2All: formData.getAll("hidden2"),
+    keys: [...formData.keys()],
+    values: [...formData.values()],
     entries: [...formData.entries()],
+    fromEntries: Object.fromEntries(formData),
   });
   const code = formData.get("code") ?? "";
   if (typeof code !== "string") {
@@ -127,6 +137,9 @@ export default function EditCodeRoute() {
         method="post"
         className="space-y-8 divide-y divide-gray-200"
       >
+        <input type="hidden" name="hidden1" value="hidden1-value" />
+        <input type="hidden" name="hidden2" value="hidden2-value1" />
+        <input type="hidden" name="hidden2" value="hidden2-value2" />
         <div className="space-y-8 divide-y divide-gray-200">
           <div>
             <div>
