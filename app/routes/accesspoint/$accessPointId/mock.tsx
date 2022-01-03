@@ -94,8 +94,7 @@ function Heartbeat({
   accessPoint: LoaderData["accessPoint"];
 }) {
   const { id } = accessPoint;
-  const [code, setCode] = React.useState(accessPoint.cachedConfig?.code ?? "");
-  const [codes, setCodes] = React.useState(() =>
+  const [codes, setCodes] = React.useState<string>(() =>
     accessPoint.cachedConfig
       ? JSON.parse(accessPoint.cachedConfig.codes).join(" ")
       : ""
@@ -106,7 +105,7 @@ function Heartbeat({
   const mutation = useMutation<
     unknown,
     Error,
-    { id: AccessPoint["id"]; config: Partial<AccessPointCachedConfig> }
+    { id: AccessPoint["id"]; config: Pick<AccessPointCachedConfig, "accessCheckPolicy"> & { codes: string[]} }
   >(({ id, config }) =>
     fetch(
       new Request(`/api/accesspoint/heartbeat`, {
@@ -154,27 +153,7 @@ function Heartbeat({
               />
             </div>
           </div>
-          <div className="mt-2">
-            <label
-              htmlFor="cachedCode"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Code
-            </label>
-            <div className="mt-1 max-w-xl text-sm text-gray-500">
-              <p>{`3-8 digits | empty string`}</p>
-            </div>
-            <div className="mt-1 flex rounded-md shadow-sm">
-              <input
-                type="text"
-                name="cachedCode"
-                id="cachedCode"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
-              />
-            </div>
-          </div>
+          
           <div className="mt-2">
             <label
               htmlFor="cachedAccessCheckPolicy"
@@ -204,8 +183,8 @@ function Heartbeat({
               mutation.mutate({
                 id,
                 config: {
-                  codes: codes.trim().split(/\s+/),
-                  code,
+                  // MDN: When the string is empty, split() returns an array containing one empty string, rather than an empty array. 
+                  codes: codes.trim().split(/\s+/).filter((el) => el.length > 0),
                   accessCheckPolicy,
                 },
               });

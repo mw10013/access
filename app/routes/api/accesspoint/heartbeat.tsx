@@ -2,28 +2,50 @@ import type { ActionFunction } from "remix";
 import { json } from "remix";
 import { db } from "~/utils/db.server";
 
+function isCodesMalformed(codes: any) {
+  if (Array.isArray(codes)) {
+    return codes.some(
+      (el) =>
+        typeof el !== "string" ||
+        el.length < 3 ||
+        el.length > 8 ||
+        !/^\d+$/.test(el)
+    );
+  }
+  return true;
+}
+
 export const action: ActionFunction = async ({ request }) => {
   const { id, config } = await request.json();
   const accessPoint =
     typeof id === "number" &&
     (await db.accessPoint.findUnique({
       where: { id },
+      include: {
+        codes: {
+          where: { code: { not: "" }, enabled: true },
+          orderBy: { code: "asc" },
+        },
+      },
     }));
   if (!accessPoint) {
     throw new Response("Access point not found.", {
       status: 404,
     });
   }
+  if (!config) {
+    throw (
+      (new Response("Config required"),
+      {
+        status: 400,
+      })
+    );
+  }
 
-  const { codes, code, accessCheckPolicy } = config;
-  console.log({ codes });
-  if (
-    typeof code !== "string" ||
-    (code.length > 0 &&
-      (code.length < 3 || code.length > 8 || !/^\d+$/.test(code)))
-  ) {
+  const { codes, accessCheckPolicy } = config;
+  if (isCodesMalformed(codes)) {
     throw new Response(
-      `Malformed code. Code must be a string containing 3 to 8 digits or empty string.`,
+      `Malformed codes. Must be an array of strings containing 3 to 8 digits.`,
       { status: 400 }
     );
   }
@@ -44,17 +66,22 @@ export const action: ActionFunction = async ({ request }) => {
     data: { heartbeatAt: new Date() },
   });
 
-  const cachedConfig = await db.accessPointCachedConfig.upsert({
+  const codesAsJson = JSON.stringify([...new Set(codes)].sort());
+  await db.accessPointCachedConfig.upsert({
     where: { accessPointId: accessPoint.id },
-    update: { code, accessCheckPolicy },
-    create: { accessPointId: accessPoint.id, code, accessCheckPolicy },
+    update: { accessCheckPolicy, codes: codesAsJson },
+    create: {
+      accessPointId: accessPoint.id,
+      codes: codesAsJson,
+      accessCheckPolicy,
+    },
   });
 
   return json(
     {
       config: {
-        code: updatedAccessPoint.code,
         accessCheckPolicy: updatedAccessPoint.accessCheckPolicy,
+        codes: accessPoint.codes.map((el) => el.code),
       },
     },
     200

@@ -53,7 +53,7 @@ export default function RawlRoute() {
               name="poll"
               type="checkbox"
               checked={poll}
-              onClick={() => setPoll(!poll)}
+              onChange={() => setPoll(!poll)}
               className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
             />
           </div>
