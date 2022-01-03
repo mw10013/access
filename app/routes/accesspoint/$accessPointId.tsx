@@ -14,7 +14,6 @@ export default function IdRoute() {
         <div className="">ID: {id}</div>
         <nav className="mt-5 flex-1 space-y-1 flex flex-col">
           <Link to=".">Overview</Link>
-          <Link to="edit/codes">Edit Codes</Link>
           <Link to="edit/settings">Edit Settings</Link>
           <Link to="mock">Mock</Link>
           <Link to="raw">Raw</Link>
