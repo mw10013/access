@@ -96,10 +96,9 @@ export default function Index() {
                   {ap.cachedConfig &&
                   _.isEqual(
                     {
-                      code: ap.cachedConfig.code,
                       accessCheckPolicy: ap.cachedConfig.accessCheckPolicy,
                     },
-                    { code: ap.code, accessCheckPolicy: ap.accessCheckPolicy }
+                    { accessCheckPolicy: ap.accessCheckPolicy }
                   )
                     ? "Saved"
                     : "Pending"}

@@ -4,8 +4,6 @@ const db = new PrismaClient();
 async function seed() {
   await db.accessPoint.create({
     data: {
-      key: "key1",
-      code: "13795",
       codes: {
         create: [
           { name: "guest1", code: "111", enabled: true },
@@ -17,11 +15,11 @@ async function seed() {
       accessCheckPolicy: "cloud-first",
       heartbeatAt: new Date(),
       cachedConfig: {
-        create: { code: "111", accessCheckPolicy: "point-only" },
+        create: { codes: '["111", "333"]', accessCheckPolicy: "point-only" },
       },
     },
   });
-  await db.accessPoint.create({ data: { key: "key2" } });
+  await db.accessPoint.create({ data: {} });
 }
 
 seed();
