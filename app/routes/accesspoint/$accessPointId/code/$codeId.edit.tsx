@@ -65,6 +65,14 @@ export const action: ActionFunction = async ({
   request,
   params: { accessPointId, codeId },
 }): Promise<Response | ActionData> => {
+  if (request.method === "DELETE") {
+    await db.accessPointCode.delete({
+      where: { id: Number(codeId) },
+    });
+    // return redirect("../..");
+    return redirect(`/accessPoint/${accessPointId}`);
+  }
+
   const formData = await request.formData();
   // Node FormData get() seems to return null for empty string value.
   // Object.fromEntries(formData): if formData.entries() has 2 entries with the same key, only 1 is taken.
@@ -94,7 +102,20 @@ export default function EditCodeRoute() {
   const actionData = useActionData<ActionData>();
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold leading-7 text-gray-900">Edit Code</h1>
+      <div className="flex justify-between">
+        <h1 className="text-2xl font-bold leading-7 text-gray-900">
+          Edit Code
+        </h1>
+        <Form replace method="delete">
+          <button
+            type="submit"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-rose-600 hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+          >
+            Delete
+          </button>
+        </Form>
+      </div>
+
       <Form
         reloadDocument
         replace
