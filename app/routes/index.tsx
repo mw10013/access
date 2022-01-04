@@ -21,7 +21,7 @@ export const loader: LoaderFunction = async () => {
       },
       cachedConfig: true,
     },
-    orderBy: { id: "asc" },
+    orderBy: { name: "asc" },
   });
   const data: LoaderData = { accessPoints };
   return data;
@@ -80,12 +80,6 @@ export default function Index() {
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Policy
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
                 Connection
               </th>
               <th
@@ -112,9 +106,6 @@ export default function Index() {
                   {ap.codes.map((el) => el.code).join(" ")}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {ap.accessCheckPolicy}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {connectionStatus(ap.heartbeatAt)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -122,11 +113,9 @@ export default function Index() {
                   _.isEqual(
                     {
                       codes: new Set(JSON.parse(ap.cachedConfig.codes)),
-                      accessCheckPolicy: ap.cachedConfig.accessCheckPolicy,
                     },
                     {
                       codes: new Set(ap.codes.map((el) => el.code)),
-                      accessCheckPolicy: ap.accessCheckPolicy,
                     }
                   )
                     ? "Saved"

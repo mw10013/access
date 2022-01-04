@@ -6,7 +6,9 @@ import { db } from "~/utils/db.server";
 
 type LoaderData = { accessPoint: AccessPoint };
 
-export const loader: LoaderFunction = async ({ params: { accessPointId: id } }) => {
+export const loader: LoaderFunction = async ({
+  params: { accessPointId: id },
+}) => {
   const accessPoint =
     typeof id === "string" &&
     (await db.accessPoint.findUnique({
@@ -21,55 +23,42 @@ export const loader: LoaderFunction = async ({ params: { accessPointId: id } }) 
   return data;
 };
 
-function validateCode(code: string) {
-  if (code.length > 0) {
-    if (!/^\d+$/.test(code)) {
-      return "Code must contain only digits.";
-    }
-    if (code.length < 3) {
-      return "Code must have at least 3 digits";
-    }
-    if (code.length > 8) {
-      return "Code must have no more than 8 digits.";
-    }
+function validateName(name: string) {
+  if (name.length === 0) {
+    return "Name is required.";
   }
-}
-
-function validateAccessCheckPolicy(accessCheckPolicy: string) {
-  if (
-    !["cloud-first", "cloud-only", "point-only"].some(
-      (el) => el === accessCheckPolicy
-    )
-  ) {
-    return "Access check policy must be cloud-first, cloud-only, or point-only.";
+  if (name.length > 100) {
+    return "Name is too long.";
   }
 }
 
 type ActionData = {
   formError?: string;
   fieldErrors?: {
-    code: string | undefined;
-    accessCheckPolicy: string | undefined;
+    name: string | undefined;
   };
   fields?: {
-    code: string;
-    accessCheckPolicy: string;
+    name: string;
   };
 };
 
-export const action: ActionFunction = async ({ request, params: { accessPointId: id } }) => {
-  const form = await request.formData();
-  const code = form.get("code") ?? "";
-  const accessCheckPolicy = form.get("accessCheckPolicy");
-  if (typeof code !== "string" || typeof accessCheckPolicy !== "string") {
+export const action: ActionFunction = async ({
+  request,
+  params: { accessPointId: id },
+}) => {
+  const formData = await request.formData();
+  // Node FormData get() seems to return null for empty string value.
+  // Object.fromEntries(formData): if formData.entries() has 2 entries with the same key, only 1 is taken.
+  const fieldValues = Object.fromEntries(formData);
+  const { name } = fieldValues;
+  if (typeof name !== "string") {
     return { formError: `Form not submitted correctly.` };
   }
 
   const fieldErrors = {
-    code: validateCode(code),
-    accessCheckPolicy: validateAccessCheckPolicy(accessCheckPolicy),
+    name: validateName(name),
   };
-  const fields = { code, accessCheckPolicy };
+  const fields = { name };
   if (Object.values(fieldErrors).some(Boolean)) {
     return { fieldErrors, fields };
   }
@@ -85,7 +74,7 @@ export const action: ActionFunction = async ({ request, params: { accessPointId:
 
   await db.accessPoint.update({
     where: { id: accessPoint.id },
-    data: { code, accessCheckPolicy },
+    data: { name },
   });
   return redirect("..");
 };
@@ -116,102 +105,33 @@ export default function EditSettingsRoute() {
             <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
               <div className="sm:col-span-4">
                 <label
-                  htmlFor="code"
+                  htmlFor="name"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Code
+                  Name
                 </label>
 
                 <div className="mt-1 flex rounded-md shadow-sm">
                   <input
                     type="text"
-                    name="code"
-                    id="code"
+                    name="name"
+                    id="name"
                     defaultValue={
-                      actionData ? actionData?.fields?.code : accessPoint.code
+                      actionData ? actionData?.fields?.name : accessPoint.name
                     }
                     className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
                   />
                 </div>
-                {actionData?.fieldErrors?.code ? (
+                {actionData?.fieldErrors?.name ? (
                   <p
                     className="mt-2 text-sm text-red-600"
                     role="alert"
-                    id="code-error"
+                    id="name-error"
                   >
-                    {actionData.fieldErrors.code}
+                    {actionData.fieldErrors.name}
                   </p>
                 ) : null}
               </div>
-            </div>
-          </div>
-
-          <div className="pt-8">
-            <div className="mt-6-">
-              <fieldset className="mt-6-">
-                <div>
-                  <legend className="text-base font-medium text-gray-900">
-                    Access Check Policy
-                  </legend>
-                  <p className="text-sm text-gray-500"></p>
-                </div>
-                <div className="mt-4 space-y-4">
-                  <div className="flex items-center">
-                    <input
-                      id="acpCloudFirst"
-                      name="accessCheckPolicy"
-                      value="cloud-first"
-                      type="radio"
-                      defaultChecked={
-                        accessPoint.accessCheckPolicy === "cloud-first"
-                      }
-                      className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-                    />
-                    <label
-                      htmlFor="acpCloudFirst"
-                      className="ml-3 block text-sm font-medium text-gray-700"
-                    >
-                      Cloud First
-                    </label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      id="acpCloudOnly"
-                      name="accessCheckPolicy"
-                      value="cloud-only"
-                      type="radio"
-                      defaultChecked={
-                        accessPoint.accessCheckPolicy === "cloud-only"
-                      }
-                      className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-                    />
-                    <label
-                      htmlFor="acpCloudOnly"
-                      className="ml-3 block text-sm font-medium text-gray-700"
-                    >
-                      Cloud Only
-                    </label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      id="acpPointOnly"
-                      name="accessCheckPolicy"
-                      value="point-only"
-                      type="radio"
-                      defaultChecked={
-                        accessPoint.accessCheckPolicy === "point-only"
-                      }
-                      className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-                    />
-                    <label
-                      htmlFor="acpPointOnly"
-                      className="ml-3 block text-sm font-medium text-gray-700"
-                    >
-                      Point Only
-                    </label>
-                  </div>
-                </div>
-              </fieldset>
             </div>
           </div>
         </div>

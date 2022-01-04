@@ -42,21 +42,10 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
-  const { codes, accessCheckPolicy } = config;
+  const { codes } = config;
   if (isCodesMalformed(codes)) {
     throw new Response(
       `Malformed codes. Must be an array of strings containing 3 to 8 digits.`,
-      { status: 400 }
-    );
-  }
-
-  if (
-    accessCheckPolicy !== "cloud-only" &&
-    accessCheckPolicy !== "cloud-first" &&
-    accessCheckPolicy !== "point-only"
-  ) {
-    throw new Response(
-      `accessCheckPolicy must be "cloud-only" | "cloud-first" | "point-only".`,
       { status: 400 }
     );
   }
@@ -69,18 +58,16 @@ export const action: ActionFunction = async ({ request }) => {
   const codesAsJson = JSON.stringify([...new Set(codes)].sort());
   await db.accessPointCachedConfig.upsert({
     where: { accessPointId: accessPoint.id },
-    update: { accessCheckPolicy, codes: codesAsJson },
+    update: { codes: codesAsJson },
     create: {
       accessPointId: accessPoint.id,
       codes: codesAsJson,
-      accessCheckPolicy,
     },
   });
 
   return json(
     {
       config: {
-        accessCheckPolicy: updatedAccessPoint.accessCheckPolicy,
         codes: accessPoint.codes.map((el) => el.code),
       },
     },

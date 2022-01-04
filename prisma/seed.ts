@@ -14,10 +14,9 @@ async function seed() {
             { name: "master", code: "444", enabled: true },
           ],
         },
-        accessCheckPolicy: "cloud-first",
         heartbeatAt: new Date(),
         cachedConfig: {
-          create: { codes: '["111", "333"]', accessCheckPolicy: "point-only" },
+          create: { codes: '["111", "333"]' },
         },
       },
     }),
