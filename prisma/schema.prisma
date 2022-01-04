@@ -12,6 +12,8 @@ datasource db {
 
 model AccessPoint {
   id                Int       @id @default(autoincrement())
+  name              String
+  description       String    @default("")
   // publicKey         String    @unique
   codes             AccessPointCode[]
   accessCheckPolicy String    @default("cloud-only")
