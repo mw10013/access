@@ -31,14 +31,21 @@ function validateName(name: string) {
     return "Name is too long.";
   }
 }
+function validateDescription(name: string) {
+  if (name.length > 1000) {
+    return "Description is too long.";
+  }
+}
 
 type ActionData = {
   formError?: string;
   fieldErrors?: {
     name: string | undefined;
+    description: string | undefined;
   };
   fields?: {
     name: string;
+    description: string;
   };
 };
 
@@ -50,13 +57,14 @@ export const action: ActionFunction = async ({
   // Node FormData get() seems to return null for empty string value.
   // Object.fromEntries(formData): if formData.entries() has 2 entries with the same key, only 1 is taken.
   const fieldValues = Object.fromEntries(formData);
-  const { name } = fieldValues;
-  if (typeof name !== "string") {
+  const { name, description } = fieldValues;
+  if (typeof name !== "string" || typeof description !== "string") {
     return { formError: `Form not submitted correctly.` };
   }
 
   const fieldErrors = {
     name: validateName(name),
+    description: validateDescription(description),
   };
   const fields = { name };
   if (Object.values(fieldErrors).some(Boolean)) {
@@ -74,7 +82,7 @@ export const action: ActionFunction = async ({
 
   await db.accessPoint.update({
     where: { id: accessPoint.id },
-    data: { name },
+    data: { name, description },
   });
   return redirect("..");
 };
@@ -129,6 +137,39 @@ export default function EditSettingsRoute() {
                     id="name-error"
                   >
                     {actionData.fieldErrors.name}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+            <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Description
+                </label>
+
+                <div className="mt-1 flex rounded-md shadow-sm">
+                  <input
+                    type="text"
+                    name="description"
+                    id="description"
+                    defaultValue={
+                      actionData
+                        ? actionData?.fields?.description
+                        : accessPoint.description
+                    }
+                    className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
+                  />
+                </div>
+                {actionData?.fieldErrors?.description ? (
+                  <p
+                    className="mt-2 text-sm text-red-600"
+                    role="alert"
+                    id="description-error"
+                  >
+                    {actionData.fieldErrors.description}
                   </p>
                 ) : null}
               </div>
