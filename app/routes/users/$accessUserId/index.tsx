@@ -31,7 +31,7 @@ export default function Index() {
       <h1 className="text-2xl font-bold leading-7 text-gray-900">
         User {accessUser.name}{" "}
       </h1>
-      <div className="flex mt-3 space-x-10 text-sm text-gray-500">
+      <div className="flex mt-1 space-x-10 text-sm text-gray-500">
         <div>ID: {accessUser.id}</div>
         <div>
           Code:{" "}
@@ -120,12 +120,6 @@ export default function Index() {
                     >
                       Remove
                     </a>
-                    {/* <Link
-                      to={`accessPoints/${ap.id}`}
-                      className="text-indigo-600 hover:text-indigo-900"
-                    >
-                      Remove
-                    </Link> */}
                   </td>
                 </tr>
               ))}
@@ -134,7 +128,7 @@ export default function Index() {
         </div>
       </div>
 
-      <pre className="mt-2">{JSON.stringify(accessUser, null, 2)}</pre>
+      {/* <pre className="mt-2">{JSON.stringify(accessUser, null, 2)}</pre> */}
     </div>
   );
 }
