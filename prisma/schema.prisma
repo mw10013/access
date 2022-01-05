@@ -14,11 +14,19 @@ model AccessPoint {
   id                Int       @id @default(autoincrement())
   name              String
   description       String    @default("")
-  codes             AccessPointCode[]
-  cachedConfig      AccessPointCachedConfig?
+  accessUsers       AccessUser[]
   heartbeatAt       DateTime?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  cachedConfig      AccessPointCachedConfig?
+  codes             AccessPointCode[]
+}
+
+model AccessUser {
+  id                Int       @id @default(autoincrement())
+  name              String
+  description       String    @default("") 
+  code              String    @default("")
+  enabled           Boolean   @default(true)
+  accessPoints      AccessPoint[] 
 }
 
 model AccessPointCode {
