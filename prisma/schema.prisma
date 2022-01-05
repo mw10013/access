@@ -17,7 +17,6 @@ model AccessPoint {
   accessUsers       AccessUser[]
   heartbeatAt       DateTime?
   cachedConfig      AccessPointCachedConfig?
-  codes             AccessPointCode[]
 }
 
 model AccessUser {
@@ -27,15 +26,6 @@ model AccessUser {
   code              String    @default("")
   enabled           Boolean   @default(true)
   accessPoints      AccessPoint[] 
-}
-
-model AccessPointCode {
-  id                Int         @id @default(autoincrement())
-  name              String      @default("")
-  code              String      @default("")
-  enabled           Boolean     @default(false)
-  accessPoint       AccessPoint @relation(fields: [accessPointId], references: [id])
-  accessPointId     Int     
 }
 
 model AccessPointCachedConfig {

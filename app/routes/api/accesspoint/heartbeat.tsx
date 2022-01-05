@@ -22,7 +22,7 @@ export const action: ActionFunction = async ({ request }) => {
     (await db.accessPoint.findUnique({
       where: { id },
       include: {
-        codes: {
+        accessUsers: {
           where: { code: { not: "" }, enabled: true },
           orderBy: { code: "asc" },
         },
@@ -68,7 +68,7 @@ export const action: ActionFunction = async ({ request }) => {
   return json(
     {
       config: {
-        codes: accessPoint.codes.map((el) => el.code),
+        codes: accessPoint.accessUsers.map((el) => el.code),
       },
     },
     200

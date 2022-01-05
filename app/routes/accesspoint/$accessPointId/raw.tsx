@@ -6,7 +6,7 @@ import { db } from "~/utils/db.server";
 
 type LoaderData = {
   accessPoint: Prisma.AccessPointGetPayload<{
-    include: { codes: true; cachedConfig: true };
+    include: { accessUsers: true; cachedConfig: true };
   }>;
 };
 
@@ -15,7 +15,7 @@ export const loader: LoaderFunction = async ({
 }) => {
   const accessPoint = await db.accessPoint.findUnique({
     where: { id: Number(id) },
-    include: { codes: { orderBy: { name: "asc" } }, cachedConfig: true },
+    include: { accessUsers: { orderBy: { name: "asc" } }, cachedConfig: true },
   });
   if (!accessPoint) {
     throw new Response("Access point not found.", {

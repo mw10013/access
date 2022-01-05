@@ -8,14 +8,20 @@ import * as _ from "lodash";
 
 type LoaderData = {
   accessPoints: Prisma.AccessPointGetPayload<{
-    include: { codes: true; cachedConfig: true };
+    include: {
+      accessUsers: {
+        where: { code: { not: "" }; enabled: true };
+        orderBy: { code: "asc" };
+      };
+      cachedConfig: true;
+    };
   }>[];
 };
 
 export const loader: LoaderFunction = async () => {
   const accessPoints = await db.accessPoint.findMany({
     include: {
-      codes: {
+      accessUsers: {
         where: { code: { not: "" }, enabled: true },
         orderBy: { code: "asc" },
       },
@@ -69,13 +75,6 @@ export default function Index() {
               >
                 Name
               </th>
-
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Codes
-              </th>
               <th
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -103,9 +102,6 @@ export default function Index() {
                   {ap.name}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {ap.codes.map((el) => el.code).join(" ")}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {connectionStatus(ap.heartbeatAt)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -115,7 +111,7 @@ export default function Index() {
                       codes: new Set(JSON.parse(ap.cachedConfig.codes)),
                     },
                     {
-                      codes: new Set(ap.codes.map((el) => el.code)),
+                      codes: new Set(ap.accessUsers.map((el) => el.code)),
                     }
                   )
                     ? "Saved"

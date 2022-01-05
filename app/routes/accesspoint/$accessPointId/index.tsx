@@ -7,7 +7,7 @@ import { db } from "~/utils/db.server";
 
 type LoaderData = {
   accessPoint: Prisma.AccessPointGetPayload<{
-    include: { codes: true; cachedConfig: true };
+    include: { accessUsers: true; cachedConfig: true };
   }>;
 };
 
@@ -16,7 +16,7 @@ export const loader: LoaderFunction = async ({
 }) => {
   const accessPoint = await db.accessPoint.findUnique({
     where: { id: Number(id) },
-    include: { codes: { orderBy: { name: "asc" } }, cachedConfig: true },
+    include: { accessUsers: { orderBy: { name: "asc" } }, cachedConfig: true },
   });
   if (!accessPoint) {
     throw new Response("Access point not found.", {
@@ -34,7 +34,7 @@ export default function IdIndex() {
       <h1 className="text-2xl font-bold leading-7 text-gray-900">Overview</h1>
       <div className="m-4 bg-white shadow sm:rounded-lg">
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">Codes</h3>
+          <h3 className="text-lg leading-6 font-medium text-gray-900">Users</h3>
           <div className="mt-2 max-w-xl text-sm text-gray-500">
             <p></p>
           </div>
@@ -48,6 +48,12 @@ export default function IdIndex() {
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
                     Name
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Description
                   </th>
                   <th
                     scope="col"
@@ -67,23 +73,26 @@ export default function IdIndex() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {accessPoint.codes.map((code) => (
-                  <tr key={code.id}>
+                {accessPoint.accessUsers.map((accessUser) => (
+                  <tr key={accessUser.id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {code.name}
+                      {accessUser.name}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {code.code}
+                      {accessUser.description}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {code.enabled ? "Enabled" : "Disabled"}
+                      {accessUser.code}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {accessUser.enabled ? "Enabled" : "Disabled"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <Link
-                        to={`code/${code.id}/edit`}
+                        to={`accessUser/${accessUser.id}`}
                         className="text-indigo-600 hover:text-indigo-900"
                       >
-                        Edit
+                        View
                       </Link>{" "}
                     </td>
                   </tr>
