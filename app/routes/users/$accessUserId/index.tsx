@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { LoaderFunction } from "remix";
-import { useLoaderData, Link, useNavigate } from "remix";
+import { useLoaderData, Link, useNavigate, useSubmit } from "remix";
 // import type { AccessPoint } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
@@ -24,6 +24,7 @@ export const loader: LoaderFunction = async ({
 
 export default function Index() {
   const navigate = useNavigate();
+  const submit = useSubmit();
   const { accessUser } = useLoaderData<LoaderData>();
   return (
     <div className="p-8">
@@ -107,12 +108,24 @@ export default function Index() {
                     {ap.description}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <Link
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        submit(null, {
+                          method: "post",
+                          action: `/users/${accessUser.id}/accesspoints/${ap.id}/remove`,
+                        });
+                      }}
+                    >
+                      Remove
+                    </a>
+                    {/* <Link
                       to={`accessPoints/${ap.id}`}
                       className="text-indigo-600 hover:text-indigo-900"
                     >
-                      View
-                    </Link>
+                      Remove
+                    </Link> */}
                   </td>
                 </tr>
               ))}
