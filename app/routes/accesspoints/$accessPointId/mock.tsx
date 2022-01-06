@@ -135,9 +135,8 @@ function Connectivity({ accessPoint: { id } }: { accessPoint: AccessPoint }) {
         </h3>
         <div className="mt-2 max-w-xl text-sm text-gray-500">
           <p>
-            Deprecated http get /api/accesspoint/:id/heartbeatie.
-            /api/accesspoint/{id}/heartbeat for connectivity test. WARNING: id
-            instead of key.
+            Deprecated http get /api/accesspoint/:id/heartbeat ie.
+            /api/accesspoint/{id}/heartbeat for connectivity test.
           </p>
         </div>
         <button

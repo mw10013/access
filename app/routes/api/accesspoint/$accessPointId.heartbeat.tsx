@@ -16,7 +16,7 @@ export const loader: LoaderFunction = async ({
           message: `Access point ${id} not found.`,
         },
       },
-      200
+      404
     );
   }
   const updatedAccessPoint = await db.accessPoint.update({
