@@ -12,7 +12,7 @@ datasource db {
 
 model AccessPoint {
   id                Int       @id @default(autoincrement())
-  name              String
+  name              String    @unique
   description       String    @default("")
   accessUsers       AccessUser[]
   heartbeatAt       DateTime?
@@ -21,9 +21,9 @@ model AccessPoint {
 
 model AccessUser {
   id                Int       @id @default(autoincrement())
-  name              String
+  name              String    @unique
   description       String    @default("") 
-  code              String    @default("")
+  code              String    @unique
   enabled           Boolean   @default(true)
   accessPoints      AccessPoint[] 
 }
