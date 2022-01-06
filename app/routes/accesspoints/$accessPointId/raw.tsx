@@ -11,19 +11,14 @@ type LoaderData = {
 };
 
 export const loader: LoaderFunction = async ({
-  params: { accessPointId: id },
-}) => {
+  params: { accessPointId },
+}): Promise<LoaderData> => {
   const accessPoint = await db.accessPoint.findUnique({
-    where: { id: Number(id) },
+    where: { id: Number(accessPointId) },
     include: { accessUsers: { orderBy: { name: "asc" } }, cachedConfig: true },
+    rejectOnNotFound: true,
   });
-  if (!accessPoint) {
-    throw new Response("Access point not found.", {
-      status: 404,
-    });
-  }
-  const data: LoaderData = { accessPoint };
-  return data;
+  return { accessPoint };
 };
 
 export default function RawRoute() {
