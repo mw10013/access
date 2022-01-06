@@ -9,9 +9,15 @@ export const loader: LoaderFunction = async ({
     where: { id: Number(id) },
   });
   if (!accessPoint) {
-    throw new Response("AccessPoint not found.", {
-      status: 404,
-    });
+    return json(
+      {
+        error: {
+          name: "NotFoundError",
+          message: `Access point ${id} not found.`,
+        },
+      },
+      200
+    );
   }
   const updatedAccessPoint = await db.accessPoint.update({
     where: { id: accessPoint.id },
