@@ -4,31 +4,31 @@ import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 
 type LoaderData = {
-  accessUser: Prisma.AccessUserGetPayload<{
-    include: { accessPoints: true };
+  accessPoint: Prisma.AccessPointGetPayload<{
+    include: { accessUsers: true };
   }>;
 };
 
 export const loader: LoaderFunction = async ({
-  params: { accessUserId },
+  params: { accessPointId },
 }): Promise<LoaderData> => {
-  const accessUser = await db.accessUser.findUnique({
-    where: { id: Number(accessUserId) },
-    include: { accessPoints: { orderBy: { name: "asc" } } },
+  const accessPoint = await db.accessPoint.findUnique({
+    where: { id: Number(accessPointId) },
+    include: { accessUsers: { orderBy: { name: "asc" } } },
     rejectOnNotFound: true,
   });
-  return { accessUser };
+  return { accessPoint };
 };
 
 export default function Index() {
   const navigate = useNavigate();
   const submit = useSubmit();
-  const { accessUser } = useLoaderData<LoaderData>();
+  const { accessPoint } = useLoaderData<LoaderData>();
   return (
     <div className="p-8">
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold leading-7 text-gray-900">
-          User {accessUser.name}
+          Access Point {accessPoint.name}
         </h1>
         <button
           type="button"
@@ -39,35 +39,22 @@ export default function Index() {
         </button>
       </div>
       <div className="flex mt-1 space-x-10 text-sm text-gray-500">
-        <div>ID: {accessUser.id}</div>
-        <div>
-          Code:{" "}
-          {accessUser.code || (
-            <span className="font-bold">{accessUser.code}</span>
-          )}
-        </div>
-        <div>
-          {accessUser.enabled ? (
-            "Enabled"
-          ) : (
-            <span className="font-bold">Disabled</span>
-          )}
-        </div>
+        <div>ID: {accessPoint.id}</div>
       </div>
 
-      {accessUser.description ? (
-        <p className="mt-4">{accessUser.description}</p>
+      {accessPoint.description ? (
+        <p className="mt-4">{accessPoint.description}</p>
       ) : null}
 
       <div className="mt-4">
         <div className="flex justify-between">
           <h3 className="text-lg leading-6 font-medium text-gray-900">
-            Access Points
+            Access Users
           </h3>
           <button
             type="button"
             className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
-            onClick={() => navigate("./accesspoints/add")}
+            onClick={() => navigate("./accessusers/add")}
           >
             Add
           </button>
@@ -97,22 +84,40 @@ export default function Index() {
                 >
                   Description
                 </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Code
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Enabled
+                </th>
                 <th scope="col" className="relative px-6 py-3">
                   <span className="sr-only">View</span>
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {accessUser.accessPoints.map((ap) => (
-                <tr key={ap.id}>
+              {accessPoint.accessUsers.map((au) => (
+                <tr key={au.id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">
-                    {ap.id}
+                    {au.id}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {ap.name}
+                    {au.name}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {ap.description}
+                    {au.description}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {au.code}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {au.enabled ? "Enabled" : "Disabled"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <a
@@ -121,7 +126,7 @@ export default function Index() {
                         e.preventDefault();
                         submit(null, {
                           method: "post",
-                          action: `/users/${accessUser.id}/accesspoints/${ap.id}/remove`,
+                          action: `/accesspoints/${accessPoint.id}/users/${au.id}/remove`,
                         });
                       }}
                     >
