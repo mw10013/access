@@ -47,7 +47,7 @@ export default function Index() {
       <div className="mt-4">
         <div className="flex justify-between">
           <h3 className="text-lg leading-6 font-medium text-gray-900">
-            Access Users
+            Users With Access
           </h3>
           <button
             type="button"
