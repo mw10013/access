@@ -36,7 +36,6 @@ function Heartbeat({
       ? JSON.parse(accessPoint.cachedConfig.codes).join(" ")
       : ""
   );
-
   const mutation = useMutation<
     unknown,
     Error,

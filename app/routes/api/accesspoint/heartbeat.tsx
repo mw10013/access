@@ -29,23 +29,37 @@ export const action: ActionFunction = async ({ request }) => {
       },
     }));
   if (!accessPoint) {
-    throw new Response("Access point not found.", {
-      status: 404,
-    });
+    return json(
+      {
+        error: {
+          name: "NotFoundError",
+          message: `Access point ${id} not found.`,
+        },
+      },
+      { status: 404 }
+    );
   }
   if (!config) {
-    throw (
-      (new Response("Config required"),
+    return json(
       {
-        status: 400,
-      })
+        error: {
+          name: "BadRequestError",
+          message: `Config required.`,
+        },
+      },
+      { status: 400 }
     );
   }
 
   const { codes } = config;
   if (isCodesMalformed(codes)) {
-    throw new Response(
-      `Malformed codes. Must be an array of strings containing 3 to 8 digits.`,
+    return json(
+      {
+        error: {
+          name: "BadRequestError",
+          message: `Malformed codes. Must be an array of strings containing 3 to 8 digits.`,
+        },
+      },
       { status: 400 }
     );
   }
