@@ -28,9 +28,18 @@ export default function Index() {
   const { accessUser } = useLoaderData<LoaderData>();
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold leading-7 text-gray-900">
-        User {accessUser.name}{" "}
-      </h1>
+      <div className="flex justify-between">
+        <h1 className="text-2xl font-bold leading-7 text-gray-900">
+          User {accessUser.name}
+        </h1>
+        <button
+          type="button"
+          className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
+          onClick={() => navigate("edit")}
+        >
+          Edit
+        </button>
+      </div>
       <div className="flex mt-1 space-x-10 text-sm text-gray-500">
         <div>ID: {accessUser.id}</div>
         <div>
