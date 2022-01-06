@@ -28,7 +28,7 @@ export default function Index() {
     <div className="p-8">
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold leading-7 text-gray-900">
-          Access Point: {accessPoint.name}
+          Access Point
         </h1>
         <button
           type="button"
@@ -39,6 +39,7 @@ export default function Index() {
         </button>
       </div>
       <div className="flex mt-1 space-x-10 text-sm text-gray-500">
+        <div>{accessPoint.name}</div>
         <div>ID: {accessPoint.id}</div>
         <div>{accessPoint.description}</div>
       </div>
