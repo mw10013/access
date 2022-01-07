@@ -10,15 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model AccessPoint {
-  id                Int       @id @default(autoincrement())
-  name              String    @unique
-  description       String    @default("")
-  accessUsers       AccessUser[]
-  heartbeatAt       DateTime?
-  cachedConfig      AccessPointCachedConfig?
-}
-
 model AccessUser {
   id                Int       @id @default(autoincrement())
   name              String    @unique
@@ -28,8 +19,34 @@ model AccessUser {
   accessPoints      AccessPoint[] 
 }
 
+model AccessLocation {
+  id                Int       @id @default(autoincrement())
+  name              String    @unique
+  description       String    @default("")
+  accessHubs        AccessHub[]        
+}
+
+model AccessHub {
+  id                Int            @id @default(autoincrement())
+  accessLocation    AccessLocation @relation(fields: [accessLocationId], references: [id])
+  accessLocationId  Int          
+  accessPoints      AccessPoint[] 
+}
+
+model AccessPoint {
+  id                Int       @id @default(autoincrement())
+  name              String
+  description       String    @default("")
+  accessUsers       AccessUser[]
+  heartbeatAt       DateTime?
+  cachedConfig      AccessPointCachedConfig?
+  accessHub         AccessHub @relation(fields: [accessHubId], references: [id])
+  accessHubId       Int     
+}
+
 model AccessPointCachedConfig {
   id                Int         @id @default(autoincrement())
+  users             String      @default("[]") // json array of users
   codes             String      @default("[]") // json array of strings
   accessPoint       AccessPoint @relation(fields: [accessPointId], references: [id])
   accessPointId     Int         @unique

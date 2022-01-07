@@ -39,56 +39,139 @@ async function seed() {
   });
 
   await Promise.all([
-    db.accessPoint.create({
+    db.accessLocation.create({
       data: {
-        name: "BnB-1 Front Door",
-        accessUsers: {
-          connect: [
-            { id: masterId },
-            { id: guest1Id },
-            { id: guest2Id },
-            { id: staffId },
-            { id: repairId },
+        name: "Brooklyn BnB",
+        accessHubs: {
+          create: [
+            {
+              accessPoints: {
+                create: [
+                  {
+                    name: "Front Door",
+                    accessUsers: {
+                      connect: [
+                        { id: masterId },
+                        { id: guest1Id },
+                        { id: guest2Id },
+                        { id: staffId },
+                        { id: repairId },
+                      ],
+                    },
+                    heartbeatAt: new Date(),
+                    cachedConfig: {
+                      create: { codes: '["111", "333"]' },
+                    },
+                  },
+                  {
+                    name: "Back Door",
+                    accessUsers: {
+                      connect: [
+                        { id: masterId },
+                        { id: guest1Id },
+                        { id: guest2Id },
+                        { id: staffId },
+                        { id: repairId },
+                      ],
+                    },
+                  },
+                  {
+                    name: "Basement Outside",
+                    description: "Guests are not allowed.",
+                    accessUsers: {
+                      connect: [
+                        { id: masterId },
+                        { id: staffId },
+                        { id: repairId },
+                      ],
+                    },
+                  },
+                  {
+                    name: "Basement Inside",
+                    description: "Guests are not allowed.",
+                    accessUsers: {
+                      connect: [
+                        { id: masterId },
+                        { id: staffId },
+                        { id: repairId },
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              accessPoints: {
+                create: [
+                  {
+                    name: "2nd Floor Front",
+                    accessUsers: {
+                      connect: [
+                        { id: masterId },
+                        { id: guest1Id },
+                        { id: staffId },
+                        { id: repairId },
+                      ],
+                    },
+                  },
+                  {
+                    name: "2nd Floor Back",
+                    accessUsers: {
+                      connect: [
+                        { id: masterId },
+                        { id: guest1Id },
+                        { id: staffId },
+                        { id: repairId },
+                      ],
+                    },
+                  },
+                  {
+                    name: "3rd Floor Front",
+                    accessUsers: {
+                      connect: [
+                        { id: masterId },
+                        { id: guest2Id },
+                        { id: staffId },
+                        { id: repairId },
+                      ],
+                    },
+                  },
+                  {
+                    name: "3rd Floor Back",
+                    accessUsers: {
+                      connect: [
+                        { id: masterId },
+                        { id: guest2Id },
+                        { id: staffId },
+                        { id: repairId },
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
           ],
-        },
-        heartbeatAt: new Date(),
-        cachedConfig: {
-          create: { codes: '["111", "333"]' },
         },
       },
     }),
-    db.accessPoint.create({
+    db.accessLocation.create({
       data: {
-        name: "BnB-1 2nd Floor",
-        accessUsers: {
-          connect: [
-            { id: masterId },
-            { id: guest1Id },
-            { id: staffId },
-            { id: repairId },
+        name: "SI BnB",
+        accessHubs: {
+          create: [
+            {
+              accessPoints: {
+                create: [
+                  {
+                    name: "Front Door",
+                    accessUsers: {
+                      connect: [{ id: masterId }],
+                    },
+                  },
+                ],
+              },
+            },
           ],
-        },
-      },
-    }),
-    db.accessPoint.create({
-      data: {
-        name: "BnB-1 3rd Floor",
-        accessUsers: {
-          connect: [
-            { id: masterId },
-            { id: guest2Id },
-            { id: staffId },
-            { id: repairId },
-          ],
-        },
-      },
-    }),
-    db.accessPoint.create({
-      data: {
-        name: "BnB-1 Basement",
-        description: "Guests are not allowed.",
-        accessUsers: {
-          connect: [{ id: masterId }, { id: staffId }, { id: repairId }],
         },
       },
     }),
