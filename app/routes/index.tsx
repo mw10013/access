@@ -11,7 +11,12 @@ type LoaderData = {
     include: {
       accessUsers: {
         where: { code: { not: "" }; enabled: true };
-        orderBy: { code: "asc" };
+        // orderBy: { code: "asc" };
+      };
+      accessHub: {
+        include: {
+          accessLocation: true;
+        };
       };
       cachedConfig: true;
     };
@@ -25,9 +30,17 @@ export const loader: LoaderFunction = async () => {
         where: { code: { not: "" }, enabled: true },
         orderBy: { code: "asc" },
       },
+      accessHub: {
+        include: {
+          accessLocation: true,
+        },
+      },
       cachedConfig: true,
     },
-    orderBy: { name: "asc" },
+    orderBy: [
+      { accessHub: { accessLocation: { name: "asc" } } },
+      { name: "asc" },
+    ],
   });
 
   const data: LoaderData = { accessPoints };
@@ -68,7 +81,7 @@ export default function Index() {
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Id
+                Location
               </th>
               <th
                 scope="col"
@@ -97,7 +110,7 @@ export default function Index() {
             {accessPoints.map((ap) => (
               <tr key={ap.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {ap.id}
+                  {ap.accessHub.accessLocation.name}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {ap.name}

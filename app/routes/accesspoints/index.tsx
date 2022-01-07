@@ -5,14 +5,20 @@ import { db } from "~/utils/db.server";
 
 type LoaderData = {
   accessPoints: Prisma.AccessPointGetPayload<{
-    include: { accessUsers: true };
+    include: {
+      accessUsers: true;
+      accessHub: { include: { accessLocation: true } };
+    };
   }>[];
 };
 
 export const loader: LoaderFunction = async (): Promise<LoaderData> => {
   const accessPoints = await db.accessPoint.findMany({
     orderBy: { name: "asc" },
-    include: { accessUsers: { orderBy: { name: "asc" } } },
+    include: {
+      accessUsers: { orderBy: { name: "asc" } },
+      accessHub: { include: { accessLocation: true } },
+    },
   });
   return { accessPoints };
 };
@@ -41,7 +47,7 @@ export default function Index() {
               scope="col"
               className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
-              Id
+              Location
             </th>
             <th
               scope="col"
@@ -65,7 +71,7 @@ export default function Index() {
           {accessPoints.map((ap) => (
             <tr key={ap.id}>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {ap.id}
+                {ap.accessHub.accessLocation.name}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                 {ap.name}

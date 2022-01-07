@@ -6,7 +6,11 @@ import { db } from "~/utils/db.server";
 
 type LoaderData = {
   accessPoint: Prisma.AccessPointGetPayload<{
-    include: { accessUsers: true; cachedConfig: true };
+    include: {
+      accessUsers: true;
+      cachedConfig: true;
+      accessHub: { include: { accessLocation: true } };
+    };
   }>;
 };
 
@@ -15,7 +19,8 @@ export const loader: LoaderFunction = async ({
 }): Promise<LoaderData> => {
   const accessPoint = await db.accessPoint.findUnique({
     where: { id: Number(accessPointId) },
-    include: { accessUsers: { orderBy: { name: "asc" } }, cachedConfig: true },
+    include: { accessUsers: { orderBy: { name: "asc" } }, cachedConfig: true,
+  accessHub: { include: { accessLocation: true}} },
     rejectOnNotFound: true,
   });
   return { accessPoint };

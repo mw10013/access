@@ -5,7 +5,10 @@ import { db } from "~/utils/db.server";
 
 type LoaderData = {
   accessPoint: Prisma.AccessPointGetPayload<{
-    include: { accessUsers: true };
+    include: {
+      accessUsers: true;
+      accessHub: { include: { accessLocation: true } };
+    };
   }>;
 };
 
@@ -14,7 +17,10 @@ export const loader: LoaderFunction = async ({
 }): Promise<LoaderData> => {
   const accessPoint = await db.accessPoint.findUnique({
     where: { id: Number(accessPointId) },
-    include: { accessUsers: { orderBy: { name: "asc" } } },
+    include: {
+      accessUsers: { orderBy: { name: "asc" } },
+      accessHub: { include: { accessLocation: true } },
+    },
     rejectOnNotFound: true,
   });
   return { accessPoint };
@@ -39,8 +45,10 @@ export default function Index() {
         </button>
       </div>
       <div className="flex mt-1 space-x-10 text-sm text-gray-500">
-        <div>{accessPoint.name}</div>
+        <div>Location: {accessPoint.accessHub.accessLocation.name}</div>
+        <div className="text-gray-900">{accessPoint.name}</div>
         <div>ID: {accessPoint.id}</div>
+        <div>Hub ID: {accessPoint.accessHubId}</div>
         <div>{accessPoint.description}</div>
       </div>
 
@@ -102,10 +110,10 @@ export default function Index() {
             <tbody className="bg-white divide-y divide-gray-200">
               {accessPoint.accessUsers.map((au) => (
                 <tr key={au.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm  text-gray-500">
                     {au.id}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {au.name}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

@@ -1,12 +1,5 @@
-import * as React from "react";
 import type { ActionFunction, LoaderFunction } from "remix";
-import {
-  useActionData,
-  useLoaderData,
-  Form,
-  useNavigate,
-  redirect,
-} from "remix";
+import { useLoaderData, Form, useNavigate, redirect } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 
@@ -14,7 +7,9 @@ type LoaderData = {
   accessUser: Prisma.AccessUserGetPayload<{
     include: { accessPoints: true };
   }>;
-  accessPoints: Prisma.AccessPointGetPayload<{}>[];
+  accessPoints: Prisma.AccessPointGetPayload<{
+    include: { accessHub: { include: { accessLocation: true } } };
+  }>[];
 };
 
 export const loader: LoaderFunction = async ({
@@ -28,6 +23,11 @@ export const loader: LoaderFunction = async ({
   const notIn = accessUser.accessPoints.map((el) => el.id);
   const accessPoints = await db.accessPoint.findMany({
     where: { id: { notIn } },
+    orderBy: [
+      { accessHub: { accessLocation: { name: "asc" } } },
+      { name: "asc" },
+    ],
+    include: { accessHub: { include: { accessLocation: true } } },
   });
   return { accessUser, accessPoints };
 };
@@ -77,7 +77,7 @@ export default function Add() {
                     htmlFor={`accessPoint-${apIdx}`}
                     className="font-medium text-gray-700 select-none"
                   >
-                    {`ID: ${ap.id}: ${ap.name}`}
+                    {`${ap.accessHub.accessLocation.name}: ${ap.name}`}
                   </label>
                 </div>
                 <div className="ml-3 flex items-center h-5">
@@ -103,7 +103,7 @@ export default function Add() {
             <button
               type="button"
               className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              onClick={() => navigate(`/users/${accessUser.id}`)}
+              onClick={() => navigate(-1)}
             >
               Cancel
             </button>
