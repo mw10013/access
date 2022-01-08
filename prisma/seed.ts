@@ -38,173 +38,171 @@ async function seed() {
     },
   });
 
-  await Promise.all([
-    db.accessLocation.create({
-      data: {
-        name: "Brooklyn BnB",
-        accessManagers: {
-          create: [
-            {
-              accessPoints: {
-                create: [
-                  {
-                    name: "Front Door",
-                    position: 1,
-                    accessUsers: {
-                      connect: [
-                        { id: masterId },
-                        { id: guest1Id },
-                        { id: guest2Id },
-                        { id: staffId },
-                        { id: repairId },
-                      ],
-                    },
-                    heartbeatAt: new Date(),
-                    cachedConfig: {
-                      create: { codes: '["111", "333"]' },
-                    },
+  await db.accessLocation.create({
+    data: {
+      name: "Brooklyn BnB",
+      accessManagers: {
+        create: [
+          {
+            accessPoints: {
+              create: [
+                {
+                  name: "Front Door",
+                  position: 1,
+                  accessUsers: {
+                    connect: [
+                      { id: masterId },
+                      { id: guest1Id },
+                      { id: guest2Id },
+                      { id: staffId },
+                      { id: repairId },
+                    ],
                   },
-                  {
-                    name: "Back Door",
-                    position: 2,
-                    accessUsers: {
-                      connect: [
-                        { id: masterId },
-                        { id: guest1Id },
-                        { id: guest2Id },
-                        { id: staffId },
-                        { id: repairId },
-                      ],
-                    },
+                  heartbeatAt: new Date(),
+                  cachedConfig: {
+                    create: { codes: '["111", "333"]' },
                   },
-                  {
-                    name: "Basement Outside",
-                    description: "Guests are not allowed.",
-                    position: 3,
-                    accessUsers: {
-                      connect: [
-                        { id: masterId },
-                        { id: staffId },
-                        { id: repairId },
-                      ],
-                    },
+                },
+                {
+                  name: "Back Door",
+                  position: 2,
+                  accessUsers: {
+                    connect: [
+                      { id: masterId },
+                      { id: guest1Id },
+                      { id: guest2Id },
+                      { id: staffId },
+                      { id: repairId },
+                    ],
                   },
-                  {
-                    name: "Basement Inside",
-                    description: "Guests are not allowed.",
-                    position: 4,
-                    accessUsers: {
-                      connect: [
-                        { id: masterId },
-                        { id: staffId },
-                        { id: repairId },
-                      ],
-                    },
+                },
+                {
+                  name: "Basement Outside",
+                  description: "Guests are not allowed.",
+                  position: 3,
+                  accessUsers: {
+                    connect: [
+                      { id: masterId },
+                      { id: staffId },
+                      { id: repairId },
+                    ],
                   },
-                ],
-              },
+                },
+                {
+                  name: "Basement Inside",
+                  description: "Guests are not allowed.",
+                  position: 4,
+                  accessUsers: {
+                    connect: [
+                      { id: masterId },
+                      { id: staffId },
+                      { id: repairId },
+                    ],
+                  },
+                },
+              ],
             },
-            {
-              accessPoints: {
-                create: [
-                  {
-                    name: "2nd Floor Front",
-                    position: 1,
-                    accessUsers: {
-                      connect: [
-                        { id: masterId },
-                        { id: guest1Id },
-                        { id: staffId },
-                        { id: repairId },
-                      ],
-                    },
+          },
+          {
+            accessPoints: {
+              create: [
+                {
+                  name: "2nd Floor Front",
+                  position: 1,
+                  accessUsers: {
+                    connect: [
+                      { id: masterId },
+                      { id: guest1Id },
+                      { id: staffId },
+                      { id: repairId },
+                    ],
                   },
-                  {
-                    name: "2nd Floor Back",
-                    position: 2,
-                    accessUsers: {
-                      connect: [
-                        { id: masterId },
-                        { id: guest1Id },
-                        { id: staffId },
-                        { id: repairId },
-                      ],
-                    },
+                },
+                {
+                  name: "2nd Floor Back",
+                  position: 2,
+                  accessUsers: {
+                    connect: [
+                      { id: masterId },
+                      { id: guest1Id },
+                      { id: staffId },
+                      { id: repairId },
+                    ],
                   },
-                  {
-                    name: "3rd Floor Front",
-                    position: 3,
-                    accessUsers: {
-                      connect: [
-                        { id: masterId },
-                        { id: guest2Id },
-                        { id: staffId },
-                        { id: repairId },
-                      ],
-                    },
+                },
+                {
+                  name: "3rd Floor Front",
+                  position: 3,
+                  accessUsers: {
+                    connect: [
+                      { id: masterId },
+                      { id: guest2Id },
+                      { id: staffId },
+                      { id: repairId },
+                    ],
                   },
-                  {
-                    name: "3rd Floor Back",
-                    position: 4,
-                    accessUsers: {
-                      connect: [
-                        { id: masterId },
-                        { id: guest2Id },
-                        { id: staffId },
-                        { id: repairId },
-                      ],
-                    },
+                },
+                {
+                  name: "3rd Floor Back",
+                  position: 4,
+                  accessUsers: {
+                    connect: [
+                      { id: masterId },
+                      { id: guest2Id },
+                      { id: staffId },
+                      { id: repairId },
+                    ],
                   },
-                  {
-                    name: "Unused",
-                    position: 5,
-                  },
-                  {
-                    name: "Unused",
-                    position: 6,
-                  },
-                ],
-              },
+                },
+                {
+                  name: "Unused",
+                  position: 5,
+                },
+                {
+                  name: "Unused",
+                  position: 6,
+                },
+              ],
             },
-          ],
-        },
+          },
+        ],
       },
-    }),
-    db.accessLocation.create({
-      data: {
-        name: "SI BnB",
-        accessManagers: {
-          create: [
-            {
-              accessPoints: {
-                create: [
-                  {
-                    name: "Front Door",
-                    position: 1,
-                    accessUsers: {
-                      connect: [{ id: masterId }],
-                    },
+    },
+  });
+  await db.accessLocation.create({
+    data: {
+      name: "SI BnB",
+      accessManagers: {
+        create: [
+          {
+            accessPoints: {
+              create: [
+                {
+                  name: "Front Door",
+                  position: 1,
+                  accessUsers: {
+                    connect: [{ id: masterId }],
                   },
-                  {
-                    name: "Unused",
-                    position: 2,
-                  },
-                  {
-                    name: "Unused",
-                    position: 3,
-                  },
-                  {
-                    name: "Unused",
-                    position: 4,
-                  },
-                ],
-              },
+                },
+                {
+                  name: "Unused",
+                  position: 2,
+                },
+                {
+                  name: "Unused",
+                  position: 3,
+                },
+                {
+                  name: "Unused",
+                  position: 4,
+                },
+              ],
             },
-          ],
-        },
+          },
+        ],
       },
-    }),
-  ]);
+    },
+  });
 }
 
 seed();

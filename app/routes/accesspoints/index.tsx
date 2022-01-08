@@ -61,6 +61,12 @@ export default function Index() {
             >
               Description
             </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Manager [ID]
+            </th>
 
             <th scope="col" className="relative px-6 py-3">
               <span className="sr-only">View</span>
@@ -68,21 +74,23 @@ export default function Index() {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {accessPoints.map((ap) => (
-            <tr key={ap.id}>
+          {accessPoints.map((i) => (
+            <tr key={i.id}>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {ap.accessManager.accessLocation.name}
+                {i.accessManager.accessLocation.name}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {ap.name}
+                {i.name}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {ap.description}
+                {i.description}
               </td>
-
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {`${i.accessManager.name} [${i.accessManager.id}]`}
+              </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <Link
-                  to={`/accesspoints/${ap.id}`}
+                  to={`/accesspoints/${i.id}`}
                   className="text-indigo-600 hover:text-indigo-900"
                 >
                   View
