@@ -5,6 +5,7 @@ import type { AccessManager } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { QueryClient, QueryClientProvider, useMutation } from "react-query";
+import type { ActionData } from "~/routes/api/accessmanager/heartbeat";
 
 const queryClient = new QueryClient();
 
@@ -41,20 +42,11 @@ function Heartbeat({
   //       : ""
   //   );
   const [users, setUsers] = React.useState<string>("");
-  const mutation = useMutation<
-    unknown,
-    Error,
-    {
-      id: AccessManager["id"];
-      config: {
-        users: string;
-      };
-    }
-  >(({ id, config }) =>
+  const mutation = useMutation<unknown, Error, ActionData>((actionData) =>
     fetch(
       new Request(`/api/accessmanager/heartbeat`, {
         method: "POST",
-        body: JSON.stringify({ id, config }),
+        body: JSON.stringify(actionData),
       })
     ).then(async (res) => {
       if (res.ok) {
@@ -103,9 +95,9 @@ function Heartbeat({
             onClick={(e) => {
               e.preventDefault();
               mutation.mutate({
-                id,
-                config: {
-                  users,
+                accessManager: {
+                  id,
+                  accessPoints: [],
                 },
               });
             }}

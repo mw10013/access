@@ -119,7 +119,7 @@ export default function Edit() {
               <p
                 className="mt-2 text-sm text-red-600"
                 role="alert"
-                id="code-error"
+                id="name-error"
               >
                 {actionData.fieldErrors.name}
               </p>
@@ -153,7 +153,7 @@ export default function Edit() {
               <p
                 className="mt-2 text-sm text-red-600"
                 role="alert"
-                id="code-error"
+                id="description-error"
               >
                 {actionData.fieldErrors.description}
               </p>

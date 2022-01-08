@@ -2,43 +2,109 @@ import type { ActionFunction } from "remix";
 import { json } from "remix";
 import { db } from "~/utils/db.server";
 
-function isCodesMalformed(codes: any) {
-  if (Array.isArray(codes)) {
-    return codes.some(
-      (el) =>
-        typeof el !== "string" ||
-        el.length < 3 ||
-        el.length > 8 ||
-        !/^\d+$/.test(el)
-    );
+export type ActionData = {
+  accessManager: {
+    id: number;
+    accessPoints: {
+      id: number;
+      config: {
+        users: { id: number; code: string }[];
+      };
+    }[];
+  };
+};
+
+function isActionData(data: any): data is ActionData {
+  if (!data || typeof data !== "object") {
+    return false;
+  }
+  const { accessManager } = data;
+  if (
+    !accessManager ||
+    typeof accessManager !== "object" ||
+    typeof accessManager.id !== "number" ||
+    !Array.isArray(accessManager.accessPoints)
+  ) {
+    return false;
+  }
+  for (const accessPoint of accessManager.accessPoints) {
+    if (
+      !accessPoint ||
+      typeof accessPoint !== "object" ||
+      typeof accessPoint.id !== "number" ||
+      !accessPoint.config ||
+      typeof accessPoint.config !== "object" ||
+      !Array.isArray(accessPoint.config.users)
+    ) {
+      return false;
+    }
+    for (const user of accessPoint.config.users) {
+      if (
+        !user ||
+        typeof user !== "object" ||
+        typeof user.id !== "number" ||
+        typeof user.code !== "string"
+      ) {
+        return false;
+      }
+    }
   }
   return true;
 }
 
 export const action: ActionFunction = async ({ request }) => {
   const data = await request.json();
-  if (
-    !data.accessManager ||
-    typeof data.accessManager.id !== "number" ||
-    !Array.isArray(data.accessManager.accessPoints)
-  ) {
+  console.log({ fn: "action", data });
+  if (!isActionData(data)) {
     return json(
       {
         error: {
           name: "BadRequestError",
-          message: `Malformed data: must have accessManager with id and accessPoints array of Access Points.`,
+          message: `Malformed data.`,
         },
       },
       { status: 400 }
     );
   }
 
-  return json(
-    {
-      message: "in progress",
+  const accessManager = await db.accessManager.findUnique({
+    where: { id: data.accessManager.id },
+    include: {
+      accessPoints: {
+        orderBy: { position: "asc" },
+        include: { accessUsers: { where: { enabled: true } } },
+      },
     },
-    200
-  );
+  });
+  if (!accessManager) {
+    return json(
+      {
+        error: {
+          name: "NotFoundError",
+          message: `Access manager ${data.accessManager.id} not found.`,
+        },
+      },
+      { status: 404 }
+    );
+  }
+
+  const returnData: ActionData = {
+    accessManager: {
+      id: accessManager.id,
+      accessPoints: accessManager.accessPoints.map((i) => ({
+        id: i.id,
+        config: {
+          users: i.accessUsers.map((u) => ({
+            id: u.id,
+            code: u.code,
+          })),
+        },
+      })),
+    },
+  };
+
+  return json(returnData, 200);
+
   /*
   const { id, config } = await request.json();
   const accessPoint =
