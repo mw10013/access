@@ -119,7 +119,8 @@ export default function Index() {
                   {connectionStatus(ap.heartbeatAt)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {ap.cachedConfig &&
+                  TBD
+                  {/*ap.cachedConfig &&
                   _.isEqual(
                     {
                       codes: new Set(JSON.parse(ap.cachedConfig.codes)),
@@ -129,7 +130,7 @@ export default function Index() {
                     }
                   )
                     ? "Saved"
-                    : "Pending"}
+                  : "Pending"*/}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <Link
