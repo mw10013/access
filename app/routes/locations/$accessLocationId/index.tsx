@@ -6,12 +6,12 @@ import { db } from "~/utils/db.server";
 type LoaderData = {
   accessLocation: Prisma.AccessLocationGetPayload<{
     include: {
-      accessHubs: { include: { accessPoints: true } };
+      accessManagers: { include: { accessPoints: true } };
     };
   }>;
   accessPoints: Prisma.AccessPointGetPayload<{
     include: {
-      accessHub: { include: { accessLocation: true } };
+      accessManager: { include: { accessLocation: true } };
     };
   }>[];
 };
@@ -22,16 +22,18 @@ export const loader: LoaderFunction = async ({
   const accessLocation = await db.accessLocation.findUnique({
     where: { id: Number(accessLocationId) },
     include: {
-      accessHubs: { include: { accessPoints: { orderBy: { name: "asc" } } } },
+      accessManagers: {
+        include: { accessPoints: { orderBy: { name: "asc" } } },
+      },
     },
     rejectOnNotFound: true,
   });
 
   const accessPoints = await db.accessPoint.findMany({
     where: {
-      accessHubId: { in: accessLocation.accessHubs.map((el) => el.id) },
+      accessManagerId: { in: accessLocation.accessManagers.map((el) => el.id) },
     },
-    include: { accessHub: { include: { accessLocation: true } } },
+    include: { accessManager: { include: { accessLocation: true } } },
     orderBy: { name: "asc" },
   });
   return { accessLocation, accessPoints };

@@ -42,13 +42,14 @@ async function seed() {
     db.accessLocation.create({
       data: {
         name: "Brooklyn BnB",
-        accessHubs: {
+        accessManagers: {
           create: [
             {
               accessPoints: {
                 create: [
                   {
                     name: "Front Door",
+                    position: 1,
                     accessUsers: {
                       connect: [
                         { id: masterId },
@@ -65,6 +66,7 @@ async function seed() {
                   },
                   {
                     name: "Back Door",
+                    position: 2,
                     accessUsers: {
                       connect: [
                         { id: masterId },
@@ -78,6 +80,7 @@ async function seed() {
                   {
                     name: "Basement Outside",
                     description: "Guests are not allowed.",
+                    position: 3,
                     accessUsers: {
                       connect: [
                         { id: masterId },
@@ -89,6 +92,7 @@ async function seed() {
                   {
                     name: "Basement Inside",
                     description: "Guests are not allowed.",
+                    position: 4,
                     accessUsers: {
                       connect: [
                         { id: masterId },
@@ -105,6 +109,7 @@ async function seed() {
                 create: [
                   {
                     name: "2nd Floor Front",
+                    position: 1,
                     accessUsers: {
                       connect: [
                         { id: masterId },
@@ -116,6 +121,7 @@ async function seed() {
                   },
                   {
                     name: "2nd Floor Back",
+                    position: 2,
                     accessUsers: {
                       connect: [
                         { id: masterId },
@@ -127,6 +133,7 @@ async function seed() {
                   },
                   {
                     name: "3rd Floor Front",
+                    position: 3,
                     accessUsers: {
                       connect: [
                         { id: masterId },
@@ -138,6 +145,7 @@ async function seed() {
                   },
                   {
                     name: "3rd Floor Back",
+                    position: 4,
                     accessUsers: {
                       connect: [
                         { id: masterId },
@@ -146,6 +154,14 @@ async function seed() {
                         { id: repairId },
                       ],
                     },
+                  },
+                  {
+                    name: "Unused",
+                    position: 5,
+                  },
+                  {
+                    name: "Unused",
+                    position: 6,
                   },
                 ],
               },
@@ -157,16 +173,29 @@ async function seed() {
     db.accessLocation.create({
       data: {
         name: "SI BnB",
-        accessHubs: {
+        accessManagers: {
           create: [
             {
               accessPoints: {
                 create: [
                   {
                     name: "Front Door",
+                    position: 1,
                     accessUsers: {
                       connect: [{ id: masterId }],
                     },
+                  },
+                  {
+                    name: "Unused",
+                    position: 2,
+                  },
+                  {
+                    name: "Unused",
+                    position: 3,
+                  },
+                  {
+                    name: "Unused",
+                    position: 4,
                   },
                 ],
               },

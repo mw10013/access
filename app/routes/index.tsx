@@ -13,7 +13,7 @@ type LoaderData = {
         where: { code: { not: "" }; enabled: true };
         // orderBy: { code: "asc" };
       };
-      accessHub: {
+      accessManager: {
         include: {
           accessLocation: true;
         };
@@ -30,7 +30,7 @@ export const loader: LoaderFunction = async () => {
         where: { code: { not: "" }, enabled: true },
         orderBy: { code: "asc" },
       },
-      accessHub: {
+      accessManager: {
         include: {
           accessLocation: true,
         },
@@ -38,7 +38,7 @@ export const loader: LoaderFunction = async () => {
       cachedConfig: true,
     },
     orderBy: [
-      { accessHub: { accessLocation: { name: "asc" } } },
+      { accessManager: { accessLocation: { name: "asc" } } },
       { name: "asc" },
     ],
   });
@@ -110,7 +110,7 @@ export default function Index() {
             {accessPoints.map((ap) => (
               <tr key={ap.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {ap.accessHub.accessLocation.name}
+                  {ap.accessManager.accessLocation.name}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {ap.name}

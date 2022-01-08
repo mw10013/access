@@ -7,7 +7,7 @@ type LoaderData = {
   accessPoint: Prisma.AccessPointGetPayload<{
     include: {
       accessUsers: true;
-      accessHub: { include: { accessLocation: true } };
+      accessManager: { include: { accessLocation: true } };
     };
   }>;
 };
@@ -19,7 +19,7 @@ export const loader: LoaderFunction = async ({
     where: { id: Number(accessPointId) },
     include: {
       accessUsers: { orderBy: { name: "asc" } },
-      accessHub: { include: { accessLocation: true } },
+      accessManager: { include: { accessLocation: true } },
     },
     rejectOnNotFound: true,
   });
@@ -45,10 +45,10 @@ export default function Index() {
         </button>
       </div>
       <div className="flex mt-1 space-x-10 text-sm text-gray-500">
-        <div>Location: {accessPoint.accessHub.accessLocation.name}</div>
+        <div>Location: {accessPoint.accessManager.accessLocation.name}</div>
         <div className="text-gray-900">{accessPoint.name}</div>
         <div>ID: {accessPoint.id}</div>
-        <div>Hub ID: {accessPoint.accessHubId}</div>
+        <div>Manager ID: {accessPoint.accessManagerId}</div>
         <div>{accessPoint.description}</div>
       </div>
 

@@ -23,11 +23,12 @@ model AccessLocation {
   id                Int       @id @default(autoincrement())
   name              String    @unique
   description       String    @default("")
-  accessHubs        AccessHub[]        
+  accessManagers    AccessManager[]        
 }
 
-model AccessHub {
+model AccessManager {
   id                Int            @id @default(autoincrement())
+  name              String         @default("Manager")
   accessLocation    AccessLocation @relation(fields: [accessLocationId], references: [id])
   accessLocationId  Int          
   accessPoints      AccessPoint[] 
@@ -40,8 +41,11 @@ model AccessPoint {
   accessUsers       AccessUser[]
   heartbeatAt       DateTime?
   cachedConfig      AccessPointCachedConfig?
-  accessHub         AccessHub @relation(fields: [accessHubId], references: [id])
-  accessHubId       Int     
+  accessManager     AccessManager @relation(fields: [accessManagerId], references: [id])
+  accessManagerId   Int 
+  position          Int
+
+  @@unique([accessManagerId, position])    
 }
 
 model AccessPointCachedConfig {

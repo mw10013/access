@@ -9,7 +9,7 @@ type LoaderData = {
     include: {
       accessUsers: true;
       cachedConfig: true;
-      accessHub: { include: { accessLocation: true } };
+      accessManager: { include: { accessLocation: true } };
     };
   }>;
 };
@@ -19,8 +19,11 @@ export const loader: LoaderFunction = async ({
 }): Promise<LoaderData> => {
   const accessPoint = await db.accessPoint.findUnique({
     where: { id: Number(accessPointId) },
-    include: { accessUsers: { orderBy: { name: "asc" } }, cachedConfig: true,
-  accessHub: { include: { accessLocation: true}} },
+    include: {
+      accessUsers: { orderBy: { name: "asc" } },
+      cachedConfig: true,
+      accessManager: { include: { accessLocation: true } },
+    },
     rejectOnNotFound: true,
   });
   return { accessPoint };

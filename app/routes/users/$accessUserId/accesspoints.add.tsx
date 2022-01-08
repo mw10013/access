@@ -8,7 +8,7 @@ type LoaderData = {
     include: { accessPoints: true };
   }>;
   accessPoints: Prisma.AccessPointGetPayload<{
-    include: { accessHub: { include: { accessLocation: true } } };
+    include: { accessManager: { include: { accessLocation: true } } };
   }>[];
 };
 
@@ -24,10 +24,10 @@ export const loader: LoaderFunction = async ({
   const accessPoints = await db.accessPoint.findMany({
     where: { id: { notIn } },
     orderBy: [
-      { accessHub: { accessLocation: { name: "asc" } } },
+      { accessManager: { accessLocation: { name: "asc" } } },
       { name: "asc" },
     ],
-    include: { accessHub: { include: { accessLocation: true } } },
+    include: { accessManager: { include: { accessLocation: true } } },
   });
   return { accessUser, accessPoints };
 };
@@ -77,7 +77,7 @@ export default function Add() {
                     htmlFor={`accessPoint-${apIdx}`}
                     className="font-medium text-gray-700 select-none"
                   >
-                    {`${ap.accessHub.accessLocation.name}: ${ap.name}`}
+                    {`${ap.accessManager.accessLocation.name}: ${ap.name}`}
                   </label>
                 </div>
                 <div className="ml-3 flex items-center h-5">
