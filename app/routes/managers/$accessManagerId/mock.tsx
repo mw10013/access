@@ -41,7 +41,7 @@ function Heartbeat({
   //       ? JSON.parse(accessManager.cachedConfig.codes).join(" ")
   //       : ""
   //   );
-  const [users, setUsers] = React.useState<string>("");
+  const [data, setData] = React.useState<string>("");
   const mutation = useMutation<unknown, Error, ActionData>((actionData) =>
     fetch(
       new Request(`/api/accessmanager/heartbeat`, {
@@ -70,25 +70,26 @@ function Heartbeat({
         <form>
           <div className="mt-2">
             <label
-              htmlFor="cachedCodes"
+              htmlFor="about"
               className="block text-sm font-medium text-gray-700"
             >
-              Codes
+              Data
             </label>
-            <div className="mt-1 max-w-xl text-sm text-gray-500">
-              <p>{`3-8 digit codes separated by space | empty string`}</p>
-            </div>
-            <div className="mt-1 flex rounded-md shadow-sm">
-              <input
-                type="text"
-                name="cachedCodes"
-                id="cachedCodes"
-                value={users}
-                onChange={(e) => setUsers(e.target.value)}
-                className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
+            <div className="mt-1">
+              <textarea
+                id="about"
+                name="about"
+                rows={10}
+                className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md"
+                value={data}
+                onChange={(e) => setData(e.target.value)}
               />
             </div>
+            <p className="mt-2 text-sm text-gray-500">
+              Hint: Click heartbeat button and copy server response.
+            </p>
           </div>
+
           <button
             type="submit"
             className="mt-4 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-2 sm:ml-3- sm:w-auto sm:text-sm"
