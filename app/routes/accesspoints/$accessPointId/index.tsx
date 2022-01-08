@@ -164,7 +164,6 @@ export default function Index() {
         </button>
       </div>
 
-      {/* <pre className="mt-2">{JSON.stringify(accessUser, null, 2)}</pre> */}
     </div>
   );
 }
