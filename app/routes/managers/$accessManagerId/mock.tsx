@@ -52,7 +52,7 @@ function Heartbeat({
     }
   >(({ id, config }) =>
     fetch(
-      new Request(`/api/heartbeat`, {
+      new Request(`/api/accessmanager/heartbeat`, {
         method: "POST",
         body: JSON.stringify({ id, config }),
       })
