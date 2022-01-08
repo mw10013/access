@@ -29,6 +29,7 @@ model AccessLocation {
 model AccessManager {
   id                Int            @id @default(autoincrement())
   name              String         @default("Manager")
+  description       String         @default("") 
   accessLocation    AccessLocation @relation(fields: [accessLocationId], references: [id])
   accessLocationId  Int          
   accessPoints      AccessPoint[] 

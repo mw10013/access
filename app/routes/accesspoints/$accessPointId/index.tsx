@@ -49,6 +49,7 @@ export default function Index() {
         <div className="text-gray-900">{accessPoint.name}</div>
         <div>ID: {accessPoint.id}</div>
         <div>Manager ID: {accessPoint.accessManagerId}</div>
+        <div>Position: {accessPoint.position}</div>
         <div>{accessPoint.description}</div>
       </div>
 

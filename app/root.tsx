@@ -15,10 +15,11 @@ function classNames(...classes: string[]) {
 }
 
 const navigation = [
-  { name: "Dashboard", href: "/", current: false },
-  { name: "Users", href: "/users", current: false },
-  { name: "Locations", href: "/locations", current: false },
-  { name: "Access Points", href: "accessPoints", current: false },
+  { name: "Dashboard", to: ".", current: false },
+  { name: "Users", to: "users", current: false },
+  { name: "Locations", to: "locations", current: false },
+  { name: "Managers", to: "managers", current: false },
+  { name: "Access Points", to: "accessPoints", current: false },
 ];
 
 export const meta: MetaFunction = () => {
@@ -52,7 +53,7 @@ export default function App() {
                   {navigation.map((item) => (
                     <Link
                       key={item.name}
-                      to={item.href}
+                      to={item.to}
                       className={classNames(
                         item.current
                           ? "border-indigo-500 text-gray-900"
