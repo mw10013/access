@@ -17,7 +17,7 @@ function classNames(...classes: string[]) {
 const navigation = [
   { name: "Dashboard", href: "/", current: false },
   { name: "Users", href: "/users", current: false },
-  { name: "Locations", href: "/users", current: false },
+  { name: "Locations", href: "/locations", current: false },
   { name: "Access Points", href: "accessPoints", current: false },
 ];
 

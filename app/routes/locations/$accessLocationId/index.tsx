@@ -4,42 +4,47 @@ import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 
 type LoaderData = {
-  accessUser: Prisma.AccessUserGetPayload<{
+  accessLocation: Prisma.AccessLocationGetPayload<{
     include: {
-      accessPoints: {
-        include: { accessHub: { include: { accessLocation: true } } };
-      };
+      accessHubs: { include: { accessPoints: true } };
     };
   }>;
+  accessPoints: Prisma.AccessPointGetPayload<{
+    include: {
+      accessHub: { include: { accessLocation: true } };
+    };
+  }>[];
 };
 
 export const loader: LoaderFunction = async ({
-  params: { accessUserId },
+  params: { accessLocationId },
 }): Promise<LoaderData> => {
-  const accessUser = await db.accessUser.findUnique({
-    where: { id: Number(accessUserId) },
+  const accessLocation = await db.accessLocation.findUnique({
+    where: { id: Number(accessLocationId) },
     include: {
-      accessPoints: {
-        orderBy: [
-          { accessHub: { accessLocation: { name: "asc" } } },
-          { name: "asc" },
-        ],
-        include: { accessHub: { include: { accessLocation: true } } },
-      },
+      accessHubs: { include: { accessPoints: { orderBy: { name: "asc" } } } },
     },
     rejectOnNotFound: true,
   });
-  return { accessUser };
+
+  const accessPoints = await db.accessPoint.findMany({
+    where: {
+      accessHubId: { in: accessLocation.accessHubs.map((el) => el.id) },
+    },
+    include: { accessHub: { include: { accessLocation: true } } },
+    orderBy: { name: "asc" },
+  });
+  return { accessLocation, accessPoints };
 };
 
 export default function Index() {
   const navigate = useNavigate();
   const submit = useSubmit();
-  const { accessUser } = useLoaderData<LoaderData>();
+  const { accessLocation, accessPoints } = useLoaderData<LoaderData>();
   return (
     <div className="p-8">
       <div className="flex justify-between">
-        <h1 className="text-2xl font-bold leading-7 text-gray-900">User</h1>
+        <h1 className="text-2xl font-bold leading-7 text-gray-900">Location</h1>
         <button
           type="button"
           className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
@@ -49,25 +54,14 @@ export default function Index() {
         </button>
       </div>
       <div className="flex mt-1 space-x-10 text-sm text-gray-500">
-        <div>{accessUser.name}</div>
-        <div>ID: {accessUser.id}</div>
-        <div>
-          Code:{" "}
-          {accessUser.code || (
-            <span className="font-bold">{accessUser.code}</span>
-          )}
-        </div>
-        <div>
-          {accessUser.enabled ? (
-            "Enabled"
-          ) : (
-            <span className="font-bold">Disabled</span>
-          )}
-        </div>
+        <div>{accessLocation.name}</div>
+        <div>ID: {accessLocation.id}</div>
       </div>
 
-      {accessUser.description ? (
-        <p className="mt-2 text-sm text-gray-500">{accessUser.description}</p>
+      {accessLocation.description ? (
+        <p className="mt-2 text-sm text-gray-500">
+          {accessLocation.description}
+        </p>
       ) : null}
 
       <div className="mt-4">
@@ -75,13 +69,13 @@ export default function Index() {
           <h3 className="text-lg leading-6 font-medium text-gray-900">
             Access Points
           </h3>
-          <button
+          {/* <button
             type="button"
             className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
             onClick={() => navigate("./accesspoints/add")}
           >
             Add
-          </button>
+          </button> */}
         </div>
         <div className="mt-2 max-w-xl text-sm text-gray-500">
           <p></p>
@@ -90,12 +84,6 @@ export default function Index() {
           <table className="mt-4 max-width-md divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Location
-                </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -114,11 +102,8 @@ export default function Index() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {accessUser.accessPoints.map((ap) => (
+              {accessPoints.map((ap) => (
                 <tr key={ap.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {ap.accessHub.accessLocation.name}
-                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium  text-gray-900">
                     {ap.name}
                   </td>
@@ -127,16 +112,10 @@ export default function Index() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <Link
-                      to="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        submit(null, {
-                          method: "post",
-                          action: `/users/${accessUser.id}/accesspoints/${ap.id}/remove`,
-                        });
-                      }}
+                      to={`/accesspoints/${ap.id}`}
+                      className="text-indigo-600 hover:text-indigo-900"
                     >
-                      Remove
+                      View
                     </Link>
                   </td>
                 </tr>
@@ -145,8 +124,6 @@ export default function Index() {
           </table>
         </div>
       </div>
-
-      {/* <pre className="mt-2">{JSON.stringify(accessUser, null, 2)}</pre> */}
     </div>
   );
 }

@@ -126,8 +126,8 @@ export default function Index() {
                     {au.enabled ? "Enabled" : "Disabled"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       onClick={(e) => {
                         e.preventDefault();
                         submit(null, {
@@ -137,7 +137,7 @@ export default function Index() {
                       }}
                     >
                       Remove
-                    </a>
+                    </Link>
                   </td>
                 </tr>
               ))}
