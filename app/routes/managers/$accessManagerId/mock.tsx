@@ -83,7 +83,7 @@ function Heartbeat({
         </h3>
         <div className="mt-2 max-w-xl text-sm text-gray-500">
           <p>
-            {`Http post to /api/accessmanager/heartbeat. See dev network tab for format of body.`}
+            {`Changing too much to risk out of date documentation. Use dev network tab for the current truth. View source of request for method and url. View payload to see format of data. View preview to see format of response data.`}
           </p>
         </div>
         <form>
@@ -105,6 +105,8 @@ function Heartbeat({
               />
             </div>
             <p className="mt-2 text-sm text-gray-500">
+              Initially populated with json that would sync up access manager
+              with cloud.
             </p>
           </div>
 
