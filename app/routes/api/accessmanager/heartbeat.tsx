@@ -4,7 +4,7 @@ import { db } from "~/utils/db.server";
 import * as _ from "lodash";
 import { identity } from "lodash";
 
-type ActionData = {
+type HeartbeatData = {
   accessManager: {
     id: number;
     accessPoints: {
@@ -16,7 +16,9 @@ type ActionData = {
   };
 };
 
-function isActionData(data: any): data is ActionData {
+type ReturnData = HeartbeatData;
+
+function isHeartbeatData(data: any): data is HeartbeatData {
   if (!data || typeof data !== "object") {
     return false;
   }
@@ -56,8 +58,7 @@ function isActionData(data: any): data is ActionData {
 
 export const action: ActionFunction = async ({ request }) => {
   const data = await request.json();
-  console.log({ fn: "action", data });
-  if (!isActionData(data)) {
+  if (!isHeartbeatData(data)) {
     return json(
       {
         error: {
@@ -132,7 +133,7 @@ export const action: ActionFunction = async ({ request }) => {
     },
   });
 
-  const returnData: ActionData = {
+  const returnData: ReturnData = {
     accessManager: {
       id: accessManager.id,
       accessPoints: accessManager.accessPoints.map((i) => ({
