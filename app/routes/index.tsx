@@ -9,10 +9,7 @@ import * as _ from "lodash";
 type LoaderData = {
   accessPoints: Prisma.AccessPointGetPayload<{
     include: {
-      accessUsers: {
-        where: { code: { not: "" }; enabled: true };
-        // orderBy: { code: "asc" };
-      };
+      accessUsers: true;
       accessManager: {
         include: {
           accessLocation: true;
@@ -27,8 +24,7 @@ export const loader: LoaderFunction = async () => {
   const accessPoints = await db.accessPoint.findMany({
     include: {
       accessUsers: {
-        where: { code: { not: "" }, enabled: true },
-        orderBy: { code: "asc" },
+        where: { enabled: true },
       },
       accessManager: {
         include: {
@@ -42,9 +38,7 @@ export const loader: LoaderFunction = async () => {
       { name: "asc" },
     ],
   });
-
-  const data: LoaderData = { accessPoints };
-  return data;
+  return { accessPoints };
 };
 
 function connectionStatus(heartbeatAt: AccessPoint["heartbeatAt"]) {
@@ -62,17 +56,43 @@ function connectionStatus(heartbeatAt: AccessPoint["heartbeatAt"]) {
 
 export default function Index() {
   const { accessPoints } = useLoaderData<LoaderData>();
+  const [poll, setPoll] = React.useState(true);
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    const intervalId = setInterval(
-      () => navigate(".", { replace: true }),
-      5000
-    );
-    return () => clearInterval(intervalId);
-  }, [navigate]);
+    if (poll) {
+      const intervalId = setInterval(
+        () => navigate(".", { replace: true }),
+        5000
+      );
+      return () => clearInterval(intervalId);
+    }
+  }, [navigate, poll]);
   return (
-    <div className="p-4 bg-white">
+    <div className="p-8">
+      <div className="flex justify-between">
+        <h1 className="text-2xl font-bold leading-7 text-gray-900">
+          Dashboard
+        </h1>
+        <div className="relative flex items-start">
+          <div className="flex items-center h-5">
+            <input
+              id="poll"
+              aria-describedby="comments-description"
+              name="poll"
+              type="checkbox"
+              checked={poll}
+              onChange={() => setPoll(!poll)}
+              className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+            />
+          </div>
+          <div className="ml-3 text-sm">
+            <label htmlFor="poll" className="font-medium text-gray-700">
+              Poll
+            </label>
+          </div>
+        </div>
+      </div>
       <div className="max-w-7xl mx-auto">
         <table className="mt-4 max-width-md divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -107,34 +127,36 @@ export default function Index() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {accessPoints.map((ap) => (
-              <tr key={ap.id}>
+            {accessPoints.map((i) => (
+              <tr key={i.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {ap.accessManager.accessLocation.name}
+                  <Link
+                    to={`/locations/${i.accessManager.accessLocation.id}`}
+                    className="text-indigo-600 hover:text-indigo-900"
+                  >
+                    {i.accessManager.accessLocation.name}
+                  </Link>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {ap.name}
+                  {i.name}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {connectionStatus(ap.heartbeatAt)}
+                  {connectionStatus(i.heartbeatAt)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  TBD
-                  {/*ap.cachedConfig &&
+                  {i.cachedConfig &&
                   _.isEqual(
-                    {
-                      codes: new Set(JSON.parse(ap.cachedConfig.codes)),
-                    },
-                    {
-                      codes: new Set(ap.accessUsers.map((el) => el.code)),
-                    }
+                    new Set(JSON.parse(i.cachedConfig.users)),
+                    new Set(
+                      i.accessUsers.map((i) => ({ id: i.id, code: i.code }))
+                    )
                   )
                     ? "Saved"
-                  : "Pending"*/}
+                    : "Pending"}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                   <Link
-                    to={`/accesspoints/${ap.id}`}
+                    to={`/accesspoints/${i.id}`}
                     className="text-indigo-600 hover:text-indigo-900"
                   >
                     View

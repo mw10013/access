@@ -114,25 +114,31 @@ export default function Index() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {accessUser.accessPoints.map((ap) => (
-                <tr key={ap.id}>
+              {accessUser.accessPoints.map((i) => (
+                <tr key={i.id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {ap.accessManager.accessLocation.name}
+                    <Link
+                      to={`/locations/${i.accessManager.accessLocation.id}`}
+                      className="text-indigo-600 hover:text-indigo-900"
+                    >
+                      {i.accessManager.accessLocation.name}
+                    </Link>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium  text-gray-900">
-                    {ap.name}
+                    {i.name}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {ap.description}
+                    {i.description}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                     <Link
                       to="#"
+                      className="text-indigo-600 hover:text-indigo-900"
                       onClick={(e) => {
                         e.preventDefault();
                         submit(null, {
                           method: "post",
-                          action: `/users/${accessUser.id}/accesspoints/${ap.id}/remove`,
+                          action: `/users/${accessUser.id}/accesspoints/${i.id}/remove`,
                         });
                       }}
                     >
@@ -145,8 +151,6 @@ export default function Index() {
           </table>
         </div>
       </div>
-
-      {/* <pre className="mt-2">{JSON.stringify(accessUser, null, 2)}</pre> */}
     </div>
   );
 }

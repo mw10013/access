@@ -61,7 +61,7 @@ export default function Index() {
                 {al.description}
               </td>
 
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                 <Link
                   to={`/locations/${al.id}`}
                   className="text-indigo-600 hover:text-indigo-900"

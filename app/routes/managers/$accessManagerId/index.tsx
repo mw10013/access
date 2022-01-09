@@ -49,7 +49,15 @@ export default function Index() {
       <div className="flex mt-1 space-x-10 text-sm text-gray-500">
         <div>{accessManager.name}</div>
         <div>ID: {accessManager.id}</div>
-        <div>Location: {accessManager.accessLocation.name}</div>
+        <div>
+          Location:{" "}
+          <Link
+            to={`/locations/${accessManager.accessLocationId}`}
+            className="text-indigo-600 hover:text-indigo-900"
+          >
+            {accessManager.accessLocation.name}
+          </Link>
+        </div>
       </div>
 
       {accessManager.description ? (
@@ -106,7 +114,7 @@ export default function Index() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {i.description}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                     <Link
                       to={`/accesspoints/${i.id}`}
                       className="text-indigo-600 hover:text-indigo-900"

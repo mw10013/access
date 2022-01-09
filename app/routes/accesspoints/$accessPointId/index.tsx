@@ -48,7 +48,15 @@ export default function Index() {
         <div>Location: {accessPoint.accessManager.accessLocation.name}</div>
         <div className="text-gray-900">{accessPoint.name}</div>
         <div>ID: {accessPoint.id}</div>
-        <div>Manager ID: {accessPoint.accessManagerId}</div>
+        <div>
+          Manager ID:{" "}
+          <Link
+            to={`/managers/${accessPoint.accessManagerId}`}
+            className="text-indigo-600 hover:text-indigo-900"
+          >
+            {accessPoint.accessManagerId}
+          </Link>
+        </div>
         <div>Position: {accessPoint.position}</div>
         <div>{accessPoint.description}</div>
       </div>
@@ -109,31 +117,37 @@ export default function Index() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {accessPoint.accessUsers.map((au) => (
-                <tr key={au.id}>
+              {accessPoint.accessUsers.map((i) => (
+                <tr key={i.id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm  text-gray-500">
-                    {au.id}
+                    {i.id}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {au.name}
+                    <Link
+                      to={`/users/${i.id}`}
+                      className="text-indigo-600 hover:text-indigo-900"
+                    >
+                      {i.name}
+                    </Link>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {au.description}
+                    {i.description}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {au.code}
+                    {i.code}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {au.enabled ? "Enabled" : "Disabled"}
+                    {i.enabled ? "Enabled" : "Disabled"}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                     <Link
                       to="#"
+                      className="text-indigo-600 hover:text-indigo-900"
                       onClick={(e) => {
                         e.preventDefault();
                         submit(null, {
                           method: "post",
-                          action: `/accesspoints/${accessPoint.id}/users/${au.id}/remove`,
+                          action: `/accesspoints/${accessPoint.id}/users/${i.id}/remove`,
                         });
                       }}
                     >

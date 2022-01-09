@@ -77,7 +77,12 @@ export default function Index() {
           {accessPoints.map((i) => (
             <tr key={i.id}>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {i.accessManager.accessLocation.name}
+                <Link
+                  to={`/locations/${i.accessManager.accessLocation.id}`}
+                  className="text-indigo-600 hover:text-indigo-900"
+                >
+                  {i.accessManager.accessLocation.name}
+                </Link>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                 {i.name}
@@ -86,15 +91,20 @@ export default function Index() {
                 {i.description}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {`${i.accessManager.name} [${i.accessManager.id}]`}
+                <Link
+                  to={`/managers/${i.accessManager.id}`}
+                  className="text-indigo-600 hover:text-indigo-900"
+                >
+                  {`${i.accessManager.name} [${i.accessManager.id}]`}
+                </Link>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                 <Link
                   to={`/accesspoints/${i.id}`}
                   className="text-indigo-600 hover:text-indigo-900"
                 >
                   View
-                </Link>{" "}
+                </Link>
               </td>
             </tr>
           ))}
