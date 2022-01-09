@@ -51,7 +51,7 @@ model AccessPoint {
 
 model AccessPointCachedConfig {
   id                Int         @id @default(autoincrement())
-  users             String      @default("[]") // json array of users
+  accessUsers       String      @default("[]") // json array of users
   accessPoint       AccessPoint @relation(fields: [accessPointId], references: [id])
   accessPointId     Int         @unique
   cachedAt          DateTime    @updatedAt

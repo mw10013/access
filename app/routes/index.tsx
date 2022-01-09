@@ -146,7 +146,7 @@ export default function Index() {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {i.cachedConfig &&
                   _.isEqual(
-                    new Set(JSON.parse(i.cachedConfig.users)),
+                    new Set(JSON.parse(i.cachedConfig.accessUsers)),
                     new Set(
                       i.accessUsers.map((i) => ({ id: i.id, code: i.code }))
                     )

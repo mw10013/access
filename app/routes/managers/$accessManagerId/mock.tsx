@@ -1,7 +1,6 @@
 import * as React from "react";
 import type { LoaderFunction } from "remix";
-import { useLoaderData, useFetcher } from "remix";
-import type { AccessManager } from "@prisma/client";
+import { useLoaderData } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { QueryClient, QueryClientProvider, useMutation } from "react-query";
@@ -49,7 +48,7 @@ function Heartbeat({
           accessPoints: accessManager.accessPoints.map((i) => ({
             id: i.id,
             config: {
-              users: i.accessUsers.map((u) => ({
+              accessUsers: i.accessUsers.map((u) => ({
                 id: u.id,
                 code: u.code,
               })),

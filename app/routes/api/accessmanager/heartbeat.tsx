@@ -10,7 +10,7 @@ type HeartbeatData = {
     accessPoints: {
       id: number;
       config: {
-        users: { id: number; code: string }[];
+        accessUsers: { id: number; code: string }[];
       };
     }[];
   };
@@ -38,11 +38,11 @@ function isHeartbeatData(data: any): data is HeartbeatData {
       typeof accessPoint.id !== "number" ||
       !accessPoint.config ||
       typeof accessPoint.config !== "object" ||
-      !Array.isArray(accessPoint.config.users)
+      !Array.isArray(accessPoint.config.accessUsers)
     ) {
       return false;
     }
-    for (const user of accessPoint.config.users) {
+    for (const user of accessPoint.config.accessUsers) {
       if (
         !user ||
         typeof user !== "object" ||
@@ -113,8 +113,8 @@ export const action: ActionFunction = async ({ request }) => {
     data: {
       accessPoints: {
         update: data.accessManager.accessPoints.map((i) => {
-          const usersAsJson = JSON.stringify(
-            i.config.users.map((u) => ({ id: u.id, code: u.code }))
+          const accessUsersAsJson = JSON.stringify(
+            i.config.accessUsers.map((u) => ({ id: u.id, code: u.code }))
           );
           return {
             where: { id: i.id },
@@ -122,8 +122,8 @@ export const action: ActionFunction = async ({ request }) => {
               heartbeatAt: new Date(),
               cachedConfig: {
                 upsert: {
-                  update: { users: usersAsJson },
-                  create: { users: usersAsJson },
+                  update: { accessUsers: accessUsersAsJson },
+                  create: { accessUsers: accessUsersAsJson },
                 },
               },
             },
@@ -139,7 +139,7 @@ export const action: ActionFunction = async ({ request }) => {
       accessPoints: accessManager.accessPoints.map((i) => ({
         id: i.id,
         config: {
-          users: i.accessUsers.map((u) => ({
+          accessUsers: i.accessUsers.map((u) => ({
             id: u.id,
             code: u.code,
           })),
