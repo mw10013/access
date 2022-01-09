@@ -5,7 +5,6 @@ import type { AccessManager } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { QueryClient, QueryClientProvider, useMutation } from "react-query";
-import type { ActionData } from "~/routes/api/accessmanager/heartbeat";
 
 const queryClient = new QueryClient();
 
@@ -23,7 +22,13 @@ export const loader: LoaderFunction = async ({
   const accessManager = await db.accessManager.findUnique({
     where: { id: Number(accessManagerId) },
     include: {
-      accessPoints: { include: { accessUsers: true, cachedConfig: true } },
+      accessPoints: {
+        orderBy: { position: "asc" },
+        include: {
+          accessUsers: { where: { enabled: true } },
+          cachedConfig: true,
+        },
+      },
     },
     rejectOnNotFound: true,
   });
@@ -36,17 +41,31 @@ function Heartbeat({
   accessManager: LoaderData["accessManager"];
 }) {
   const { id } = accessManager;
-  //   const [codes, setCodes] = React.useState<string>(() =>
-  //     accessManager.cachedConfig
-  //       ? JSON.parse(accessManager.cachedConfig.codes).join(" ")
-  //       : ""
-  //   );
-  const [data, setData] = React.useState<string>("");
-  const mutation = useMutation<unknown, Error, ActionData>((actionData) =>
+  const [data, setData] = React.useState<string>(() =>
+    JSON.stringify(
+      {
+        accessManager: {
+          id: accessManager.id,
+          accessPoints: accessManager.accessPoints.map((i) => ({
+            id: i.id,
+            config: {
+              users: i.accessUsers.map((u) => ({
+                id: u.id,
+                code: u.code,
+              })),
+            },
+          })),
+        },
+      },
+      null,
+      2
+    )
+  );
+  const mutation = useMutation<unknown, Error, string>((data) =>
     fetch(
       new Request(`/api/accessmanager/heartbeat`, {
         method: "POST",
-        body: JSON.stringify(actionData),
+        body: data,
       })
     ).then(async (res) => {
       if (res.ok) {
@@ -86,7 +105,6 @@ function Heartbeat({
               />
             </div>
             <p className="mt-2 text-sm text-gray-500">
-              Hint: Click heartbeat button and copy server response.
             </p>
           </div>
 
@@ -95,12 +113,7 @@ function Heartbeat({
             className="mt-4 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-2 sm:ml-3- sm:w-auto sm:text-sm"
             onClick={(e) => {
               e.preventDefault();
-              mutation.mutate({
-                accessManager: {
-                  id,
-                  accessPoints: [],
-                },
-              });
+              mutation.mutate(data);
             }}
           >
             Heartbeat

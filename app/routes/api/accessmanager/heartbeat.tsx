@@ -1,8 +1,10 @@
 import type { ActionFunction } from "remix";
 import { json } from "remix";
 import { db } from "~/utils/db.server";
+import * as _ from "lodash";
+import { identity } from "lodash";
 
-export type ActionData = {
+type ActionData = {
   accessManager: {
     id: number;
     accessPoints: {
@@ -88,6 +90,48 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
+  if (
+    !_.isEqual(
+      new Set(accessManager.accessPoints.map((i) => i.id)),
+      new Set(data.accessManager.accessPoints.map((i) => i.id))
+    )
+  ) {
+    return json(
+      {
+        error: {
+          name: "BadRequestError",
+          message: `Dreadful access point id's.`,
+        },
+      },
+      { status: 404 }
+    );
+  }
+
+  const updatedAccessManager = await db.accessManager.update({
+    where: { id: accessManager.id },
+    data: {
+      accessPoints: {
+        update: data.accessManager.accessPoints.map((i) => {
+          const usersAsJson = JSON.stringify(
+            i.config.users.map((u) => ({ id: u.id, code: u.code }))
+          );
+          return {
+            where: { id: i.id },
+            data: {
+              heartbeatAt: new Date(),
+              cachedConfig: {
+                upsert: {
+                  update: { users: usersAsJson },
+                  create: { users: usersAsJson },
+                },
+              },
+            },
+          };
+        }),
+      },
+    },
+  });
+
   const returnData: ActionData = {
     accessManager: {
       id: accessManager.id,
@@ -104,78 +148,4 @@ export const action: ActionFunction = async ({ request }) => {
   };
 
   return json(returnData, 200);
-
-  /*
-  const { id, config } = await request.json();
-  const accessPoint =
-    typeof id === "number" &&
-    (await db.accessPoint.findUnique({
-      where: { id },
-      include: {
-        accessUsers: {
-          where: { code: { not: "" }, enabled: true },
-          orderBy: { code: "asc" },
-        },
-      },
-    }));
-  if (!accessPoint) {
-    return json(
-      {
-        error: {
-          name: "NotFoundError",
-          message: `Access point ${id} not found.`,
-        },
-      },
-      { status: 404 }
-    );
-  }
-  if (!config) {
-    return json(
-      {
-        error: {
-          name: "BadRequestError",
-          message: `Config required.`,
-        },
-      },
-      { status: 400 }
-    );
-  }
-
-  const { codes } = config;
-  if (isCodesMalformed(codes)) {
-    return json(
-      {
-        error: {
-          name: "BadRequestError",
-          message: `Malformed codes. Must be an array of strings containing 3 to 8 digits.`,
-        },
-      },
-      { status: 400 }
-    );
-  }
-
-  const updatedAccessPoint = await db.accessPoint.update({
-    where: { id: accessPoint.id },
-    data: { heartbeatAt: new Date() },
-  });
-
-  const codesAsJson = JSON.stringify([...new Set(codes)].sort());
-  await db.accessPointCachedConfig.upsert({
-    where: { accessPointId: accessPoint.id },
-    update: { codes: codesAsJson },
-    create: {
-      accessPointId: accessPoint.id,
-      codes: codesAsJson,
-    },
-  });
-
-  return json(
-    {
-      config: {
-        codes: accessPoint.accessUsers.map((el) => el.code),
-      },
-    },
-    200
-  );
-  */
 };
