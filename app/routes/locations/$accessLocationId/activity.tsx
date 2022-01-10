@@ -12,6 +12,8 @@ type LoaderData = {
       };
     };
   }>[];
+  //   accessUsersObject: Record<string, Prisma.AccessUserGetPayload<{}>>;
+  accessUsersObject: { [id: string]: Prisma.AccessUserGetPayload<{}> };
 };
 
 export const loader: LoaderFunction = async ({
@@ -38,13 +40,47 @@ export const loader: LoaderFunction = async ({
     },
   });
 
-  return { accessLocation, accessEvents };
+  const accessUserIds = new Set(
+    accessEvents
+      .map((i) => i.accessUserId)
+      .filter((i): i is number => typeof i === "number")
+  );
+  const accessUsers = await db.accessUser.findMany({
+    where: {
+      id: { in: [...accessUserIds] },
+    },
+  });
+  const accessUsersObject = accessUsers.reduce(
+    (acc: { [id: string]: Prisma.AccessUserGetPayload<{}> }, v) => {
+      acc[v.id] = v;
+      return acc;
+    },
+    {}
+  );
+  console.log({ accessEvents, accessUsersObject });
+
+  return { accessLocation, accessEvents, accessUsersObject };
 };
+
+function accessUserDisplay(
+  accessEvent: Prisma.AccessEventGetPayload<{}>,
+  accessUsersObject: LoaderData["accessUsersObject"]
+) {
+  if (!accessEvent.accessUserId) {
+    return "";
+  }
+  const accessUser = accessUsersObject[accessEvent.accessUserId];
+  if (accessUser) {
+    return accessUser.name;
+  }
+  return `Deleted user [${accessEvent.accessUserId}]`;
+}
 
 export default function Index() {
   const navigate = useNavigate();
   const submit = useSubmit();
-  const { accessLocation, accessEvents } = useLoaderData<LoaderData>();
+  const { accessLocation, accessEvents, accessUsersObject } =
+    useLoaderData<LoaderData>();
   return (
     <div className="p-8">
       <div className="flex justify-between">
@@ -95,6 +131,12 @@ export default function Index() {
                 >
                   Code
                 </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  User
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -108,6 +150,9 @@ export default function Index() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {i.code}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {accessUserDisplay(i, accessUsersObject)}
                   </td>
                 </tr>
               ))}
