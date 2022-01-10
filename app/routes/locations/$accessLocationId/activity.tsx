@@ -12,7 +12,6 @@ type LoaderData = {
       };
     };
   }>[];
-  //   accessUsersObject: Record<string, Prisma.AccessUserGetPayload<{}>>;
   accessUsersObject: { [id: string]: Prisma.AccessUserGetPayload<{}> };
 };
 
@@ -63,10 +62,10 @@ export const loader: LoaderFunction = async ({
 };
 
 function accessUserDisplay(
-  accessEvent: Prisma.AccessEventGetPayload<{}>,
+  accessEvent: LoaderData["accessEvents"][number],
   accessUsersObject: LoaderData["accessUsersObject"]
 ) {
-  if (!accessEvent.accessUserId) {
+  if (typeof accessEvent.accessUserId !== "number") {
     return "";
   }
   const accessUser = accessUsersObject[accessEvent.accessUserId];
