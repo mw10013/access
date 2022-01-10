@@ -45,6 +45,7 @@ model AccessPoint {
   accessManager     AccessManager @relation(fields: [accessManagerId], references: [id])
   accessManagerId   Int 
   position          Int
+  accessEvents      AccessEvent[]
 
   @@unique([accessManagerId, position])    
 }
@@ -55,4 +56,14 @@ model AccessPointCachedConfig {
   accessPoint       AccessPoint @relation(fields: [accessPointId], references: [id])
   accessPointId     Int         @unique
   cachedAt          DateTime    @updatedAt
+}
+
+model AccessEvent {
+  id                Int         @id @default(autoincrement())
+  at                DateTime
+  access            String
+  code              String
+  accessUserId      Int? // May be id of access user that no longer exists since deleted.
+  accessPoint       AccessPoint @relation(fields: [accessPointId], references: [id])
+  accessPointId     Int
 }

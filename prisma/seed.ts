@@ -10,20 +10,27 @@ async function seed() {
       enabled: true,
     },
   });
-  const { id: guest1Id } = await db.accessUser.create({
+  const { id: brooklynGuest1Id } = await db.accessUser.create({
     data: {
-      name: "Guest 1",
-      description: "For second floor.",
+      name: "Brooklyn BnB Guest 1",
+      description: "Second floor of Brooklyn BnB.",
       code: "111",
       enabled: true,
     },
   });
-  const { id: guest2Id } = await db.accessUser.create({
+  const { id: brooklynGuest2Id } = await db.accessUser.create({
     data: {
-      name: "Guest 2",
-      description: "For third floor.",
+      name: "Brooklyn BnB Guest 2",
+      description: "Third floor of Brooklyn BnB.",
       code: "222",
       enabled: false,
+    },
+  });
+  const { id: siGuestId } = await db.accessUser.create({
+    data: {
+      name: "Staten Island BnB Guest 1",
+      code: "13795",
+      enabled: true,
     },
   });
   const { id: staffId } = await db.accessUser.create({
@@ -52,8 +59,8 @@ async function seed() {
                   accessUsers: {
                     connect: [
                       { id: masterId },
-                      { id: guest1Id },
-                      { id: guest2Id },
+                      { id: brooklynGuest1Id },
+                      { id: brooklynGuest2Id },
                       { id: staffId },
                       { id: repairId },
                     ],
@@ -64,6 +71,27 @@ async function seed() {
                       accessUsers: `[{"id": ${masterId}, "code": "555"}]`,
                     },
                   },
+                  accessEvents: {
+                    create: [
+                      {
+                        at: new Date(),
+                        access: "deny",
+                        code: "5555555",
+                      },
+                      {
+                        at: new Date(),
+                        access: "grant",
+                        code: "666666",
+                        accessUserId: masterId,
+                      },
+                      {
+                        at: new Date(),
+                        access: "grant",
+                        code: "999999",
+                        accessUserId: 1500,
+                      },
+                    ],
+                  },
                 },
                 {
                   name: "Back Door",
@@ -71,8 +99,8 @@ async function seed() {
                   accessUsers: {
                     connect: [
                       { id: masterId },
-                      { id: guest1Id },
-                      { id: guest2Id },
+                      { id: brooklynGuest1Id },
+                      { id: brooklynGuest2Id },
                       { id: staffId },
                       { id: repairId },
                     ],
@@ -114,7 +142,7 @@ async function seed() {
                   accessUsers: {
                     connect: [
                       { id: masterId },
-                      { id: guest1Id },
+                      { id: brooklynGuest1Id },
                       { id: staffId },
                       { id: repairId },
                     ],
@@ -126,7 +154,7 @@ async function seed() {
                   accessUsers: {
                     connect: [
                       { id: masterId },
-                      { id: guest1Id },
+                      { id: brooklynGuest1Id },
                       { id: staffId },
                       { id: repairId },
                     ],
@@ -138,7 +166,7 @@ async function seed() {
                   accessUsers: {
                     connect: [
                       { id: masterId },
-                      { id: guest2Id },
+                      { id: brooklynGuest2Id },
                       { id: staffId },
                       { id: repairId },
                     ],
@@ -150,7 +178,7 @@ async function seed() {
                   accessUsers: {
                     connect: [
                       { id: masterId },
-                      { id: guest2Id },
+                      { id: brooklynGuest2Id },
                       { id: staffId },
                       { id: repairId },
                     ],
@@ -173,7 +201,7 @@ async function seed() {
   });
   await db.accessLocation.create({
     data: {
-      name: "SI BnB",
+      name: "Staten Island BnB",
       accessManagers: {
         create: [
           {
@@ -183,7 +211,7 @@ async function seed() {
                   name: "Front Door",
                   position: 1,
                   accessUsers: {
-                    connect: [{ id: masterId }],
+                    connect: [{ id: masterId }, { id: siGuestId }],
                   },
                 },
                 {
