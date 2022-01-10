@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 const db = new PrismaClient();
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
 async function seed() {
   const { id: masterId } = await db.accessUser.create({
     data: {
@@ -74,18 +76,18 @@ async function seed() {
                   accessEvents: {
                     create: [
                       {
-                        at: new Date(),
+                        at: new Date(Date.now() - 30 * DAY_MS),
                         access: "deny",
                         code: "5555555",
                       },
                       {
-                        at: new Date(),
+                        at: new Date(Date.now() - 28 * DAY_MS),
                         access: "grant",
                         code: "666666",
                         accessUserId: masterId,
                       },
                       {
-                        at: new Date(),
+                        at: new Date(Date.now() - 25 * DAY_MS),
                         access: "grant",
                         code: "999999",
                         accessUserId: 1500,

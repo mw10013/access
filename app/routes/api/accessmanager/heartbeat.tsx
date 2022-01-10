@@ -2,23 +2,44 @@ import type { ActionFunction } from "remix";
 import { json } from "remix";
 import { db } from "~/utils/db.server";
 import * as _ from "lodash";
-import { identity } from "lodash";
+
+type AccessConfigData = {
+  accessUsers: { id: number; code: string }[];
+};
 
 type HeartbeatRequestData = {
   accessManager: {
     id: number;
     accessPoints: {
       id: number;
-      config: {
-        accessUsers: { id: number; code: string }[];
+      config: AccessConfigData;
+      activity?: {
+        since: string; // ISO date format
+        accessEvents: {
+          at: string; // ISO date format
+          access: "grant" | "deny";
+          code: string;
+          accessUserId?: number;
+        }[];
       };
     }[];
   };
 };
 
-type HeartbeatResponseData = HeartbeatRequestData;
+type HeartbeatResponseData = {
+  accessManager: {
+    id: number;
+    accessPoints: {
+      id: number;
+      config: AccessConfigData;
+      activity: {
+        since: Date;
+      };
+    }[];
+  };
+};
 
-function isHeartbeatData(data: any): data is HeartbeatRequestData {
+function isHeartbeatRequestData(data: any): data is HeartbeatRequestData {
   if (!data || typeof data !== "object") {
     return false;
   }
@@ -42,14 +63,40 @@ function isHeartbeatData(data: any): data is HeartbeatRequestData {
     ) {
       return false;
     }
-    for (const user of accessPoint.config.accessUsers) {
+    for (const accessUserData of accessPoint.config.accessUsers) {
       if (
-        !user ||
-        typeof user !== "object" ||
-        typeof user.id !== "number" ||
-        typeof user.code !== "string"
+        !accessUserData ||
+        typeof accessUserData !== "object" ||
+        typeof accessUserData.id !== "number" ||
+        typeof accessUserData.code !== "string"
       ) {
         return false;
+      }
+    }
+    if (accessPoint.activity) {
+      const activity = accessPoint.activity;
+      if (
+        typeof activity !== "object" ||
+        typeof activity.since !== "string" ||
+        Date.parse(activity.since) === NaN ||
+        !Array.isArray(activity.accessEvents)
+      ) {
+        return false;
+      }
+      for (const accessEventData of activity.accessEvents) {
+        if (
+          accessEventData == null ||
+          typeof accessEventData !== "object" ||
+          typeof accessEventData.at !== "string" ||
+          Date.parse(accessEventData.at) === NaN ||
+          (accessEventData.access !== "grant" &&
+            accessEventData.access !== "deny") ||
+          typeof accessEventData.code !== "string" ||
+          (accessEventData.accessUserId != null &&
+            typeof accessEventData.accessUserId !== "number")
+        ) {
+          return false;
+        }
       }
     }
   }
@@ -58,7 +105,7 @@ function isHeartbeatData(data: any): data is HeartbeatRequestData {
 
 export const action: ActionFunction = async ({ request }) => {
   const data = await request.json();
-  if (!isHeartbeatData(data)) {
+  if (!isHeartbeatRequestData(data)) {
     return json(
       {
         error: {
@@ -75,7 +122,10 @@ export const action: ActionFunction = async ({ request }) => {
     include: {
       accessPoints: {
         orderBy: { position: "asc" },
-        include: { accessUsers: { where: { enabled: true } } },
+        include: {
+          accessUsers: { where: { enabled: true } },
+          accessEvents: { distinct: "accessPointId", orderBy: { at: "desc" } },
+        },
       },
     },
   });
@@ -108,6 +158,8 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
+  // TODO: check that since matches and events later than since.
+
   const updatedAccessManager = await db.accessManager.update({
     where: { id: accessManager.id },
     data: {
@@ -126,6 +178,16 @@ export const action: ActionFunction = async ({ request }) => {
                   create: { accessUsers: accessUsersAsJson },
                 },
               },
+              accessEvents: {
+                create: i.activity
+                  ? i.activity.accessEvents.map((e) => ({
+                      at: e.at,
+                      access: e.access,
+                      code: e.code,
+                      accessUserId: e.accessUserId,
+                    }))
+                  : [],
+              },
             },
           };
         }),
@@ -143,6 +205,10 @@ export const action: ActionFunction = async ({ request }) => {
             id: u.id,
             code: u.code,
           })),
+        },
+        activity: {
+          since:
+            i.accessEvents.length === 0 ? new Date(0) : i.accessEvents[0].at,
         },
       })),
     },

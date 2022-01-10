@@ -6,7 +6,7 @@
 - git clone https://github.com/mw10013/access.git
 - .env file in root with DATABASE_URL="file:./dev.db"
 - npm install
-- copy dev.db to prisma folder or Build Database From Scratch
+- Build Database From Scratch
 - npm run dev
 - localhost:3000
 
@@ -16,8 +16,7 @@
 
 ## Build Database From Scratch
 
-- delete/rename prisma/dev.db if it exists
-- npx prisma db push
+- npx prisma db push --force-reset
 - npx prisma db seed
 
 ## Development Setup Notes
