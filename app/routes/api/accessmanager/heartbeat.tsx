@@ -13,10 +13,6 @@ const AccessConfigData = z.object({
   ),
 });
 
-// type AccessConfigData = {
-//   accessUsers: { id: number; code: string }[];
-// };
-
 type AccessConfigData = z.infer<typeof AccessConfigData>;
 
 const HeartbeatRequestData = z.object({
@@ -31,7 +27,7 @@ const HeartbeatRequestData = z.object({
             since: z.string().nonempty(),
             accessEvents: z.array(
               z.object({
-                at: z.string().nonempty(),
+                at: z.string().nonempty(), // JSON date
                 access: z.literal("grant").or(z.literal("deny")),
                 code: z.string().nonempty(),
                 accessUserId: z.number().int().optional(),
@@ -46,25 +42,6 @@ const HeartbeatRequestData = z.object({
 
 type HeartbeatRequestData = z.infer<typeof HeartbeatRequestData>;
 
-// type HeartbeatRequestData = {
-//   accessManager: {
-//     id: number;
-//     accessPoints: {
-//       id: number;
-//       config: AccessConfigData;
-//       activity?: {
-//         since: string; // ISO date format
-//         accessEvents: {
-//           at: string; // ISO date format
-//           access: "grant" | "deny";
-//           code: string;
-//           accessUserId?: number;
-//         }[];
-//       };
-//     }[];
-//   };
-// };
-
 type HeartbeatResponseData = {
   accessManager: {
     id: number;
@@ -72,91 +49,14 @@ type HeartbeatResponseData = {
       id: number;
       config: AccessConfigData;
       activity: {
-        since: Date;
+        since: string; // JSON date
       };
     }[];
   };
 };
 
-function isHeartbeatRequestData(data: any): data is HeartbeatRequestData {
-  if (!data || typeof data !== "object") {
-    return false;
-  }
-  const { accessManager } = data;
-  if (
-    !accessManager ||
-    typeof accessManager !== "object" ||
-    typeof accessManager.id !== "number" ||
-    !Array.isArray(accessManager.accessPoints)
-  ) {
-    return false;
-  }
-  for (const accessPoint of accessManager.accessPoints) {
-    if (
-      !accessPoint ||
-      typeof accessPoint !== "object" ||
-      typeof accessPoint.id !== "number" ||
-      !accessPoint.config ||
-      typeof accessPoint.config !== "object" ||
-      !Array.isArray(accessPoint.config.accessUsers)
-    ) {
-      return false;
-    }
-    for (const accessUserData of accessPoint.config.accessUsers) {
-      if (
-        !accessUserData ||
-        typeof accessUserData !== "object" ||
-        typeof accessUserData.id !== "number" ||
-        typeof accessUserData.code !== "string"
-      ) {
-        return false;
-      }
-    }
-    if (accessPoint.activity) {
-      const activity = accessPoint.activity;
-      if (
-        typeof activity !== "object" ||
-        typeof activity.since !== "string" ||
-        Date.parse(activity.since) === NaN ||
-        !Array.isArray(activity.accessEvents)
-      ) {
-        return false;
-      }
-      for (const accessEventData of activity.accessEvents) {
-        if (
-          accessEventData == null ||
-          typeof accessEventData !== "object" ||
-          typeof accessEventData.at !== "string" ||
-          Date.parse(accessEventData.at) === NaN ||
-          (accessEventData.access !== "grant" &&
-            accessEventData.access !== "deny") ||
-          typeof accessEventData.code !== "string" ||
-          (accessEventData.accessUserId != null &&
-            typeof accessEventData.accessUserId !== "number")
-        ) {
-          return false;
-        }
-      }
-    }
-  }
-  return true;
-}
-
 export const action: ActionFunction = async ({ request }) => {
-  const rawData = await request.json();
-  const data = HeartbeatRequestData.parse(rawData);
-
-  if (!isHeartbeatRequestData(data)) {
-    return json(
-      {
-        error: {
-          name: "BadRequestError",
-          message: `Malformed data.`,
-        },
-      },
-      { status: 400 }
-    );
-  }
+  const data = HeartbeatRequestData.parse(await request.json());
 
   const accessManager = await db.accessManager.findUnique({
     where: { id: data.accessManager.id },
@@ -248,8 +148,10 @@ export const action: ActionFunction = async ({ request }) => {
           })),
         },
         activity: {
-          since:
-            i.accessEvents.length === 0 ? new Date(0) : i.accessEvents[0].at,
+          since: (i.accessEvents.length === 0
+            ? new Date(0)
+            : i.accessEvents[0].at
+          ).toJSON(),
         },
       })),
     },

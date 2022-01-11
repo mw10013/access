@@ -56,7 +56,7 @@ export const loader: LoaderFunction = async ({
     },
     {}
   );
-  console.log({ accessEvents, accessUsersObject });
+  //   console.log({ accessEvents, accessUsersObject });
 
   return { accessLocation, accessEvents, accessUsersObject };
 };
