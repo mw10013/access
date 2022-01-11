@@ -2,29 +2,68 @@ import type { ActionFunction } from "remix";
 import { json } from "remix";
 import { db } from "~/utils/db.server";
 import * as _ from "lodash";
+import { z } from "zod";
 
-type AccessConfigData = {
-  accessUsers: { id: number; code: string }[];
-};
+const AccessConfigData = z.object({
+  accessUsers: z.array(
+    z.object({
+      id: z.number().int(),
+      code: z.string().nonempty(),
+    })
+  ),
+});
 
-type HeartbeatRequestData = {
-  accessManager: {
-    id: number;
-    accessPoints: {
-      id: number;
-      config: AccessConfigData;
-      activity?: {
-        since: string; // ISO date format
-        accessEvents: {
-          at: string; // ISO date format
-          access: "grant" | "deny";
-          code: string;
-          accessUserId?: number;
-        }[];
-      };
-    }[];
-  };
-};
+// type AccessConfigData = {
+//   accessUsers: { id: number; code: string }[];
+// };
+
+type AccessConfigData = z.infer<typeof AccessConfigData>;
+
+const HeartbeatRequestData = z.object({
+  accessManager: z.object({
+    id: z.number().int(),
+    accessPoints: z.array(
+      z.object({
+        id: z.number().int(),
+        config: AccessConfigData,
+        activity: z
+          .object({
+            since: z.string().nonempty(),
+            accessEvents: z.array(
+              z.object({
+                at: z.string().nonempty(),
+                access: z.literal("grant").or(z.literal("deny")),
+                code: z.string().nonempty(),
+                accessUserId: z.number().int().optional(),
+              })
+            ),
+          })
+          .optional(),
+      })
+    ),
+  }),
+});
+
+type HeartbeatRequestData = z.infer<typeof HeartbeatRequestData>;
+
+// type HeartbeatRequestData = {
+//   accessManager: {
+//     id: number;
+//     accessPoints: {
+//       id: number;
+//       config: AccessConfigData;
+//       activity?: {
+//         since: string; // ISO date format
+//         accessEvents: {
+//           at: string; // ISO date format
+//           access: "grant" | "deny";
+//           code: string;
+//           accessUserId?: number;
+//         }[];
+//       };
+//     }[];
+//   };
+// };
 
 type HeartbeatResponseData = {
   accessManager: {
@@ -104,7 +143,9 @@ function isHeartbeatRequestData(data: any): data is HeartbeatRequestData {
 }
 
 export const action: ActionFunction = async ({ request }) => {
-  const data = await request.json();
+  const rawData = await request.json();
+  const data = HeartbeatRequestData.parse(rawData);
+
   if (!isHeartbeatRequestData(data)) {
     return json(
       {

@@ -34,6 +34,7 @@
 - npm add react-query
 - npm add lodash
 - npm add -D @types/lodash
+- npm add zod
 
 # Welcome to Remix!
 
