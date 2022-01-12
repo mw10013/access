@@ -4,12 +4,21 @@ const db = new PrismaClient();
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 async function seed() {
+  const kody = await db.user.create({
+    data: {
+      username: "kody",
+      // this is a hashed version of "twixrox"
+      passwordHash:
+        "$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu/1u",
+    },
+  });
   const { id: masterId } = await db.accessUser.create({
     data: {
       name: "Master",
       description: "Access to everything",
       code: "555",
       enabled: true,
+      userId: kody.id,
     },
   });
   const { id: brooklynGuest1Id } = await db.accessUser.create({
@@ -18,6 +27,7 @@ async function seed() {
       description: "Second floor of Brooklyn BnB.",
       code: "111",
       enabled: true,
+      userId: kody.id,
     },
   });
   const { id: brooklynGuest2Id } = await db.accessUser.create({
@@ -26,6 +36,7 @@ async function seed() {
       description: "Third floor of Brooklyn BnB.",
       code: "222",
       enabled: false,
+      userId: kody.id,
     },
   });
   const { id: siGuestId } = await db.accessUser.create({
@@ -33,10 +44,11 @@ async function seed() {
       name: "Staten Island BnB Guest 1",
       code: "13795",
       enabled: true,
+      userId: kody.id,
     },
   });
   const { id: staffId } = await db.accessUser.create({
-    data: { name: "Staff", code: "333", enabled: true },
+    data: { name: "Staff", code: "333", enabled: true, userId: kody.id },
   });
   const { id: repairId } = await db.accessUser.create({
     data: {
@@ -44,6 +56,7 @@ async function seed() {
       description: "For repairs as necessary.",
       code: "444",
       enabled: false,
+      userId: kody.id,
     },
   });
 
