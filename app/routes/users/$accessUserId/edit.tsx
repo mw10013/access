@@ -34,15 +34,6 @@ function validateCode(code: string) {
   if (code.length === 0) {
     return "Code is required.";
   }
-  if (!/^\d+$/.test(code)) {
-    return "Code must contain only digits.";
-  }
-  if (code.length < 3) {
-    return "Code must have at least 3 digits";
-  }
-  if (code.length > 8) {
-    return "Code must have no more than 8 digits.";
-  }
 }
 
 type ActionData = {
@@ -61,8 +52,14 @@ export const action: ActionFunction = async ({
   params: { accessUserId },
 }): Promise<Response | ActionData> => {
   if (request.method === "DELETE") {
-    await db.accessUser.delete({
+    await db.accessUser.update({
       where: { id: Number(accessUserId) },
+      data: {
+        deletedAt: new Date(),
+        accessPoints: {
+          set: [],
+        },
+      },
     });
     return redirect("/users");
   }

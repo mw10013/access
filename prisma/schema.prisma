@@ -18,6 +18,7 @@ model AccessUser {
   enabled           Boolean   @default(true)
   accessPoints      AccessPoint[]
   accessEvents      AccessEvent[]
+  deletedAt         DateTime?
 }
 
 model AccessLocation {
