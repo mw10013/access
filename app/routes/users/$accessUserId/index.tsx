@@ -16,8 +16,8 @@ type LoaderData = {
 export const loader: LoaderFunction = async ({
   params: { accessUserId },
 }): Promise<LoaderData> => {
-  const accessUser = await db.accessUser.findUnique({
-    where: { id: Number(accessUserId) },
+  const accessUser = await db.accessUser.findFirst({
+    where: { id: Number(accessUserId), deletedAt: null },
     include: {
       accessPoints: {
         orderBy: [

@@ -11,6 +11,7 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async (): Promise<LoaderData> => {
   const accessUsers = await db.accessUser.findMany({
+    where: { deletedAt: null },
     orderBy: { name: "asc" },
     include: { accessPoints: true },
   });

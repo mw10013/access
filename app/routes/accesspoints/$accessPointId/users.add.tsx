@@ -20,7 +20,7 @@ export const loader: LoaderFunction = async ({
   });
   const notIn = accessPoint.accessUsers.map((el) => el.id);
   const accessUsers = await db.accessUser.findMany({
-    where: { id: { notIn } },
+    where: { id: { notIn }, deletedAt: null },
   });
   return { accessPoint, accessUsers };
 };
