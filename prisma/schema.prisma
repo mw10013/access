@@ -16,7 +16,8 @@ model AccessUser {
   description       String    @default("") 
   code              String    @unique
   enabled           Boolean   @default(true)
-  accessPoints      AccessPoint[] 
+  accessPoints      AccessPoint[]
+  accessEvents      AccessEvent[]
 }
 
 model AccessLocation {
@@ -52,7 +53,7 @@ model AccessPoint {
 
 model AccessPointCachedConfig {
   id                Int         @id @default(autoincrement())
-  accessUsers       String      @default("[]") // json array of users
+  accessUsers       String      @default("[]") // json array of access users
   accessPoint       AccessPoint @relation(fields: [accessPointId], references: [id])
   accessPointId     Int         @unique
   cachedAt          DateTime    @updatedAt
@@ -63,7 +64,8 @@ model AccessEvent {
   at                DateTime
   access            String
   code              String
-  accessUserId      Int? // May be id of access user that no longer exists since deleted.
+  accessUser        AccessUser?  @relation(fields: [accessUserId], references: [id])
+  accessUserId      Int?
   accessPoint       AccessPoint @relation(fields: [accessPointId], references: [id])
   accessPointId     Int
 }

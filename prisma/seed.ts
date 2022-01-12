@@ -89,8 +89,8 @@ async function seed() {
                       {
                         at: new Date(Date.now() - 25 * DAY_MS),
                         access: "grant",
-                        code: "999999",
-                        accessUserId: 1500,
+                        code: "111",
+                        accessUserId: brooklynGuest1Id,
                       },
                     ],
                   },
