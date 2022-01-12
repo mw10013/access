@@ -35,6 +35,8 @@
 - npm add lodash
 - npm add -D @types/lodash
 - npm add zod
+- npm add bcryptjs
+- npm add -D @types/bcryptjs
 
 # Welcome to Remix!
 
