@@ -118,7 +118,7 @@ export default function Index() {
                 <tr key={i.id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <Link
-                      to={`/locations/${i.accessManager.accessLocation.id}`}
+                      to={`/access/locations/${i.accessManager.accessLocation.id}`}
                       className="text-indigo-600 hover:text-indigo-900"
                     >
                       {i.accessManager.accessLocation.name}
@@ -138,7 +138,7 @@ export default function Index() {
                         e.preventDefault();
                         submit(null, {
                           method: "post",
-                          action: `/users/${accessUser.id}/accesspoints/${i.id}/remove`,
+                          action: `/access/users/${accessUser.id}/accesspoints/${i.id}/remove`,
                         });
                       }}
                     >

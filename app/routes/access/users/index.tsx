@@ -66,27 +66,27 @@ export default function Index() {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {accessUsers.map((au) => (
-            <tr key={au.id}>
+          {accessUsers.map((i) => (
+            <tr key={i.id}>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {au.id}
+                {i.id}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {au.name}
+                {i.name}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {au.code}
+                {i.code}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {au.enabled ? "Enabled" : "Disabled"}
+                {i.enabled ? "Enabled" : "Disabled"}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                 <Link
-                  to={`/users/${au.id}`}
+                  to={`${i.id}`}
                   className="text-indigo-600 hover:text-indigo-900"
                 >
                   View
-                </Link>{" "}
+                </Link>
               </td>
             </tr>
           ))}

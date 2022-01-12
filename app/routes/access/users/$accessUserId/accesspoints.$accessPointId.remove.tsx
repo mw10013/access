@@ -11,5 +11,5 @@ export const action: ActionFunction = async ({
       accessPoints: { disconnect: { id: Number(accessPointId) } },
     },
   });
-  return redirect(`/users/${accessUserId}`);
+  return redirect(`/access/users/${accessUserId}`);
 };

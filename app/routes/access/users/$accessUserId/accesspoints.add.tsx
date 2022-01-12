@@ -53,7 +53,7 @@ export const action: ActionFunction = async ({
       data: { accessPoints: { connect: ids.map((id) => ({ id })) } },
     });
   }
-  return redirect(`/users/${accessUserId}`);
+  return redirect(`/access/users/${accessUserId}`);
 };
 
 export default function Add() {
