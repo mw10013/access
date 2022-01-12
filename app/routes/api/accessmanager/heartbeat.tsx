@@ -6,39 +6,50 @@ import { z } from "zod";
 
 const AccessConfigData = z.object({
   accessUsers: z.array(
-    z.object({
-      id: z.number().int(),
-      code: z.string().nonempty(),
-    })
+    z
+      .object({
+        id: z.number().int(),
+        code: z.string().nonempty(),
+      })
+      .strict()
   ),
 });
 
 type AccessConfigData = z.infer<typeof AccessConfigData>;
 
-const HeartbeatRequestData = z.object({
-  accessManager: z.object({
-    id: z.number().int(),
-    accessPoints: z.array(
-      z.object({
+const HeartbeatRequestData = z
+  .object({
+    accessManager: z
+      .object({
         id: z.number().int(),
-        config: AccessConfigData,
-        activity: z
-          .object({
-            since: z.string().nonempty(),
-            accessEvents: z.array(
-              z.object({
-                at: z.string().nonempty(), // JSON date
-                access: z.literal("grant").or(z.literal("deny")),
-                code: z.string().nonempty(),
-                accessUserId: z.number().int().optional(),
-              })
-            ),
-          })
-          .optional(),
+        accessPoints: z.array(
+          z
+            .object({
+              id: z.number().int(),
+              config: AccessConfigData,
+              activity: z
+                .object({
+                  since: z.string().nonempty(),
+                  accessEvents: z.array(
+                    z
+                      .object({
+                        at: z.string().nonempty(), // JSON date
+                        access: z.literal("grant").or(z.literal("deny")),
+                        code: z.string().nonempty(),
+                        accessUserId: z.number().int().optional(),
+                      })
+                      .strict()
+                  ),
+                })
+                .strict()
+                .optional(),
+            })
+            .strict()
+        ),
       })
-    ),
-  }),
-});
+      .strict(),
+  })
+  .strict();
 
 type HeartbeatRequestData = z.infer<typeof HeartbeatRequestData>;
 
