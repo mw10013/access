@@ -1,4 +1,4 @@
-import { Link, Outlet } from "remix";
+import { Link, Outlet, useSubmit } from "remix";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -13,6 +13,7 @@ const navigation = [
 ];
 
 export default function AccessRoute() {
+  const submit = useSubmit();
   return (
     <div>
       <nav className="bg-white border-b border-gray-200">
@@ -41,6 +42,23 @@ export default function AccessRoute() {
                   </Link>
                 ))}
               </div>
+            </div>
+            <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
+              <a
+                href="#"
+                className="whitespace-nowrap text-sm font-medium text-gray-500 hover:text-gray-700"
+                onClick={() =>
+                  submit(null, { action: "/signout", method: "post" })
+                }
+              >
+                Sign out
+              </a>
+              {/* <a
+                href="#"
+                className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+              >
+                Sign up
+              </a> */}
             </div>
           </div>
         </div>

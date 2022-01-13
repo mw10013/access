@@ -4,12 +4,20 @@ const db = new PrismaClient();
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 async function seed() {
-  const kody = await db.user.create({
+  const aunt = await db.user.create({
     data: {
-      username: "kody",
+      email: "aunt@genteelbnb.com",
+      // this is a hashed version of "elegant"
+      passwordHash:
+        "$2a$10$ll1X9ln2B/jwu2465hUBbuRb7SK3KSdL3AhMVvJv7t.M4Zr39Wnka",
+    },
+  });
+  const installer = await db.user.create({
+    data: {
+      email: "installer@install.com",
       // this is a hashed version of "twixrox"
       passwordHash:
-        "$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu/1u",
+        "$2a$10$uU.0Utt.Ne3q0Vl1Ocj0fuoiQ9Q2xcYrcWWMrzxX4o22pyLY3Fr5q",
     },
   });
   const { id: masterId } = await db.accessUser.create({
@@ -18,7 +26,7 @@ async function seed() {
       description: "Access to everything",
       code: "555",
       enabled: true,
-      userId: kody.id,
+      userId: aunt.id,
     },
   });
   const { id: brooklynGuest1Id } = await db.accessUser.create({
@@ -27,7 +35,7 @@ async function seed() {
       description: "Second floor of Brooklyn BnB.",
       code: "111",
       enabled: true,
-      userId: kody.id,
+      userId: aunt.id,
     },
   });
   const { id: brooklynGuest2Id } = await db.accessUser.create({
@@ -36,7 +44,7 @@ async function seed() {
       description: "Third floor of Brooklyn BnB.",
       code: "222",
       enabled: false,
-      userId: kody.id,
+      userId: aunt.id,
     },
   });
   const { id: siGuestId } = await db.accessUser.create({
@@ -44,11 +52,11 @@ async function seed() {
       name: "Staten Island BnB Guest 1",
       code: "13795",
       enabled: true,
-      userId: kody.id,
+      userId: aunt.id,
     },
   });
   const { id: staffId } = await db.accessUser.create({
-    data: { name: "Staff", code: "333", enabled: true, userId: kody.id },
+    data: { name: "Staff", code: "333", enabled: true, userId: aunt.id },
   });
   const { id: repairId } = await db.accessUser.create({
     data: {
@@ -56,7 +64,7 @@ async function seed() {
       description: "For repairs as necessary.",
       code: "444",
       enabled: false,
-      userId: kody.id,
+      userId: aunt.id,
     },
   });
 

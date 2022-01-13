@@ -6,7 +6,7 @@
 - git clone https://github.com/mw10013/access.git
 - .env file in root with
   -- DATABASE_URL="file:./dev.db"
-  -- SESSION_SECRET="any-string"
+  -- SESSION_SECRET="top-secret"
 - npm install
 - Build Database From Scratch
 - npm run dev
