@@ -74,6 +74,8 @@ async function seed() {
       accessManagers: {
         create: [
           {
+            name: "Brooklyn BnB",
+            userId: aunt.id,
             accessPoints: {
               create: [
                 {
@@ -153,15 +155,9 @@ async function seed() {
                     ],
                   },
                 },
-              ],
-            },
-          },
-          {
-            accessPoints: {
-              create: [
                 {
                   name: "2nd Floor Front",
-                  position: 1,
+                  position: 5,
                   accessUsers: {
                     connect: [
                       { id: masterId },
@@ -173,7 +169,7 @@ async function seed() {
                 },
                 {
                   name: "2nd Floor Back",
-                  position: 2,
+                  position: 6,
                   accessUsers: {
                     connect: [
                       { id: masterId },
@@ -185,7 +181,7 @@ async function seed() {
                 },
                 {
                   name: "3rd Floor Front",
-                  position: 3,
+                  position: 7,
                   accessUsers: {
                     connect: [
                       { id: masterId },
@@ -197,7 +193,7 @@ async function seed() {
                 },
                 {
                   name: "3rd Floor Back",
-                  position: 4,
+                  position: 8,
                   accessUsers: {
                     connect: [
                       { id: masterId },
@@ -209,11 +205,11 @@ async function seed() {
                 },
                 {
                   name: "Unused",
-                  position: 5,
+                  position: 9,
                 },
                 {
                   name: "Unused",
-                  position: 6,
+                  position: 10,
                 },
               ],
             },
@@ -228,6 +224,8 @@ async function seed() {
       accessManagers: {
         create: [
           {
+            name: "Staten Island BnB",
+            userId: aunt.id,
             accessPoints: {
               create: [
                 {

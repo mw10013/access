@@ -11,12 +11,13 @@ datasource db {
 }
 
 model User {
-  id            Int      @id @default(autoincrement())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  email         String   @unique
-  passwordHash  String
-  accessUsers   AccessUser[]
+  id              Int      @id @default(autoincrement())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  email           String   @unique
+  passwordHash    String
+  accessUsers     AccessUser[]
+  accessManagers  AccessManager[]
 }
 
 model AccessUser {
@@ -46,6 +47,8 @@ model AccessManager {
   accessLocation    AccessLocation @relation(fields: [accessLocationId], references: [id])
   accessLocationId  Int          
   accessPoints      AccessPoint[] 
+  user              User           @relation(fields: [userId], references: [id])
+  userId            Int
 }
 
 model AccessPoint {

@@ -23,7 +23,6 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
-  console.log({ fn: "dashboard", userId });
   // if (!userId) throw new Response("Unauthorized", { status: 401 });
 
   const accessPoints = await db.accessPoint.findMany({

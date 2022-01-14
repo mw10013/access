@@ -16,8 +16,6 @@ export async function register({ email, password }: SignInForm) {
 
 export async function signIn({ email, password }: SignInForm) {
   const passwordHash = await bcrypt.hash(password, 10);
-  console.log({ password, passwordHash });
-
   const user = await db.user.findUnique({ where: { email } });
   if (!user) return null;
 
@@ -58,7 +56,6 @@ export async function getUserId(request: Request) {
 export async function requireUserId(request: Request) {
   const session = await getUserSession(request);
   const userId = session.get("userId");
-  console.log({ fn: "requireUserId", userId, session });
   if (!userId || typeof userId !== "string") throw redirect("/signin");
   return userId;
 }
@@ -77,23 +74,14 @@ export async function getUser(request: Request) {
 
 export async function signOut(request: Request) {
   const session = await getSession(request.headers.get("Cookie"));
-  // return redirect("/signin", {
-  //   headers: { "Set-Cookie": await destroySession(session) },
-  // });
-  const data = await destroySession(session);
-  console.log({ fn: "signOut", data });
   return redirect("/signin", {
-    headers: { "Set-Cookie": data },
+    headers: { "Set-Cookie": await destroySession(session) },
   });
 }
 
 export async function createUserSession(userId: string, redirectTo: string) {
   const session = await getSession();
   session.set("userId", userId);
-  console.log({
-    fn: "createUserSession",
-    commitSession: await commitSession(session),
-  });
   return redirect(redirectTo, {
     headers: { "Set-Cookie": await commitSession(session) },
   });
