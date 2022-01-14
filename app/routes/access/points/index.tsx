@@ -46,7 +46,7 @@ export default function Index() {
               scope="col"
               className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
-              Manager [ID]
+              Manager
             </th>
             <th
               scope="col"
@@ -73,7 +73,7 @@ export default function Index() {
                   to={`../managers/${i.accessManager.id}`}
                   className="text-indigo-600 hover:text-indigo-900"
                 >
-                  {`${i.accessManager.name} [${i.accessManager.id}]`}
+                  {i.accessManager.name}
                 </Link>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">

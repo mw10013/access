@@ -2,6 +2,7 @@ import type { ActionFunction, LoaderFunction } from "remix";
 import { useLoaderData, Form, useNavigate, redirect } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
+import { requireUserId } from "~/utils/session.server";
 
 type LoaderData = {
   accessPoint: Prisma.AccessPointGetPayload<{
@@ -11,16 +12,22 @@ type LoaderData = {
 };
 
 export const loader: LoaderFunction = async ({
+  request,
   params: { accessPointId },
 }): Promise<LoaderData> => {
-  const accessPoint = await db.accessPoint.findUnique({
-    where: { id: Number(accessPointId) },
+  const userId = await requireUserId(request);
+
+  const accessPoint = await db.accessPoint.findFirst({
+    where: {
+      id: Number(accessPointId),
+      accessManager: { user: { id: Number(userId) } },
+    },
     include: { accessUsers: true },
     rejectOnNotFound: true,
   });
   const notIn = accessPoint.accessUsers.map((el) => el.id);
   const accessUsers = await db.accessUser.findMany({
-    where: { id: { notIn }, deletedAt: null },
+    where: { id: { notIn }, deletedAt: null, user: { id: Number(userId) } },
   });
   return { accessPoint, accessUsers };
 };
@@ -41,12 +48,23 @@ export const action: ActionFunction = async ({
     }
   }
   if (ids.length > 0) {
+    const userId = await requireUserId(request);
+    const accessPoint = await db.accessPoint.findFirst({
+      where: {
+        id: Number(accessPointId),
+        accessManager: { user: { id: Number(userId) } },
+      },
+      rejectOnNotFound: true,
+    });
+
+    // TODO: validate the access user id's: that they belong to the user
+
     await db.accessPoint.update({
-      where: { id: Number(accessPointId) },
+      where: { id: accessPoint.id },
       data: { accessUsers: { connect: ids.map((id) => ({ id })) } },
     });
   }
-  return redirect(`/accesspoints/${accessPointId}`);
+  return redirect(`/access/points/${accessPointId}`);
 };
 
 export default function Add() {
@@ -55,7 +73,7 @@ export default function Add() {
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold leading-7 text-gray-900">
-        Add Access Points{accessPoint.name ? ` to ${accessPoint.name}` : null}
+        Add Users{accessPoint.name ? ` to ${accessPoint.name}` : null}
       </h1>
       <Form method="post" className="mt-4">
         <fieldset>

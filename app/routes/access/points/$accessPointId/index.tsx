@@ -88,11 +88,8 @@ export default function Index() {
             Add
           </button>
         </div>
-        <div className="mt-2 max-w-xl text-sm text-gray-500">
-          <p></p>
-        </div>
         <div className="max-w-7xl mx-auto">
-          <table className="mt-4 max-width-md divide-y divide-gray-200">
+          <table className="max-width-md divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th
