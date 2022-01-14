@@ -19,8 +19,8 @@ export const loader: LoaderFunction = async ({
 }): Promise<LoaderData> => {
   const userId = await requireUserId(request);
 
-  const accessManager = await db.accessManager.findUnique({
-    where: { id: Number(accessManagerId) },
+  const accessManager = await db.accessManager.findFirst({
+    where: { id: Number(accessManagerId), user: { id: Number(userId) } },
     include: {
       accessPoints: {
         include: {
