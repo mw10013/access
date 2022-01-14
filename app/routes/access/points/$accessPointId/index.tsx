@@ -2,24 +2,30 @@ import type { LoaderFunction } from "remix";
 import { useLoaderData, Link, useNavigate, useSubmit } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
+import { requireUserId } from "~/utils/session.server";
 
 type LoaderData = {
   accessPoint: Prisma.AccessPointGetPayload<{
     include: {
       accessUsers: true;
-      accessManager: { include: { accessLocation: true } };
+      accessManager: true;
     };
   }>;
 };
 
 export const loader: LoaderFunction = async ({
+  request,
   params: { accessPointId },
 }): Promise<LoaderData> => {
-  const accessPoint = await db.accessPoint.findUnique({
-    where: { id: Number(accessPointId) },
+  const userId = await requireUserId(request);
+  const accessPoint = await db.accessPoint.findFirst({
+    where: {
+      id: Number(accessPointId),
+      accessManager: { user: { id: Number(userId) } },
+    },
     include: {
       accessUsers: { orderBy: { name: "asc" } },
-      accessManager: { include: { accessLocation: true } },
+      accessManager: true,
     },
     rejectOnNotFound: true,
   });
@@ -36,25 +42,33 @@ export default function Index() {
         <h1 className="text-2xl font-bold leading-7 text-gray-900">
           Access Point
         </h1>
-        <button
-          type="button"
-          className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
-          onClick={() => navigate("edit")}
-        >
-          Edit
-        </button>
+        <div className="flex space-x-2">
+          <button
+            type="button"
+            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
+            onClick={() => navigate("raw")}
+          >
+            Raw
+          </button>
+          <button
+            type="button"
+            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
+            onClick={() => navigate("edit")}
+          >
+            Edit
+          </button>
+        </div>
       </div>
       <div className="flex mt-1 space-x-10 text-sm text-gray-500">
-        <div>Location: {accessPoint.accessManager.accessLocation.name}</div>
         <div className="text-gray-900">{accessPoint.name}</div>
         <div>ID: {accessPoint.id}</div>
         <div>
-          Manager ID:{" "}
+          Manager:{" "}
           <Link
-            to={`/managers/${accessPoint.accessManagerId}`}
+            to={`../managers/${accessPoint.accessManagerId}`}
             className="text-indigo-600 hover:text-indigo-900"
           >
-            {accessPoint.accessManagerId}
+            {accessPoint.accessManager.name}
           </Link>
         </div>
         <div>Position: {accessPoint.position}</div>
@@ -69,7 +83,7 @@ export default function Index() {
           <button
             type="button"
             className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
-            onClick={() => navigate("./users/add")}
+            onClick={() => navigate("users/add")}
           >
             Add
           </button>
@@ -124,7 +138,7 @@ export default function Index() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     <Link
-                      to={`/users/${i.id}`}
+                      to={`../users/${i.id}`}
                       className="text-indigo-600 hover:text-indigo-900"
                     >
                       {i.name}
@@ -147,7 +161,7 @@ export default function Index() {
                         e.preventDefault();
                         submit(null, {
                           method: "post",
-                          action: `/accesspoints/${accessPoint.id}/users/${i.id}/remove`,
+                          action: `/access/points/${accessPoint.id}/users/${i.id}/remove`,
                         });
                       }}
                     >
