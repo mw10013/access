@@ -2,14 +2,18 @@ import type { ActionFunction, LoaderFunction } from "remix";
 import { useActionData, useLoaderData, Form, useSubmit, redirect } from "remix";
 import type { AccessManager } from "@prisma/client";
 import { db } from "~/utils/db.server";
+import { requireUserId } from "~/utils/session.server";
 
 type LoaderData = { accessManager: AccessManager };
 
 export const loader: LoaderFunction = async ({
+  request,
   params: { accessManagerId },
 }): Promise<LoaderData> => {
-  const accessManager = await db.accessManager.findUnique({
-    where: { id: Number(accessManagerId) },
+  const userId = await requireUserId(request);
+
+  const accessManager = await db.accessManager.findFirst({
+    where: { id: Number(accessManagerId), user: { id: Number(userId) } },
     rejectOnNotFound: true,
   });
   return { accessManager };
@@ -43,7 +47,13 @@ export const action: ActionFunction = async ({
   request,
   params: { accessManagerId },
 }): Promise<Response | ActionData> => {
-  
+  const userId = await requireUserId(request);
+
+  await db.accessManager.findFirst({
+    where: { id: Number(accessManagerId), user: { id: Number(userId) } },
+    rejectOnNotFound: true,
+  });
+
   const formData = await request.formData();
   // Node FormData get() seems to return null for empty string value.
   // Object.fromEntries(formData): if formData.entries() has 2 entries with the same key, only 1 is taken.
@@ -66,7 +76,7 @@ export const action: ActionFunction = async ({
     data: { name, description },
   });
 
-  return redirect(`/managers/${accessManagerId}`);
+  return redirect(`/access/managers/${accessManagerId}`);
 };
 
 export default function Edit() {

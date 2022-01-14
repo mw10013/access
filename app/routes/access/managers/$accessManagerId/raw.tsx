@@ -3,23 +3,25 @@ import type { LoaderFunction } from "remix";
 import { useLoaderData, useNavigate } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
+import { requireUserId } from "~/utils/session.server";
 
 type LoaderData = {
   accessManager: Prisma.AccessManagerGetPayload<{
     include: {
       accessPoints: { include: { accessUsers: true; cachedConfig: true } };
-      accessLocation: true;
     };
   }>;
 };
 
 export const loader: LoaderFunction = async ({
+  request,
   params: { accessManagerId },
 }): Promise<LoaderData> => {
+  const userId = await requireUserId(request);
+
   const accessManager = await db.accessManager.findUnique({
     where: { id: Number(accessManagerId) },
     include: {
-      accessLocation: true,
       accessPoints: {
         include: {
           accessUsers: { orderBy: { name: "asc" } },
