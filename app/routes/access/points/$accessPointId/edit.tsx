@@ -2,14 +2,20 @@ import type { ActionFunction, LoaderFunction } from "remix";
 import { useActionData, useLoaderData, Form, useSubmit, redirect } from "remix";
 import type { AccessPoint } from "@prisma/client";
 import { db } from "~/utils/db.server";
+import { requireUserId } from "~/utils/session.server";
 
 type LoaderData = { accessPoint: AccessPoint };
 
 export const loader: LoaderFunction = async ({
+  request,
   params: { accessPointId },
 }): Promise<LoaderData> => {
-  const accessPoint = await db.accessPoint.findUnique({
-    where: { id: Number(accessPointId) },
+  const userId = await requireUserId(request);
+  const accessPoint = await db.accessPoint.findFirst({
+    where: {
+      id: Number(accessPointId),
+      accessManager: { user: { id: Number(userId) } },
+    },
     rejectOnNotFound: true,
   });
   return { accessPoint };
@@ -43,14 +49,6 @@ export const action: ActionFunction = async ({
   request,
   params: { accessPointId },
 }): Promise<Response | ActionData> => {
-  /*    
-  if (request.method === "DELETE") {
-    await db.accessPoint.delete({
-      where: { id: Number(accessPointId) },
-    });
-    return redirect("/users");
-  }
-*/
   const formData = await request.formData();
   // Node FormData get() seems to return null for empty string value.
   // Object.fromEntries(formData): if formData.entries() has 2 entries with the same key, only 1 is taken.
@@ -68,12 +66,20 @@ export const action: ActionFunction = async ({
     return { fieldErrors, fieldValues };
   }
 
+  const userId = await requireUserId(request);
+  await db.accessPoint.findFirst({
+    where: {
+      id: Number(accessPointId),
+      accessManager: { user: { id: Number(userId) } },
+    },
+    rejectOnNotFound: true,
+  });
   await db.accessPoint.update({
     where: { id: Number(accessPointId) },
     data: { name, description },
   });
 
-  return redirect(`/accesspoints/${accessPointId}`);
+  return redirect(`/access/points/${accessPointId}`);
 };
 
 export default function Edit() {

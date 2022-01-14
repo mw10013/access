@@ -47,13 +47,6 @@ export const action: ActionFunction = async ({
   request,
   params: { accessManagerId },
 }): Promise<Response | ActionData> => {
-  const userId = await requireUserId(request);
-
-  await db.accessManager.findFirst({
-    where: { id: Number(accessManagerId), user: { id: Number(userId) } },
-    rejectOnNotFound: true,
-  });
-
   const formData = await request.formData();
   // Node FormData get() seems to return null for empty string value.
   // Object.fromEntries(formData): if formData.entries() has 2 entries with the same key, only 1 is taken.
@@ -71,6 +64,11 @@ export const action: ActionFunction = async ({
     return { fieldErrors, fieldValues };
   }
 
+  const userId = await requireUserId(request);
+  await db.accessManager.findFirst({
+    where: { id: Number(accessManagerId), user: { id: Number(userId) } },
+    rejectOnNotFound: true,
+  });
   await db.accessManager.update({
     where: { id: Number(accessManagerId) },
     data: { name, description },
