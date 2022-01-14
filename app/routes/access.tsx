@@ -7,9 +7,8 @@ function classNames(...classes: string[]) {
 const navigation = [
   { name: "Dashboard", to: "dashboard", current: false },
   { name: "Users", to: "users", current: false },
-  { name: "Locations", to: "locations", current: false },
   { name: "Managers", to: "managers", current: false },
-  { name: "Access Points", to: "accessPoints", current: false },
+  { name: "Access Points", to: "points", current: false },
 ];
 
 export default function AccessRoute() {

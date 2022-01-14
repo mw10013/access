@@ -71,226 +71,201 @@ async function seed() {
     data: { name: "Test", code: "333", enabled: true, userId: installer.id },
   });
 
-  await db.accessLocation.create({
+  await db.accessManager.create({
     data: {
       name: "Brooklyn BnB",
-      accessManagers: {
+      userId: aunt.id,
+      accessPoints: {
         create: [
           {
-            name: "Brooklyn BnB",
-            userId: aunt.id,
-            accessPoints: {
+            name: "Front Door",
+            position: 1,
+            accessUsers: {
+              connect: [
+                { id: masterId },
+                { id: brooklynGuest1Id },
+                { id: brooklynGuest2Id },
+                { id: staffId },
+                { id: repairId },
+              ],
+            },
+            heartbeatAt: new Date(),
+            cachedConfig: {
+              create: {
+                accessUsers: `[{"id": ${masterId}, "code": "555"}]`,
+              },
+            },
+            accessEvents: {
               create: [
                 {
-                  name: "Front Door",
-                  position: 1,
-                  accessUsers: {
-                    connect: [
-                      { id: masterId },
-                      { id: brooklynGuest1Id },
-                      { id: brooklynGuest2Id },
-                      { id: staffId },
-                      { id: repairId },
-                    ],
-                  },
-                  heartbeatAt: new Date(),
-                  cachedConfig: {
-                    create: {
-                      accessUsers: `[{"id": ${masterId}, "code": "555"}]`,
-                    },
-                  },
-                  accessEvents: {
-                    create: [
-                      {
-                        at: new Date(Date.now() - 30 * DAY_MS),
-                        access: "deny",
-                        code: "5555555",
-                      },
-                      {
-                        at: new Date(Date.now() - 28 * DAY_MS),
-                        access: "grant",
-                        code: "666666",
-                        accessUserId: masterId,
-                      },
-                      {
-                        at: new Date(Date.now() - 25 * DAY_MS),
-                        access: "grant",
-                        code: "111",
-                        accessUserId: brooklynGuest1Id,
-                      },
-                    ],
-                  },
+                  at: new Date(Date.now() - 30 * DAY_MS),
+                  access: "deny",
+                  code: "5555555",
                 },
                 {
-                  name: "Back Door",
-                  position: 2,
-                  accessUsers: {
-                    connect: [
-                      { id: masterId },
-                      { id: brooklynGuest1Id },
-                      { id: brooklynGuest2Id },
-                      { id: staffId },
-                      { id: repairId },
-                    ],
-                  },
+                  at: new Date(Date.now() - 28 * DAY_MS),
+                  access: "grant",
+                  code: "666666",
+                  accessUserId: masterId,
                 },
                 {
-                  name: "Basement Outside",
-                  description: "Guests are not allowed.",
-                  position: 3,
-                  accessUsers: {
-                    connect: [
-                      { id: masterId },
-                      { id: staffId },
-                      { id: repairId },
-                    ],
-                  },
-                },
-                {
-                  name: "Basement Inside",
-                  description: "Guests are not allowed.",
-                  position: 4,
-                  accessUsers: {
-                    connect: [
-                      { id: masterId },
-                      { id: staffId },
-                      { id: repairId },
-                    ],
-                  },
-                },
-                {
-                  name: "2nd Floor Front",
-                  position: 5,
-                  accessUsers: {
-                    connect: [
-                      { id: masterId },
-                      { id: brooklynGuest1Id },
-                      { id: staffId },
-                      { id: repairId },
-                    ],
-                  },
-                },
-                {
-                  name: "2nd Floor Back",
-                  position: 6,
-                  accessUsers: {
-                    connect: [
-                      { id: masterId },
-                      { id: brooklynGuest1Id },
-                      { id: staffId },
-                      { id: repairId },
-                    ],
-                  },
-                },
-                {
-                  name: "3rd Floor Front",
-                  position: 7,
-                  accessUsers: {
-                    connect: [
-                      { id: masterId },
-                      { id: brooklynGuest2Id },
-                      { id: staffId },
-                      { id: repairId },
-                    ],
-                  },
-                },
-                {
-                  name: "3rd Floor Back",
-                  position: 8,
-                  accessUsers: {
-                    connect: [
-                      { id: masterId },
-                      { id: brooklynGuest2Id },
-                      { id: staffId },
-                      { id: repairId },
-                    ],
-                  },
-                },
-                {
-                  name: "Unused",
-                  position: 9,
-                },
-                {
-                  name: "Unused",
-                  position: 10,
+                  at: new Date(Date.now() - 25 * DAY_MS),
+                  access: "grant",
+                  code: "111",
+                  accessUserId: brooklynGuest1Id,
                 },
               ],
             },
+          },
+          {
+            name: "Back Door",
+            position: 2,
+            accessUsers: {
+              connect: [
+                { id: masterId },
+                { id: brooklynGuest1Id },
+                { id: brooklynGuest2Id },
+                { id: staffId },
+                { id: repairId },
+              ],
+            },
+          },
+          {
+            name: "Basement Outside",
+            description: "Guests are not allowed.",
+            position: 3,
+            accessUsers: {
+              connect: [{ id: masterId }, { id: staffId }, { id: repairId }],
+            },
+          },
+          {
+            name: "Basement Inside",
+            description: "Guests are not allowed.",
+            position: 4,
+            accessUsers: {
+              connect: [{ id: masterId }, { id: staffId }, { id: repairId }],
+            },
+          },
+          {
+            name: "2nd Floor Front",
+            position: 5,
+            accessUsers: {
+              connect: [
+                { id: masterId },
+                { id: brooklynGuest1Id },
+                { id: staffId },
+                { id: repairId },
+              ],
+            },
+          },
+          {
+            name: "2nd Floor Back",
+            position: 6,
+            accessUsers: {
+              connect: [
+                { id: masterId },
+                { id: brooklynGuest1Id },
+                { id: staffId },
+                { id: repairId },
+              ],
+            },
+          },
+          {
+            name: "3rd Floor Front",
+            position: 7,
+            accessUsers: {
+              connect: [
+                { id: masterId },
+                { id: brooklynGuest2Id },
+                { id: staffId },
+                { id: repairId },
+              ],
+            },
+          },
+          {
+            name: "3rd Floor Back",
+            position: 8,
+            accessUsers: {
+              connect: [
+                { id: masterId },
+                { id: brooklynGuest2Id },
+                { id: staffId },
+                { id: repairId },
+              ],
+            },
+          },
+          {
+            name: "Unused",
+            position: 9,
+          },
+          {
+            name: "Unused",
+            position: 10,
           },
         ],
       },
     },
   });
-  await db.accessLocation.create({
+
+  await db.accessManager.create({
     data: {
       name: "Staten Island BnB",
-      accessManagers: {
+      userId: aunt.id,
+      accessPoints: {
         create: [
           {
-            name: "Staten Island BnB",
-            userId: aunt.id,
-            accessPoints: {
-              create: [
-                {
-                  name: "Front Door",
-                  position: 1,
-                  accessUsers: {
-                    connect: [{ id: masterId }, { id: siGuestId }],
-                  },
-                },
-                {
-                  name: "Unused",
-                  position: 2,
-                },
-                {
-                  name: "Unused",
-                  position: 3,
-                },
-                {
-                  name: "Unused",
-                  position: 4,
-                },
-              ],
+            name: "Front Door",
+            position: 1,
+            accessUsers: {
+              connect: [{ id: masterId }, { id: siGuestId }],
             },
+          },
+          {
+            name: "Unused",
+            position: 2,
+          },
+          {
+            name: "Unused",
+            position: 3,
+          },
+          {
+            name: "Unused",
+            position: 4,
           },
         ],
       },
     },
   });
-  await db.accessLocation.create({
+
+  await db.accessManager.create({
     data: {
-      name: "Installation Site",
-      accessManagers: {
-        create: {
-          name: "Install Mgr",
-          userId: installer.id,
-          accessPoints: {
-            create: [
-              {
-                name: "Front Door",
-                position: 1,
-                accessUsers: {
-                  connect: { id: testerId },
-                },
-              },
-              {
-                name: "Back Door",
-                position: 2,
-                accessUsers: {
-                  connect: { id: testerId },
-                },
-              },
-              {
-                name: "Unused",
-                position: 3,
-              },
-              {
-                name: "Unused",
-                position: 4,
-              },
-            ],
+      name: "Install Mgr",
+      userId: installer.id,
+      accessPoints: {
+        create: [
+          {
+            name: "Front Door",
+            position: 1,
+            accessUsers: {
+              connect: { id: testerId },
+            },
           },
-        },
+          {
+            name: "Back Door",
+            position: 2,
+            accessUsers: {
+              connect: { id: testerId },
+            },
+          },
+          {
+            name: "Unused",
+            position: 3,
+          },
+          {
+            name: "Unused",
+            position: 4,
+          },
+        ],
       },
     },
   });

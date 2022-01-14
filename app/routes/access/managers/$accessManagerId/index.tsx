@@ -2,26 +2,28 @@ import type { LoaderFunction } from "remix";
 import { useLoaderData, Link, useNavigate, useSubmit } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
+import { requireUserId } from "~/utils/session.server";
 
 type LoaderData = {
   accessManager: Prisma.AccessManagerGetPayload<{
     include: {
       accessPoints: true;
-      accessLocation: true;
     };
   }>;
 };
 
 export const loader: LoaderFunction = async ({
+  request,
   params: { accessManagerId },
 }): Promise<LoaderData> => {
+  const userId = await requireUserId(request);
+
   const accessManager = await db.accessManager.findUnique({
     where: { id: Number(accessManagerId) },
     include: {
       accessPoints: {
         orderBy: { position: "asc" },
       },
-      accessLocation: true,
     },
     rejectOnNotFound: true,
   });
@@ -30,7 +32,6 @@ export const loader: LoaderFunction = async ({
 
 export default function Index() {
   const navigate = useNavigate();
-  const submit = useSubmit();
   const { accessManager } = useLoaderData<LoaderData>();
   return (
     <div className="p-8">
@@ -39,41 +40,32 @@ export default function Index() {
           Access Manager
         </h1>
         <div className="flex space-x-2">
-        <button
-          type="button"
-          className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
-          onClick={() => navigate("mock")}
-        >
-          Mock
-        </button>
-        <button
-          type="button"
-          className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
-          onClick={() => navigate("raw")}
-        >
-          Raw
-        </button>
-        <button
-          type="button"
-          className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
-          onClick={() => navigate("edit")}
-        >
-          Edit
-        </button>
-      </div>
+          <button
+            type="button"
+            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
+            onClick={() => navigate("mock")}
+          >
+            Mock
+          </button>
+          <button
+            type="button"
+            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
+            onClick={() => navigate("raw")}
+          >
+            Raw
+          </button>
+          <button
+            type="button"
+            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
+            onClick={() => navigate("edit")}
+          >
+            Edit
+          </button>
+        </div>
       </div>
       <div className="flex mt-1 space-x-10 text-sm text-gray-500">
         <div>{accessManager.name}</div>
         <div>ID: {accessManager.id}</div>
-        <div>
-          Location:{" "}
-          <Link
-            to={`/locations/${accessManager.accessLocationId}`}
-            className="text-indigo-600 hover:text-indigo-900"
-          >
-            {accessManager.accessLocation.name}
-          </Link>
-        </div>
       </div>
 
       {accessManager.description ? (
@@ -143,7 +135,7 @@ export default function Index() {
             </tbody>
           </table>
         </div>
-      </div>    
+      </div>
     </div>
   );
 }

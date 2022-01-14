@@ -14,7 +14,6 @@ type LoaderData = {
       accessManager: {
         include: {
           user: true;
-          accessLocation: true;
         };
       };
       cachedConfig: true;
@@ -39,7 +38,6 @@ export const loader: LoaderFunction = async ({ request }) => {
       accessManager: {
         include: {
           user: true,
-          accessLocation: true,
         },
       },
       cachedConfig: true,
@@ -164,7 +162,7 @@ export default function Index() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                   <Link
-                    to={`/accesspoints/${i.id}`}
+                    to={`../points/${i.id}`}
                     className="text-indigo-600 hover:text-indigo-900"
                   >
                     View
