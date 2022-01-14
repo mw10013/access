@@ -13,6 +13,7 @@ type LoaderData = {
       accessUsers: true;
       accessManager: {
         include: {
+          user: true;
           accessLocation: true;
         };
       };
@@ -26,21 +27,24 @@ export const loader: LoaderFunction = async ({ request }) => {
   // if (!userId) throw new Response("Unauthorized", { status: 401 });
 
   const accessPoints = await db.accessPoint.findMany({
+    where: {
+      accessManager: {
+        userId: Number(userId),
+      },
+    },
     include: {
       accessUsers: {
         where: { enabled: true },
       },
       accessManager: {
         include: {
+          user: true,
           accessLocation: true,
         },
       },
       cachedConfig: true,
     },
-    orderBy: [
-      { accessManager: { accessLocation: { name: "asc" } } },
-      { name: "asc" },
-    ],
+    orderBy: [{ accessManager: { name: "asc" } }, { name: "asc" }],
   });
   return { accessPoints };
 };
@@ -105,7 +109,7 @@ export default function Index() {
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Location
+                Manager
               </th>
               <th
                 scope="col"
@@ -135,10 +139,10 @@ export default function Index() {
               <tr key={i.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <Link
-                    to={`/locations/${i.accessManager.accessLocation.id}`}
+                    to={`../managers/${i.accessManager.id}`}
                     className="text-indigo-600 hover:text-indigo-900"
                   >
-                    {i.accessManager.accessLocation.name}
+                    {i.accessManager.name}
                   </Link>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">

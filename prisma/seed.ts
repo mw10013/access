@@ -67,6 +67,9 @@ async function seed() {
       userId: aunt.id,
     },
   });
+  const { id: testerId } = await db.accessUser.create({
+    data: { name: "Test", code: "333", enabled: true, userId: installer.id },
+  });
 
   await db.accessLocation.create({
     data: {
@@ -251,6 +254,43 @@ async function seed() {
             },
           },
         ],
+      },
+    },
+  });
+  await db.accessLocation.create({
+    data: {
+      name: "Installation Site",
+      accessManagers: {
+        create: {
+          name: "Install Mgr",
+          userId: installer.id,
+          accessPoints: {
+            create: [
+              {
+                name: "Front Door",
+                position: 1,
+                accessUsers: {
+                  connect: { id: testerId },
+                },
+              },
+              {
+                name: "Back Door",
+                position: 2,
+                accessUsers: {
+                  connect: { id: testerId },
+                },
+              },
+              {
+                name: "Unused",
+                position: 3,
+              },
+              {
+                name: "Unused",
+                position: 4,
+              },
+            ],
+          },
+        },
       },
     },
   });
