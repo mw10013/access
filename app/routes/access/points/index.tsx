@@ -2,22 +2,28 @@ import type { LoaderFunction } from "remix";
 import { useLoaderData, Link, useNavigate } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
+import { requireUserId } from "~/utils/session.server";
 
 type LoaderData = {
   accessPoints: Prisma.AccessPointGetPayload<{
     include: {
       accessUsers: true;
-      accessManager: { include: { accessLocation: true } };
+      accessManager: true;
     };
   }>[];
 };
 
-export const loader: LoaderFunction = async (): Promise<LoaderData> => {
+export const loader: LoaderFunction = async ({
+  request,
+}): Promise<LoaderData> => {
+  const userId = await requireUserId(request);
+
   const accessPoints = await db.accessPoint.findMany({
-    orderBy: { name: "asc" },
+    where: { accessManager: { user: { id: Number(userId) } } },
+    orderBy: [{ accessManager: { name: "asc" } }, { name: "asc" }],
     include: {
       accessUsers: { orderBy: { name: "asc" } },
-      accessManager: { include: { accessLocation: true } },
+      accessManager: true,
     },
   });
   return { accessPoints };
@@ -32,13 +38,6 @@ export default function Index() {
         <h1 className="text-2xl font-bold leading-7 text-gray-900">
           Access Points
         </h1>
-        {/* <button
-          type="button"
-          className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
-          onClick={() => navigate("create")}
-        >
-          Create
-        </button> */}
       </div>
       <table className="mt-4 max-width-md divide-y divide-gray-200">
         <thead className="bg-gray-50">
@@ -47,7 +46,7 @@ export default function Index() {
               scope="col"
               className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
-              Location
+              Manager [ID]
             </th>
             <th
               scope="col"
@@ -61,13 +60,6 @@ export default function Index() {
             >
               Description
             </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Manager [ID]
-            </th>
-
             <th scope="col" className="relative px-6 py-3">
               <span className="sr-only">View</span>
             </th>
@@ -78,10 +70,10 @@ export default function Index() {
             <tr key={i.id}>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 <Link
-                  to={`/locations/${i.accessManager.accessLocation.id}`}
+                  to={`../managers/${i.accessManager.id}`}
                   className="text-indigo-600 hover:text-indigo-900"
                 >
-                  {i.accessManager.accessLocation.name}
+                  {`${i.accessManager.name} [${i.accessManager.id}]`}
                 </Link>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -90,17 +82,9 @@ export default function Index() {
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {i.description}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                <Link
-                  to={`/managers/${i.accessManager.id}`}
-                  className="text-indigo-600 hover:text-indigo-900"
-                >
-                  {`${i.accessManager.name} [${i.accessManager.id}]`}
-                </Link>
-              </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                 <Link
-                  to={`/accesspoints/${i.id}`}
+                  to={`${i.id}`}
                   className="text-indigo-600 hover:text-indigo-900"
                 >
                   View
