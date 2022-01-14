@@ -1,30 +1,40 @@
 import type { LoaderFunction } from "remix";
-import { useLoaderData, Link, useNavigate, useSubmit } from "remix";
+import {
+  useLoaderData,
+  Link,
+  useNavigate,
+  useSubmit,
+  useFormAction,
+} from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
+import { requireUserId } from "~/utils/session.server";
 
 type LoaderData = {
   accessUser: Prisma.AccessUserGetPayload<{
     include: {
       accessPoints: {
-        include: { accessManager: { include: { accessLocation: true } } };
+        include: { accessManager: true };
       };
     };
   }>;
 };
 
 export const loader: LoaderFunction = async ({
+  request,
   params: { accessUserId },
 }): Promise<LoaderData> => {
+  const userId = await requireUserId(request);
   const accessUser = await db.accessUser.findFirst({
-    where: { id: Number(accessUserId), deletedAt: null },
+    where: {
+      id: Number(accessUserId),
+      deletedAt: null,
+      user: { id: Number(userId) },
+    },
     include: {
       accessPoints: {
-        orderBy: [
-          { accessManager: { accessLocation: { name: "asc" } } },
-          { name: "asc" },
-        ],
-        include: { accessManager: { include: { accessLocation: true } } },
+        orderBy: [{ accessManager: { name: "asc" } }, { name: "asc" }],
+        include: { accessManager: true },
       },
     },
     rejectOnNotFound: true,
@@ -35,6 +45,7 @@ export const loader: LoaderFunction = async ({
 export default function Index() {
   const navigate = useNavigate();
   const submit = useSubmit();
+  const removeFormActionBase = useFormAction("points");
   const { accessUser } = useLoaderData<LoaderData>();
   return (
     <div className="p-8">
@@ -78,7 +89,7 @@ export default function Index() {
           <button
             type="button"
             className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
-            onClick={() => navigate("./accesspoints/add")}
+            onClick={() => navigate("points/add")}
           >
             Add
           </button>
@@ -94,7 +105,7 @@ export default function Index() {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Location
+                  Manager
                 </th>
                 <th
                   scope="col"
@@ -118,10 +129,10 @@ export default function Index() {
                 <tr key={i.id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <Link
-                      to={`/access/locations/${i.accessManager.accessLocation.id}`}
+                      to={`../managers/${i.accessManager.id}`}
                       className="text-indigo-600 hover:text-indigo-900"
                     >
-                      {i.accessManager.accessLocation.name}
+                      {i.accessManager.name}
                     </Link>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium  text-gray-900">
@@ -138,7 +149,7 @@ export default function Index() {
                         e.preventDefault();
                         submit(null, {
                           method: "post",
-                          action: `/access/users/${accessUser.id}/accesspoints/${i.id}/remove`,
+                          action: `${removeFormActionBase}/${i.id}/remove`,
                         });
                       }}
                     >

@@ -2,18 +2,19 @@ import type { LoaderFunction } from "remix";
 import { useLoaderData, Link, useNavigate } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
+import { requireUserId } from "~/utils/session.server";
 
 type LoaderData = {
-  accessUsers: Prisma.AccessUserGetPayload<{
-    include: { accessPoints: true };
-  }>[];
+  accessUsers: Prisma.AccessUserGetPayload<{}>[];
 };
 
-export const loader: LoaderFunction = async (): Promise<LoaderData> => {
+export const loader: LoaderFunction = async ({
+  request,
+}): Promise<LoaderData> => {
+  const userId = await requireUserId(request);
   const accessUsers = await db.accessUser.findMany({
-    where: { deletedAt: null },
+    where: { deletedAt: null, user: { id: Number(userId) } },
     orderBy: { name: "asc" },
-    include: { accessPoints: true },
   });
   return { accessUsers };
 };
@@ -82,7 +83,7 @@ export default function Index() {
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                 <Link
-                  to={`${i.id}`}
+                  to={i.id.toString()}
                   className="text-indigo-600 hover:text-indigo-900"
                 >
                   View

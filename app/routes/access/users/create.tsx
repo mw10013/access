@@ -1,8 +1,8 @@
 import * as React from "react";
-import type { ActionFunction, LoaderFunction } from "remix";
-import { useActionData, useLoaderData, Form, redirect } from "remix";
-import { Prisma } from "@prisma/client";
+import type { ActionFunction } from "remix";
+import { useActionData, Form, redirect } from "remix";
 import { db } from "~/utils/db.server";
+import { requireUserId } from "~/utils/session.server";
 
 function validateName(name: string) {
   if (name.length === 0) {
@@ -70,8 +70,15 @@ export const action: ActionFunction = async ({
     return { fieldErrors, fieldValues };
   }
 
+  const userId = await requireUserId(request);
   const accessUser = await db.accessUser.create({
-    data: { name, description, code, enabled: !!enabled },
+    data: {
+      name,
+      description,
+      code,
+      enabled: !!enabled,
+      userId: Number(userId),
+    },
   });
 
   return redirect(`${accessUser.id}`);

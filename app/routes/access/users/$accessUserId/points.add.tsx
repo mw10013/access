@@ -2,32 +2,32 @@ import type { ActionFunction, LoaderFunction } from "remix";
 import { useLoaderData, Form, useNavigate, redirect } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
+import { requireUserId } from "~/utils/session.server";
 
 type LoaderData = {
   accessUser: Prisma.AccessUserGetPayload<{
     include: { accessPoints: true };
   }>;
   accessPoints: Prisma.AccessPointGetPayload<{
-    include: { accessManager: { include: { accessLocation: true } } };
+    include: { accessManager: true };
   }>[];
 };
 
 export const loader: LoaderFunction = async ({
+  request,
   params: { accessUserId: id },
 }): Promise<LoaderData> => {
-  const accessUser = await db.accessUser.findUnique({
-    where: { id: Number(id) },
+  const userId = await requireUserId(request);
+  const accessUser = await db.accessUser.findFirst({
+    where: { id: Number(id), user: { id: Number(userId) } },
     include: { accessPoints: true },
     rejectOnNotFound: true,
   });
   const notIn = accessUser.accessPoints.map((el) => el.id);
   const accessPoints = await db.accessPoint.findMany({
-    where: { id: { notIn } },
-    orderBy: [
-      { accessManager: { accessLocation: { name: "asc" } } },
-      { name: "asc" },
-    ],
-    include: { accessManager: { include: { accessLocation: true } } },
+    where: { id: { notIn }, accessManager: { user: { id: Number(userId) } } },
+    orderBy: [{ accessManager: { name: "asc" } }, { name: "asc" }],
+    include: { accessManager: true },
   });
   return { accessUser, accessPoints };
 };
@@ -48,8 +48,15 @@ export const action: ActionFunction = async ({
     }
   }
   if (ids.length > 0) {
+    // TODO: validate ids of access points belong to user.
+    const userId = await requireUserId(request);
+    const accessUser = await db.accessUser.findFirst({
+      where: { id: Number(accessUserId), user: { id: Number(userId) } },
+      rejectOnNotFound: true,
+    });
+
     await db.accessUser.update({
-      where: { id: Number(accessUserId) },
+      where: { id: accessUser.id },
       data: { accessPoints: { connect: ids.map((id) => ({ id })) } },
     });
   }
@@ -62,7 +69,7 @@ export default function Add() {
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold leading-7 text-gray-900">
-        Add Access Points{accessUser.name ? ` to ${accessUser.name}` : null}
+        {`Add Access Points to ${accessUser.name}`}
       </h1>
       <Form method="post" className="mt-4">
         <fieldset>
@@ -77,7 +84,7 @@ export default function Add() {
                     htmlFor={`accessPoint-${apIdx}`}
                     className="font-medium text-gray-700 select-none"
                   >
-                    {`${ap.accessManager.accessLocation.name}: ${ap.name}`}
+                    {`${ap.accessManager.name}: ${ap.name}`}
                   </label>
                 </div>
                 <div className="ml-3 flex items-center h-5">
