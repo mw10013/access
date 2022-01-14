@@ -2,14 +2,17 @@ import type { ActionFunction, LoaderFunction } from "remix";
 import { useActionData, useLoaderData, Form, useSubmit, redirect } from "remix";
 import type { AccessUser } from "@prisma/client";
 import { db } from "~/utils/db.server";
+import { requireUserId } from "~/utils/session.server";
 
 type LoaderData = { accessUser: AccessUser };
 
 export const loader: LoaderFunction = async ({
-  params: { accessUserId: id },
+  request,
+  params: { accessUserId },
 }): Promise<LoaderData> => {
-  const accessUser = await db.accessUser.findUnique({
-    where: { id: Number(id) },
+  const userId = await requireUserId(request);
+  const accessUser = await db.accessUser.findFirst({
+    where: { id: Number(accessUserId), user: { id: Number(userId) } },
     rejectOnNotFound: true,
   });
   return { accessUser };
@@ -51,9 +54,14 @@ export const action: ActionFunction = async ({
   request,
   params: { accessUserId },
 }): Promise<Response | ActionData> => {
+  const userId = await requireUserId(request);
+  const accessUser = await db.accessUser.findFirst({
+    where: { id: Number(accessUserId), user: { id: Number(userId) } },
+    rejectOnNotFound: true,
+  });
   if (request.method === "DELETE") {
     await db.accessUser.update({
-      where: { id: Number(accessUserId) },
+      where: { id: accessUser.id },
       data: {
         deletedAt: new Date(),
         accessPoints: {
@@ -87,7 +95,7 @@ export const action: ActionFunction = async ({
   }
 
   await db.accessUser.update({
-    where: { id: Number(accessUserId) },
+    where: { id: accessUser.id },
     data: { name, description, code, enabled: !!enabled },
   });
 

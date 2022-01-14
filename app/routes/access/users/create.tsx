@@ -23,15 +23,6 @@ function validateCode(code: string) {
   if (code.length === 0) {
     return "Code is required.";
   }
-  if (!/^\d+$/.test(code)) {
-    return "Code must contain only digits.";
-  }
-  if (code.length < 3) {
-    return "Code must have at least 3 digits";
-  }
-  if (code.length > 8) {
-    return "Code must have no more than 8 digits.";
-  }
 }
 
 type ActionData = {
