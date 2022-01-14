@@ -4,6 +4,7 @@ import { useLoaderData, Link, useNavigate } from "remix";
 import type { AccessPoint } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
+import { requireUserId } from "~/utils/session.server";
 import * as _ from "lodash";
 
 type LoaderData = {
@@ -20,7 +21,11 @@ type LoaderData = {
   }>[];
 };
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }) => {
+  const userId = await requireUserId(request);
+  console.log({ fn: "dashboard", userId });
+  // if (!userId) throw new Response("Unauthorized", { status: 401 });
+
   const accessPoints = await db.accessPoint.findMany({
     include: {
       accessUsers: {

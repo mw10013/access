@@ -58,6 +58,7 @@ export async function getUserId(request: Request) {
 export async function requireUserId(request: Request) {
   const session = await getUserSession(request);
   const userId = session.get("userId");
+  console.log({ fn: "requireUserId", userId, session });
   if (!userId || typeof userId !== "string") throw redirect("/signin");
   return userId;
 }
@@ -76,14 +77,23 @@ export async function getUser(request: Request) {
 
 export async function signOut(request: Request) {
   const session = await getSession(request.headers.get("Cookie"));
+  // return redirect("/signin", {
+  //   headers: { "Set-Cookie": await destroySession(session) },
+  // });
+  const data = await destroySession(session);
+  console.log({ fn: "signOut", data });
   return redirect("/signin", {
-    headers: { "Set-Cookie": await destroySession(session) },
+    headers: { "Set-Cookie": data },
   });
 }
 
 export async function createUserSession(userId: string, redirectTo: string) {
   const session = await getSession();
   session.set("userId", userId);
+  console.log({
+    fn: "createUserSession",
+    commitSession: await commitSession(session),
+  });
   return redirect(redirectTo, {
     headers: { "Set-Cookie": await commitSession(session) },
   });

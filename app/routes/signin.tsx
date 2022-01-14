@@ -2,7 +2,7 @@ import type { ActionFunction, LoaderFunction } from "remix";
 import { useActionData, useLoaderData, Form, useSubmit, redirect } from "remix";
 import type { AccessUser } from "@prisma/client";
 import { db } from "~/utils/db.server";
-import { signIn, createUserSession, register } from "~/utils/session.server";
+import { signIn, createUserSession } from "~/utils/session.server";
 
 function validateEmail(email: unknown) {
   if (typeof email !== "string" || email.length < 3) {
