@@ -39,6 +39,8 @@
 - npm add zod
 - npm add bcryptjs
 - npm add -D @types/bcryptjs
+- npm add @headlessui/react
+- npm add @heroicons/react
 
 # Welcome to Remix!
 
