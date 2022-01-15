@@ -2,67 +2,64 @@ import type { LoaderFunction } from "remix";
 import { useLoaderData, Link, useNavigate, useSubmit } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
+import { requireUserId } from "~/utils/session.server";
 
 type LoaderData = {
-  accessLocation: Prisma.AccessLocationGetPayload<{}>;
+  accessManager: Prisma.AccessManagerGetPayload<{}>;
   accessEvents: Prisma.AccessEventGetPayload<{
     include: {
       accessUser: true;
-      accessPoint: {
-        include: { accessManager: { include: { accessLocation: true } } };
-      };
+      accessPoint: true;
     };
   }>[];
 };
 
 export const loader: LoaderFunction = async ({
-  params: { accessLocationId },
+  request,
+  params: { accessManagerId },
 }): Promise<LoaderData> => {
-  const accessLocation = await db.accessLocation.findUnique({
-    where: { id: Number(accessLocationId) },
+  const userId = await requireUserId(request);
+  const accessManager = await db.accessManager.findFirst({
+    where: { id: Number(accessManagerId), user: { id: Number(userId) } },
     rejectOnNotFound: true,
   });
 
   const accessEvents = await db.accessEvent.findMany({
     where: {
       accessPoint: {
-        accessManager: {
-          accessLocation: { id: Number(accessLocationId) },
-        },
+        accessManager: { id: accessManager.id },
       },
     },
     orderBy: { at: "desc" },
     include: {
       accessUser: true,
-      accessPoint: {
-        include: { accessManager: { include: { accessLocation: true } } },
-      },
+      accessPoint: true,
     },
   });
 
-  return { accessLocation, accessEvents };
+  return { accessManager, accessEvents };
 };
 
-export default function Index() {
+export default function RouteComponent() {
   const navigate = useNavigate();
   const submit = useSubmit();
-  const { accessLocation, accessEvents } = useLoaderData<LoaderData>();
+  const { accessManager, accessEvents } = useLoaderData<LoaderData>();
   return (
     <div className="p-8">
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold leading-7 text-gray-900">
-          Location Activity
+          Access Manager Activity
         </h1>
         <div className="flex space-x-2"></div>
       </div>
       <div className="flex mt-1 space-x-10 text-sm text-gray-500">
-        <div>{accessLocation.name}</div>
-        <div>ID: {accessLocation.id}</div>
+        <div>{accessManager.name}</div>
+        <div>ID: {accessManager.id}</div>
       </div>
 
-      {accessLocation.description ? (
+      {accessManager.description ? (
         <p className="mt-2 text-sm text-gray-500">
-          {accessLocation.description}
+          {accessManager.description}
         </p>
       ) : null}
 
