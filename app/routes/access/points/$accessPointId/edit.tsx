@@ -23,21 +23,6 @@ export const loader: LoaderFunction = async ({
   return { accessPoint };
 };
 
-function validateName(name: string) {
-  if (name.length === 0) {
-    return "Name is required.";
-  }
-  if (name.length > 100) {
-    return "Name is too long.";
-  }
-}
-
-function validateDescription(description: string) {
-  if (description.length > 500) {
-    return "Description is too long.";
-  }
-}
-
 const FieldValues = z
   .object({
     name: z.string().nonempty().max(50),
@@ -46,11 +31,6 @@ const FieldValues = z
   .strict();
 
 type FieldValues = z.infer<typeof FieldValues>;
-
-type TestType = Extract<
-  ReturnType<typeof FieldValues.safeParse>,
-  { success: false }
->;
 
 type ActionData = {
   formErrors?: ZodError["formErrors"];
@@ -61,17 +41,10 @@ export const action: ActionFunction = async ({
   request,
   params: { accessPointId },
 }): Promise<Response | ActionData> => {
-  const formData = await request.formData();
-  // Node FormData get() seems to return null for empty string value.
-  // Object.fromEntries(formData): if formData.entries() has 2 entries with the same key, only 1 is taken.
-  const fieldValues = Object.fromEntries(formData);
-  const result = FieldValues.safeParse(fieldValues);
-  if (!result.success) {
-    console.log({
-      fieldValues,
-      formErrors: result.error.formErrors,
-    });
-    return { formErrors: result.error.formErrors, fieldValues };
+  const fieldValues = Object.fromEntries(await request.formData());
+  const parseResult = FieldValues.safeParse(fieldValues);
+  if (!parseResult.success) {
+    return { formErrors: parseResult.error.formErrors, fieldValues };
   }
 
   const userId = await requireUserId(request);
@@ -85,7 +58,10 @@ export const action: ActionFunction = async ({
 
   await db.accessPoint.update({
     where: { id: Number(accessPointId) },
-    data: { name: result.data.name, description: result.data.description },
+    data: {
+      name: parseResult.data.name,
+      description: parseResult.data.description,
+    },
   });
 
   return redirect(`/access/points/${accessPointId}`);
