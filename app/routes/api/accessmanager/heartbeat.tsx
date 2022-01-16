@@ -75,7 +75,7 @@ export const action: ActionFunction = async ({ request }) => {
       accessPoints: {
         orderBy: { position: "asc" },
         include: {
-          accessUsers: { where: { enabled: true } },
+          accessUsers: true,
           accessEvents: { distinct: "accessPointId", orderBy: { at: "desc" } },
         },
       },

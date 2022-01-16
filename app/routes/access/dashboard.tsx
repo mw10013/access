@@ -32,9 +32,7 @@ export const loader: LoaderFunction = async ({ request }) => {
       },
     },
     include: {
-      accessUsers: {
-        where: { enabled: true },
-      },
+      accessUsers: true,
       accessManager: {
         include: {
           user: true,

@@ -25,7 +25,8 @@ model AccessUser {
   name              String    @unique
   description       String    @default("") 
   code              String
-  enabled           Boolean   @default(true)
+  activateCodeAt    DateTime?
+  expireCodeAt      DateTime?
   user              User      @relation(fields: [userId], references: [id])
   userId            Int
   accessPoints      AccessPoint[]

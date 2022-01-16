@@ -45,7 +45,6 @@ type ActionData = {
     name?: string | undefined;
     description?: string | undefined;
     code?: string | undefined;
-    // enabled?: string | undefined;
   };
   fieldValues?: any;
 };
@@ -76,7 +75,7 @@ export const action: ActionFunction = async ({
   // Node FormData get() seems to return null for empty string value.
   // Object.fromEntries(formData): if formData.entries() has 2 entries with the same key, only 1 is taken.
   const fieldValues = Object.fromEntries(formData);
-  const { name, description, code, enabled } = fieldValues;
+  const { name, description, code } = fieldValues;
   if (
     typeof name !== "string" ||
     typeof description !== "string" ||
@@ -96,7 +95,7 @@ export const action: ActionFunction = async ({
 
   await db.accessUser.update({
     where: { id: accessUser.id },
-    data: { name, description, code, enabled: !!enabled },
+    data: { name, description, code },
   });
 
   return redirect(`/access/users/${accessUserId}`);
@@ -216,29 +215,6 @@ export default function Edit() {
                 {actionData.fieldErrors.code}
               </p>
             ) : null}
-          </div>
-        </div>
-
-        <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-          <div className="relative flex items-start">
-            <div className="flex items-center h-5">
-              <input
-                id="enabled"
-                name="enabled"
-                type="checkbox"
-                defaultChecked={
-                  actionData?.fieldValues
-                    ? actionData.fieldValues.enabled
-                    : accessUser.enabled
-                }
-                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-              />
-            </div>
-            <div className="ml-3 text-sm">
-              <label htmlFor="enabled" className="font-medium text-gray-700">
-                Enabled
-              </label>
-            </div>
           </div>
         </div>
 

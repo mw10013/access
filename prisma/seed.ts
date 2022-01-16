@@ -25,7 +25,6 @@ async function seed() {
       name: "Master",
       description: "Access to everything",
       code: "555",
-      enabled: true,
       userId: aunt.id,
     },
   });
@@ -34,7 +33,6 @@ async function seed() {
       name: "Brooklyn BnB Guest 1",
       description: "Second floor of Brooklyn BnB.",
       code: "111",
-      enabled: true,
       userId: aunt.id,
     },
   });
@@ -43,7 +41,6 @@ async function seed() {
       name: "Brooklyn BnB Guest 2",
       description: "Third floor of Brooklyn BnB.",
       code: "222",
-      enabled: false,
       userId: aunt.id,
     },
   });
@@ -51,24 +48,22 @@ async function seed() {
     data: {
       name: "Staten Island BnB Guest 1",
       code: "13795",
-      enabled: true,
       userId: aunt.id,
     },
   });
   const { id: staffId } = await db.accessUser.create({
-    data: { name: "Staff", code: "333", enabled: true, userId: aunt.id },
+    data: { name: "Staff", code: "333", userId: aunt.id },
   });
   const { id: repairId } = await db.accessUser.create({
     data: {
       name: "Repair",
       description: "For repairs as necessary.",
       code: "444",
-      enabled: false,
       userId: aunt.id,
     },
   });
   const { id: testerId } = await db.accessUser.create({
-    data: { name: "Test", code: "333", enabled: true, userId: installer.id },
+    data: { name: "Test", code: "333", userId: installer.id },
   });
 
   await db.accessManager.create({
