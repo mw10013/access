@@ -20,33 +20,13 @@ export const loader: LoaderFunction = async ({
   return { accessUser };
 };
 
-function validateName(name: string) {
-  if (name.length === 0) {
-    return "Name is required.";
-  }
-  if (name.length > 100) {
-    return "Name is too long.";
-  }
-}
-
-function validateDescription(description: string) {
-  if (description.length > 500) {
-    return "Description is too long.";
-  }
-}
-
-function validateCode(code: string) {
-  if (code.length === 0) {
-    return "Code is required.";
-  }
-}
-
 const FieldValues = z
   .object({
     name: z.string().min(1).max(50),
     description: z.string().max(100),
     code: z.string().min(3).max(100),
     activateCodeAt: z.string(),
+    activateCodeAtHidden: z.string(),
   })
   .strict();
 type FieldValues = z.infer<typeof FieldValues>;
@@ -86,10 +66,17 @@ export const action: ActionFunction = async ({
     return { formErrors: parseResult.error.formErrors, fieldValues };
   }
 
-  const { name, description, code } = parseResult.data;
+  const { name, description, code, activateCodeAtHidden } = parseResult.data;
   await db.accessUser.update({
     where: { id: accessUser.id },
-    data: { name, description, code },
+    data: {
+      name,
+      description,
+      code,
+      activateCodeAt: activateCodeAtHidden
+        ? new Date(activateCodeAtHidden)
+        : null,
+    },
   });
   return redirect(`/access/users/${accessUserId}`);
 };
@@ -236,24 +223,26 @@ export default function RouteComponent() {
                 type="datetime-local"
                 name="activateCodeAt"
                 id="activateCodeAt"
-                defaultValue={formatDatetimeLocal(new Date())}
-                // defaultValue={
-                //   actionData?.fieldValues
-                //     ? actionData.fieldValues.code
-                //     : accessUser.code
-                // }
+                // defaultValue={formatDatetimeLocal(new Date())}
+                defaultValue={
+                  actionData?.fieldValues
+                    ? actionData.fieldValues.activatedCodeAt
+                    : accessUser.activateCodeAt
+                    ? formatDatetimeLocal(new Date(accessUser.activateCodeAt))
+                    : ""
+                }
                 className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
               />
             </div>
-            {/* {actionData?.fieldErrors?.code ? (
+            {actionData?.formErrors?.fieldErrors.activateCodeAt ? (
               <p
                 className="mt-2 text-sm text-red-600"
                 role="alert"
                 id="code-error"
               >
-                {actionData.fieldErrors.code}
+                {actionData.formErrors.fieldErrors.activateCodeAt.join(". ")}
               </p>
-            ) : null} */}
+            ) : null}
           </div>
         </div>
 
@@ -265,23 +254,33 @@ export default function RouteComponent() {
           >
             Delete
           </button>
-
+          <input
+            type="hidden"
+            name="activateCodeAtHidden"
+            id="activateCodeAtHidden"
+          />
           <button
             type="submit"
             className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             onClick={(e) => {
               const activateCodeAt =
                 e.currentTarget.form?.elements.namedItem("activateCodeAt");
+              const activateCodeAtHidden =
+                e.currentTarget.form?.elements.namedItem(
+                  "activateCodeAtHidden"
+                );
               if (
                 activateCodeAt &&
-                activateCodeAt instanceof HTMLInputElement
+                activateCodeAt instanceof HTMLInputElement &&
+                activateCodeAtHidden &&
+                activateCodeAtHidden instanceof HTMLInputElement
               ) {
-                const dt = new Date();
-                console.log({
-                  value: activateCodeAt.value,
-                  date: new Date(activateCodeAt.value).toISOString(),
-                  formatDatetimeLocal: formatDatetimeLocal(new Date()),
-                });
+                // input datetime-local does not have timezone so
+                // convert to local time on the client since the server
+                // will not know the correct timezone.
+                activateCodeAtHidden.value = activateCodeAt.value
+                  ? new Date(activateCodeAt.value).toJSON()
+                  : "";
               }
             }}
           >
