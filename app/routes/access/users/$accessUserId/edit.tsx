@@ -3,6 +3,8 @@ import { useActionData, useLoaderData, Form, useSubmit, redirect } from "remix";
 import type { AccessUser } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
+import type { ZodError } from "zod";
+import { z } from "zod";
 
 type LoaderData = { accessUser: AccessUser };
 
@@ -39,13 +41,18 @@ function validateCode(code: string) {
   }
 }
 
+const FieldValues = z
+  .object({
+    name: z.string().min(1).max(50),
+    description: z.string().max(100),
+    code: z.string().min(3).max(100),
+    activateCodeAt: z.string(),
+  })
+  .strict();
+type FieldValues = z.infer<typeof FieldValues>;
+
 type ActionData = {
-  formError?: string;
-  fieldErrors?: {
-    name?: string | undefined;
-    description?: string | undefined;
-    code?: string | undefined;
-  };
+  formErrors?: ZodError["formErrors"];
   fieldValues?: any;
 };
 
@@ -71,33 +78,19 @@ export const action: ActionFunction = async ({
     return redirect("/access/users");
   }
 
-  const formData = await request.formData();
   // Node FormData get() seems to return null for empty string value.
   // Object.fromEntries(formData): if formData.entries() has 2 entries with the same key, only 1 is taken.
-  const fieldValues = Object.fromEntries(formData);
-  const { name, description, code } = fieldValues;
-  if (
-    typeof name !== "string" ||
-    typeof description !== "string" ||
-    typeof code !== "string"
-  ) {
-    return { formError: `Form not submitted correctly.` };
+  const fieldValues = Object.fromEntries(await request.formData());
+  const parseResult = FieldValues.safeParse(fieldValues);
+  if (!parseResult.success) {
+    return { formErrors: parseResult.error.formErrors, fieldValues };
   }
 
-  const fieldErrors = {
-    name: validateName(name),
-    description: validateDescription(description),
-    code: validateCode(code),
-  };
-  if (Object.values(fieldErrors).some(Boolean)) {
-    return { fieldErrors, fieldValues };
-  }
-
+  const { name, description, code } = parseResult.data;
   await db.accessUser.update({
     where: { id: accessUser.id },
     data: { name, description, code },
   });
-
   return redirect(`/access/users/${accessUserId}`);
 };
 
@@ -123,7 +116,7 @@ export default function RouteComponent() {
       <Form replace method="post">
         <div>
           <h3 className="text-lg leading-6 font-medium text-gray-900">
-            {actionData?.formError}
+            {actionData?.formErrors?.formErrors.join(". ")}
           </h3>
           <p className="mt-1 text-sm text-gray-500"></p>
         </div>
@@ -150,13 +143,13 @@ export default function RouteComponent() {
                 className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
               />
             </div>
-            {actionData?.fieldErrors?.name ? (
+            {actionData?.formErrors?.fieldErrors.name ? (
               <p
                 className="mt-2 text-sm text-red-600"
                 role="alert"
                 id="code-error"
               >
-                {actionData.fieldErrors.name}
+                {actionData.formErrors.fieldErrors.name.join(". ")}
               </p>
             ) : null}
           </div>
@@ -184,13 +177,13 @@ export default function RouteComponent() {
                 className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
               />
             </div>
-            {actionData?.fieldErrors?.description ? (
+            {actionData?.formErrors?.fieldErrors?.description ? (
               <p
                 className="mt-2 text-sm text-red-600"
                 role="alert"
                 id="code-error"
               >
-                {actionData.fieldErrors.description}
+                {actionData.formErrors.fieldErrors.description.join(". ")}
               </p>
             ) : null}
           </div>
@@ -218,13 +211,13 @@ export default function RouteComponent() {
                 className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
               />
             </div>
-            {actionData?.fieldErrors?.code ? (
+            {actionData?.formErrors?.fieldErrors.code ? (
               <p
                 className="mt-2 text-sm text-red-600"
                 role="alert"
                 id="code-error"
               >
-                {actionData.fieldErrors.code}
+                {actionData?.formErrors?.fieldErrors.code.join(". ")}
               </p>
             ) : null}
           </div>
@@ -277,7 +270,6 @@ export default function RouteComponent() {
             type="submit"
             className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             onClick={(e) => {
-              e.preventDefault();
               const activateCodeAt =
                 e.currentTarget.form?.elements.namedItem("activateCodeAt");
               if (
