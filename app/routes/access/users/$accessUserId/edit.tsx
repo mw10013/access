@@ -28,7 +28,15 @@ const FieldValues = z
     activateCodeAt: z.string(),
     activateCodeAtHidden: z.string(),
   })
-  .strict();
+  .strict()
+  .refine(
+    (data) =>
+      !data.activateCodeAtHidden || Date.parse(data.activateCodeAt) !== NaN,
+    {
+      message: "Invalid date time.",
+      path: ["activateCodeAt"],
+    }
+  );
 type FieldValues = z.infer<typeof FieldValues>;
 
 type ActionData = {
