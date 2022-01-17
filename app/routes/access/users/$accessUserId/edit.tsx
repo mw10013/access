@@ -101,7 +101,19 @@ export const action: ActionFunction = async ({
   return redirect(`/access/users/${accessUserId}`);
 };
 
-export default function Edit() {
+function formatDatetimeLocal(dt: Date) {
+  return `${dt.getFullYear()}-${(dt.getMonth() + 1).toLocaleString("en", {
+    minimumIntegerDigits: 2,
+  })}-${dt.getDate().toLocaleString("en", {
+    minimumIntegerDigits: 2,
+  })}T${dt.getHours().toLocaleString("en", {
+    minimumIntegerDigits: 2,
+  })}:${dt.getMinutes().toLocaleString("en", {
+    minimumIntegerDigits: 2,
+  })}`;
+}
+
+export default function RouteComponent() {
   const { accessUser } = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
   const submit = useSubmit();
@@ -217,12 +229,46 @@ export default function Edit() {
             ) : null}
           </div>
         </div>
+        <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+          <div className="sm:col-span-4">
+            <label
+              htmlFor="activateCodeAt"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Activate Code At
+            </label>
+
+            <div className="mt-1 flex rounded-md shadow-sm">
+              <input
+                type="datetime-local"
+                name="activateCodeAt"
+                id="activateCodeAt"
+                defaultValue={formatDatetimeLocal(new Date())}
+                // defaultValue={
+                //   actionData?.fieldValues
+                //     ? actionData.fieldValues.code
+                //     : accessUser.code
+                // }
+                className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
+              />
+            </div>
+            {/* {actionData?.fieldErrors?.code ? (
+              <p
+                className="mt-2 text-sm text-red-600"
+                role="alert"
+                id="code-error"
+              >
+                {actionData.fieldErrors.code}
+              </p>
+            ) : null} */}
+          </div>
+        </div>
 
         <div className="mt-4 flex justify-between">
           <button
             type="button"
-            onClick={(e) => submit(e.currentTarget.form, { method: "delete" })}
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-rose-600 hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+            onClick={(e) => submit(e.currentTarget.form, { method: "delete" })}
           >
             Delete
           </button>
@@ -230,6 +276,22 @@ export default function Edit() {
           <button
             type="submit"
             className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            onClick={(e) => {
+              e.preventDefault();
+              const activateCodeAt =
+                e.currentTarget.form?.elements.namedItem("activateCodeAt");
+              if (
+                activateCodeAt &&
+                activateCodeAt instanceof HTMLInputElement
+              ) {
+                const dt = new Date();
+                console.log({
+                  value: activateCodeAt.value,
+                  date: new Date(activateCodeAt.value).toISOString(),
+                  formatDatetimeLocal: formatDatetimeLocal(new Date()),
+                });
+              }
+            }}
           >
             Save
           </button>
