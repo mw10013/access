@@ -61,14 +61,20 @@ type HeartbeatResponseData = {
 export const action: ActionFunction = async ({ request }) => {
   const data = HeartbeatRequestData.parse(await request.json());
 
-  // TODO: Don't include users with expired codes.
   const accessManager = await db.accessManager.findUnique({
     where: { id: data.accessManager.id },
     include: {
       accessPoints: {
         orderBy: { position: "asc" },
         include: {
-          accessUsers: true,
+          accessUsers: {
+            where: {
+              OR: [
+                { expireCodeAt: null },
+                { expireCodeAt: { gt: new Date() } },
+              ],
+            },
+          },
           accessEvents: { distinct: "accessPointId", orderBy: { at: "desc" } },
         },
       },
