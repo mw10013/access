@@ -25,20 +25,32 @@ const FieldValues = z
     name: z.string().min(1).max(50),
     description: z.string().max(100),
     code: z.string().min(3).max(100),
-    activateCodeAt: z.string(),
-    activateCodeAtHidden: z
+    activateCodeAt: z.string(), // datetime-local string which does not have tz
+    activateCodeAtHidden: z // gmt datetime string, may be empty
       .string()
-      .refine((data) => !data || Date.parse(data) === NaN, {
+      .refine((v) => v.length === 0 || Date.parse(v) !== NaN, {
         message: "Invalid date time",
-      }),
+      })
+      .transform((v) => (v.length > 0 ? new Date(v) : null)),
     expireCodeAt: z.string(),
     expireCodeAtHidden: z
       .string()
-      .refine((data) => !data || Date.parse(data) === NaN, {
+      .refine((v) => v.length === 0 || Date.parse(v) !== NaN, {
         message: "Invalid date time",
-      }),
+      })
+      .transform((v) => (v.length > 0 ? new Date(v) : null)),
   })
-  .strict();
+  .strict()
+  .refine(
+    (v) =>
+      !v.activateCodeAtHidden ||
+      !v.expireCodeAtHidden ||
+      v.expireCodeAtHidden.getTime() > v.activateCodeAtHidden.getTime(),
+    {
+      message: "Expiration must be later than activation",
+      path: ["expireCodeAt"],
+    }
+  );
 type FieldValues = z.infer<typeof FieldValues>;
 
 type ActionData = {
@@ -84,10 +96,8 @@ export const action: ActionFunction = async ({
       name,
       description,
       code,
-      activateCodeAt: activateCodeAtHidden
-        ? new Date(activateCodeAtHidden)
-        : null,
-      expireCodeAt: expireCodeAtHidden ? new Date(expireCodeAtHidden) : null,
+      activateCodeAt: activateCodeAtHidden,
+      expireCodeAt: expireCodeAtHidden,
     },
   });
   return redirect(`/access/users/${accessUserId}`);
@@ -246,6 +256,7 @@ export default function RouteComponent() {
               />
             </div>
             {(() => {
+              // Combine activateCodeAt and activateCodeAtHidden errors
               const activateCodeAtErrors =
                 actionData?.formErrors?.fieldErrors.activateCodeAt;
               const activateCodeAtHiddenErrors =
