@@ -26,26 +26,19 @@ const FieldValues = z
     description: z.string().max(100),
     code: z.string().min(3).max(100),
     activateCodeAt: z.string(),
-    activateCodeAtHidden: z.string(),
+    activateCodeAtHidden: z
+      .string()
+      .refine((data) => !data || Date.parse(data) === NaN, {
+        message: "Invalid date time",
+      }),
     expireCodeAt: z.string(),
-    expireCodeAtHidden: z.string(),
+    expireCodeAtHidden: z
+      .string()
+      .refine((data) => !data || Date.parse(data) === NaN, {
+        message: "Invalid date time",
+      }),
   })
-  .strict()
-  .refine(
-    (data) =>
-      !data.activateCodeAtHidden || Date.parse(data.activateCodeAt) !== NaN,
-    {
-      message: "Invalid date time.",
-      path: ["activateCodeAt"],
-    }
-  )
-  .refine(
-    (data) => !data.expireCodeAtHidden || Date.parse(data.expireCodeAt) !== NaN,
-    {
-      message: "Invalid date time.",
-      path: ["expireCodeAt"],
-    }
-  );
+  .strict();
 type FieldValues = z.infer<typeof FieldValues>;
 
 type ActionData = {
@@ -252,15 +245,26 @@ export default function RouteComponent() {
                 className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
               />
             </div>
-            {actionData?.formErrors?.fieldErrors.activateCodeAt ? (
-              <p
-                className="mt-2 text-sm text-red-600"
-                role="alert"
-                id="code-error"
-              >
-                {actionData.formErrors.fieldErrors.activateCodeAt.join(". ")}
-              </p>
-            ) : null}
+            {(() => {
+              const activateCodeAtErrors =
+                actionData?.formErrors?.fieldErrors.activateCodeAt;
+              const activateCodeAtHiddenErrors =
+                actionData?.formErrors?.fieldErrors.activateCodeAtHidden;
+              if (activateCodeAtErrors || activateCodeAtHiddenErrors) {
+                return (
+                  <p
+                    className="mt-2 text-sm text-red-600"
+                    role="alert"
+                    id="activateCodeAtError"
+                  >
+                    {[
+                      ...(activateCodeAtErrors || []),
+                      ...(activateCodeAtHiddenErrors || []),
+                    ].join(". ")}
+                  </p>
+                );
+              }
+            })()}
           </div>
         </div>
         <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
@@ -287,15 +291,26 @@ export default function RouteComponent() {
                 className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
               />
             </div>
-            {actionData?.formErrors?.fieldErrors.expireCodeAt ? (
-              <p
-                className="mt-2 text-sm text-red-600"
-                role="alert"
-                id="code-error"
-              >
-                {actionData.formErrors.fieldErrors.expireCodeAt.join(". ")}
-              </p>
-            ) : null}
+            {(() => {
+              const expireCodeAtErrors =
+                actionData?.formErrors?.fieldErrors.expireCodeAt;
+              const expireCodeAtHiddenErrors =
+                actionData?.formErrors?.fieldErrors.expireCodeAtHidden;
+              if (expireCodeAtErrors || expireCodeAtHiddenErrors) {
+                return (
+                  <p
+                    className="mt-2 text-sm text-red-600"
+                    role="alert"
+                    id="expireCodeAtError"
+                  >
+                    {[
+                      ...(expireCodeAtErrors || []),
+                      ...(expireCodeAtHiddenErrors || []),
+                    ].join(". ")}
+                  </p>
+                );
+              }
+            })()}
           </div>
         </div>
 
