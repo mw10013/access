@@ -42,11 +42,44 @@ export const loader: LoaderFunction = async ({
   return { accessUser };
 };
 
+function codeActivateExpireStatus(accessUser: LoaderData["accessUser"]) {
+  // JSON serializes dates as strings. The dates in LoaderData will come out as strings on the client.
+  const activateCodeAt = accessUser.activateCodeAt
+    ? new Date(accessUser.activateCodeAt)
+    : null;
+  const expireCodeAt = accessUser.expireCodeAt
+    ? new Date(accessUser.expireCodeAt)
+    : null;
+  const now = Date.now();
+
+  const codeStatus =
+    expireCodeAt && now > expireCodeAt.getTime()
+      ? "EXPIRED"
+      : activateCodeAt && now < activateCodeAt.getTime()
+      ? "PENDING"
+      : "ACTIVE";
+
+  const activateExpireStatus =
+    codeStatus === "ACTIVE"
+      ? expireCodeAt
+        ? `Will expire at ${expireCodeAt.toLocaleString()}`
+        : ``
+      : codeStatus === "PENDING"
+      ? expireCodeAt
+        ? `Will activate at ${activateCodeAt?.toLocaleString()} until ${expireCodeAt.toLocaleString()}.`
+        : `Will activate at ${activateCodeAt?.toLocaleString()}`
+      : ``;
+
+  return { codeStatus, activateExpireStatus };
+}
+
 export default function Index() {
   const navigate = useNavigate();
   const submit = useSubmit();
   const removeFormActionBase = useFormAction("points");
   const { accessUser } = useLoaderData<LoaderData>();
+  const { codeStatus, activateExpireStatus } =
+    codeActivateExpireStatus(accessUser);
   return (
     <div className="p-8">
       <div className="flex justify-between">
@@ -68,13 +101,8 @@ export default function Index() {
             <span className="font-bold">{accessUser.code}</span>
           )}
         </div>
-        <div>
-          {accessUser.enabled ? (
-            "Enabled"
-          ) : (
-            <span className="font-bold">Disabled</span>
-          )}
-        </div>
+        <div>{codeStatus}</div>
+        <div>{activateExpireStatus}</div>
       </div>
 
       {accessUser.description ? (
