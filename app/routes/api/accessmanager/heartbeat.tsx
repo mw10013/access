@@ -4,19 +4,6 @@ import { db } from "~/utils/db.server";
 import * as _ from "lodash";
 import { z } from "zod";
 
-const AccessConfigData = z.object({
-  accessUsers: z.array(
-    z
-      .object({
-        id: z.number().int(),
-        code: z.string().nonempty(),
-      })
-      .strict()
-  ),
-});
-
-type AccessConfigData = z.infer<typeof AccessConfigData>;
-
 const HeartbeatRequestData = z
   .object({
     accessManager: z
@@ -26,7 +13,6 @@ const HeartbeatRequestData = z
           z
             .object({
               id: z.number().int(),
-              config: AccessConfigData,
               activity: z
                 .object({
                   since: z.string().nonempty(),
@@ -50,7 +36,6 @@ const HeartbeatRequestData = z
       .strict(),
   })
   .strict();
-
 type HeartbeatRequestData = z.infer<typeof HeartbeatRequestData>;
 
 type HeartbeatResponseData = {
@@ -58,7 +43,14 @@ type HeartbeatResponseData = {
     id: number;
     accessPoints: {
       id: number;
-      config: AccessConfigData;
+      config: {
+        accessUsers: {
+          id: number;
+          code: string;
+          activateCodeAt: Date | null;
+          expireCodeAt: Date | null;
+        }[];
+      };
       activity: {
         since: string; // JSON date
       };
@@ -69,6 +61,7 @@ type HeartbeatResponseData = {
 export const action: ActionFunction = async ({ request }) => {
   const data = HeartbeatRequestData.parse(await request.json());
 
+  // TODO: Don't include users with expired codes.
   const accessManager = await db.accessManager.findUnique({
     where: { id: data.accessManager.id },
     include: {
@@ -117,19 +110,10 @@ export const action: ActionFunction = async ({ request }) => {
     data: {
       accessPoints: {
         update: data.accessManager.accessPoints.map((i) => {
-          const accessUsersAsJson = JSON.stringify(
-            i.config.accessUsers.map((u) => ({ id: u.id, code: u.code }))
-          );
           return {
             where: { id: i.id },
             data: {
               heartbeatAt: new Date(),
-              cachedConfig: {
-                upsert: {
-                  update: { accessUsers: accessUsersAsJson },
-                  create: { accessUsers: accessUsersAsJson },
-                },
-              },
               accessEvents: {
                 create: i.activity
                   ? i.activity.accessEvents.map((e) => ({
@@ -156,6 +140,8 @@ export const action: ActionFunction = async ({ request }) => {
           accessUsers: i.accessUsers.map((u) => ({
             id: u.id,
             code: u.code,
+            activateCodeAt: u.activateCodeAt,
+            expireCodeAt: u.expireCodeAt,
           })),
         },
         activity: {

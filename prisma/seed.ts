@@ -85,11 +85,6 @@ async function seed() {
               ],
             },
             heartbeatAt: new Date(),
-            cachedConfig: {
-              create: {
-                accessUsers: `[{"id": ${masterId}, "code": "555"}]`,
-              },
-            },
             accessEvents: {
               create: [
                 {

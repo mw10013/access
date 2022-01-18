@@ -52,21 +52,12 @@ model AccessPoint {
   description       String    @default("")
   accessUsers       AccessUser[]
   heartbeatAt       DateTime?
-  cachedConfig      AccessPointCachedConfig?
   accessManager     AccessManager @relation(fields: [accessManagerId], references: [id])
   accessManagerId   Int 
   position          Int
   accessEvents      AccessEvent[]
 
   @@unique([accessManagerId, position])    
-}
-
-model AccessPointCachedConfig {
-  id                Int         @id @default(autoincrement())
-  accessUsers       String      @default("[]") // json array of access users
-  accessPoint       AccessPoint @relation(fields: [accessPointId], references: [id])
-  accessPointId     Int         @unique
-  cachedAt          DateTime    @updatedAt
 }
 
 model AccessEvent {
@@ -80,9 +71,3 @@ model AccessEvent {
   accessPointId     Int
 }
 
-model AccessLocation {
-  id                Int       @id @default(autoincrement())
-  name              String    @unique
-  description       String    @default("")
-  // accessManagers    AccessManager[]        
-}

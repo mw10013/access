@@ -9,7 +9,6 @@ type LoaderData = {
   accessPoint: Prisma.AccessPointGetPayload<{
     include: {
       accessUsers: true;
-      cachedConfig: true;
       accessManager: true;
     };
   }>;
@@ -27,7 +26,6 @@ export const loader: LoaderFunction = async ({
     },
     include: {
       accessUsers: { orderBy: { name: "asc" } },
-      cachedConfig: true,
       accessManager: true,
     },
     rejectOnNotFound: true,

@@ -11,7 +11,7 @@ const queryClient = new QueryClient();
 type LoaderData = {
   accessManager: Prisma.AccessManagerGetPayload<{
     include: {
-      accessPoints: { include: { accessUsers: true; cachedConfig: true } };
+      accessPoints: true;
     };
   }>;
 };
@@ -21,16 +21,11 @@ export const loader: LoaderFunction = async ({
   params: { accessManagerId },
 }): Promise<LoaderData> => {
   const userId = await requireUserId(request);
-
   const accessManager = await db.accessManager.findFirst({
     where: { id: Number(accessManagerId), user: { id: Number(userId) } },
     include: {
       accessPoints: {
         orderBy: { position: "asc" },
-        include: {
-          accessUsers: { where: { enabled: true } },
-          cachedConfig: true,
-        },
       },
     },
     rejectOnNotFound: true,
@@ -51,12 +46,6 @@ function Heartbeat({
           id: accessManager.id,
           accessPoints: accessManager.accessPoints.map((i) => ({
             id: i.id,
-            config: {
-              accessUsers: i.accessUsers.map((u) => ({
-                id: u.id,
-                code: u.code,
-              })),
-            },
           })),
         },
       },
@@ -108,8 +97,6 @@ function Heartbeat({
               />
             </div>
             <p className="mt-2 text-sm text-gray-500">
-              Initially populated with json that would sync up access manager
-              with cloud.
             </p>
           </div>
 

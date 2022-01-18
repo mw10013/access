@@ -5,7 +5,6 @@ import type { AccessPoint } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
-import * as _ from "lodash";
 
 type LoaderData = {
   accessPoints: Prisma.AccessPointGetPayload<{
@@ -16,14 +15,12 @@ type LoaderData = {
           user: true;
         };
       };
-      cachedConfig: true;
     };
   }>[];
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
-  // if (!userId) throw new Response("Unauthorized", { status: 401 });
 
   const accessPoints = await db.accessPoint.findMany({
     where: {
@@ -38,7 +35,6 @@ export const loader: LoaderFunction = async ({ request }) => {
           user: true,
         },
       },
-      cachedConfig: true,
     },
     orderBy: [{ accessManager: { name: "asc" } }, { name: "asc" }],
   });
@@ -119,12 +115,6 @@ export default function Index() {
               >
                 Connection
               </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Config
-              </th>
               <th scope="col" className="relative px-6 py-3">
                 <span className="sr-only">View</span>
               </th>
@@ -146,17 +136,6 @@ export default function Index() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {connectionStatus(i.heartbeatAt)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {i.cachedConfig &&
-                  _.isEqual(
-                    new Set(JSON.parse(i.cachedConfig.accessUsers)),
-                    new Set(
-                      i.accessUsers.map((i) => ({ id: i.id, code: i.code }))
-                    )
-                  )
-                    ? "Saved"
-                    : "Pending"}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                   <Link
