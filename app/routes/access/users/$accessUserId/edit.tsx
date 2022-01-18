@@ -27,6 +27,8 @@ const FieldValues = z
     code: z.string().min(3).max(100),
     activateCodeAt: z.string(),
     activateCodeAtHidden: z.string(),
+    expireCodeAt: z.string(),
+    expireCodeAtHidden: z.string(),
   })
   .strict()
   .refine(
@@ -35,6 +37,13 @@ const FieldValues = z
     {
       message: "Invalid date time.",
       path: ["activateCodeAt"],
+    }
+  )
+  .refine(
+    (data) => !data.expireCodeAtHidden || Date.parse(data.expireCodeAt) !== NaN,
+    {
+      message: "Invalid date time.",
+      path: ["expireCodeAt"],
     }
   );
 type FieldValues = z.infer<typeof FieldValues>;
@@ -74,7 +83,8 @@ export const action: ActionFunction = async ({
     return { formErrors: parseResult.error.formErrors, fieldValues };
   }
 
-  const { name, description, code, activateCodeAtHidden } = parseResult.data;
+  const { name, description, code, activateCodeAtHidden, expireCodeAtHidden } =
+    parseResult.data;
   await db.accessUser.update({
     where: { id: accessUser.id },
     data: {
@@ -84,6 +94,7 @@ export const action: ActionFunction = async ({
       activateCodeAt: activateCodeAtHidden
         ? new Date(activateCodeAtHidden)
         : null,
+      expireCodeAt: expireCodeAtHidden ? new Date(expireCodeAtHidden) : null,
     },
   });
   return redirect(`/access/users/${accessUserId}`);
@@ -231,7 +242,6 @@ export default function RouteComponent() {
                 type="datetime-local"
                 name="activateCodeAt"
                 id="activateCodeAt"
-                // defaultValue={formatDatetimeLocal(new Date())}
                 defaultValue={
                   actionData?.fieldValues
                     ? actionData.fieldValues.activatedCodeAt
@@ -253,6 +263,41 @@ export default function RouteComponent() {
             ) : null}
           </div>
         </div>
+        <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+          <div className="sm:col-span-4">
+            <label
+              htmlFor="expireCodeAt"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Expire Code At
+            </label>
+
+            <div className="mt-1 flex rounded-md shadow-sm">
+              <input
+                type="datetime-local"
+                name="expireCodeAt"
+                id="expireCodeAt"
+                defaultValue={
+                  actionData?.fieldValues
+                    ? actionData.fieldValues.activatedCodeAt
+                    : accessUser.expireCodeAt
+                    ? formatDatetimeLocal(new Date(accessUser.expireCodeAt))
+                    : ""
+                }
+                className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
+              />
+            </div>
+            {actionData?.formErrors?.fieldErrors.expireCodeAt ? (
+              <p
+                className="mt-2 text-sm text-red-600"
+                role="alert"
+                id="code-error"
+              >
+                {actionData.formErrors.fieldErrors.expireCodeAt.join(". ")}
+              </p>
+            ) : null}
+          </div>
+        </div>
 
         <div className="mt-4 flex justify-between">
           <button
@@ -266,6 +311,11 @@ export default function RouteComponent() {
             type="hidden"
             name="activateCodeAtHidden"
             id="activateCodeAtHidden"
+          />
+          <input
+            type="hidden"
+            name="expireCodeAtHidden"
+            id="expireCodeAtHidden"
           />
           <button
             type="submit"
@@ -288,6 +338,20 @@ export default function RouteComponent() {
                 // will not know the correct timezone.
                 activateCodeAtHidden.value = activateCodeAt.value
                   ? new Date(activateCodeAt.value).toJSON()
+                  : "";
+              }
+              const expireCodeAt =
+                e.currentTarget.form?.elements.namedItem("expireCodeAt");
+              const expireCodeAtHidden =
+                e.currentTarget.form?.elements.namedItem("expireCodeAtHidden");
+              if (
+                expireCodeAt &&
+                expireCodeAt instanceof HTMLInputElement &&
+                expireCodeAtHidden &&
+                expireCodeAtHidden instanceof HTMLInputElement
+              ) {
+                expireCodeAtHidden.value = expireCodeAt.value
+                  ? new Date(expireCodeAt.value).toJSON()
                   : "";
               }
             }}
