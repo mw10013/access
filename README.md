@@ -41,6 +41,7 @@
 - npm add -D @types/bcryptjs
 - npm add @headlessui/react
 - npm add @heroicons/react
+- npm add -D @tailwindcss/typography
 
 # Welcome to Remix!
 
