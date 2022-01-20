@@ -1,5 +1,5 @@
 import type { LoaderFunction } from "remix";
-import { useLoaderData, Link, useNavigate } from "remix";
+import { useLoaderData, Link, useNavigate, json } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
@@ -8,15 +8,17 @@ type LoaderData = {
   accessUsers: Prisma.AccessUserGetPayload<{}>[];
 };
 
-export const loader: LoaderFunction = async ({
-  request,
-}): Promise<LoaderData> => {
+export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
   const accessUsers = await db.accessUser.findMany({
     where: { deletedAt: null, user: { id: Number(userId) } },
     orderBy: { name: "asc" },
   });
-  return { accessUsers };
+
+  // null.generateServerError();
+  // throw json("Access user does not exist.", { status: 404 });
+
+  return json<LoaderData>({ accessUsers });
 };
 
 export default function Index() {
