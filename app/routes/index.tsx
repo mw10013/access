@@ -402,12 +402,12 @@ export default function RouteComponent() {
                   </a>
                   <p className="mt-6 text-center text-base font-medium text-gray-500">
                     Existing customer?
-                    <a
-                      href="#"
+                    <Link
+                      to="signin"
                       className="text-indigo-600 hover:text-indigo-500"
                     >
                       Sign in
-                    </a>
+                    </Link>
                   </p>
                 </div>
               </div>
@@ -421,8 +421,7 @@ export default function RouteComponent() {
           <div className="px-4 lg:w-1/2 sm:px-8 xl:pr-16">
             <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl">
               <span className="block xl:inline">Access</span>{" "}
-              <span className="block text-indigo-600 xl:inline">
-              </span>
+              <span className="block text-indigo-600 xl:inline"></span>
             </h1>
             <p className="mt-3 max-w-md mx-auto text-lg text-gray-500 sm:text-xl md:mt-5 md:max-w-3xl">
               Manage your access from the cloud.

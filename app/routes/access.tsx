@@ -17,7 +17,7 @@ const user = {
 const userNavigation = [
   { name: "Your Profile", href: "#" },
   { name: "Settings", href: "#" },
-  { name: "Sign out", href: "#" },
+  // { name: "Sign out", href: "#" },
 ];
 
 const navigation = [
@@ -51,19 +51,20 @@ function Layout({ children }: { children: React.ReactNode }) {
                   </div>
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                     {navigation.map((item) => (
-                      <a
+                      <NavLink
                         key={item.name}
-                        href={item.href}
-                        className={classNames(
-                          item.current
-                            ? "border-indigo-500 text-gray-900"
-                            : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                          "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                        )}
-                        aria-current={item.current ? "page" : undefined}
+                        to={item.to}
+                        className={({ isActive }) =>
+                          classNames(
+                            isActive
+                              ? "border-indigo-500 text-gray-900"
+                              : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
+                            "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                          )
+                        }
                       >
                         {item.name}
-                      </a>
+                      </NavLink>
                     ))}
                   </div>
                 </div>
@@ -113,6 +114,26 @@ function Layout({ children }: { children: React.ReactNode }) {
                             )}
                           </Menu.Item>
                         ))}
+                        <Menu.Item key="signOut">
+                          {({ active }) => (
+                            <a
+                              href="#"
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm text-gray-700"
+                              )}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                submit(null, {
+                                  action: "/signout",
+                                  method: "post",
+                                });
+                              }}
+                            >
+                              Sign out
+                            </a>
+                          )}
+                        </Menu.Item>
                       </Menu.Items>
                     </Transition>
                   </Menu>
@@ -188,6 +209,21 @@ function Layout({ children }: { children: React.ReactNode }) {
                       {item.name}
                     </Disclosure.Button>
                   ))}
+                  <Disclosure.Button key="signOut" as={Fragment}>
+                    <a
+                      href="#"
+                      className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        submit(null, {
+                          action: "/signout",
+                          method: "post",
+                        });
+                      }}
+                    >
+                      Sign out
+                    </a>
+                  </Disclosure.Button>
                 </div>
               </div>
             </Disclosure.Panel>
@@ -195,49 +231,7 @@ function Layout({ children }: { children: React.ReactNode }) {
         )}
       </Disclosure>
 
-      <nav className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-2xl font-bold leading-7 text-gray-900">
-                  <Link to="dashboard">Access</Link>
-                </h1>
-              </div>
-              <div className="-my-px ml-6 flex space-x-8">
-                {navigation.map((item) => (
-                  <NavLink
-                    key={item.name}
-                    to={item.to}
-                    className={({ isActive }) =>
-                      classNames(
-                        isActive
-                          ? "border-indigo-500 text-gray-900"
-                          : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                        "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                      )
-                    }
-                  >
-                    {item.name}
-                  </NavLink>
-                ))}
-              </div>
-            </div>
-            <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-              <Link
-                to="#"
-                className="whitespace-nowrap text-sm font-medium text-gray-500 hover:text-gray-700"
-                onClick={(e) => {
-                  e.preventDefault();
-                  submit(null, { action: "/signout", method: "post" });
-                }}
-              >
-                Sign out
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+      
       {children}
     </div>
   );
