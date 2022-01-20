@@ -15,9 +15,6 @@ export const loader: LoaderFunction = async ({ request }) => {
     orderBy: { name: "asc" },
   });
 
-  // null.generateServerError();
-  // throw json("Access user does not exist.", { status: 404 });
-
   return json<LoaderData>({ accessUsers });
 };
 
