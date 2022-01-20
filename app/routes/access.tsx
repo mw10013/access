@@ -1,4 +1,6 @@
+import React from "react";
 import { Link, NavLink, Outlet, useSubmit } from "remix";
+import { GenericCatchBoundary, GenericErrorBoundary } from "~/components/lib";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -11,7 +13,7 @@ const navigation = [
   { name: "Access Points", to: "points" },
 ];
 
-export default function AccessRoute() {
+function Layout({ children }: { children: React.ReactNode }) {
   const submit = useSubmit();
   return (
     <div>
@@ -58,7 +60,31 @@ export default function AccessRoute() {
           </div>
         </div>
       </nav>
-      <Outlet />
+      {children}
     </div>
+  );
+}
+
+export default function RouteComponent() {
+  return (
+    <Layout>
+      <Outlet />
+    </Layout>
+  );
+}
+
+export function CatchBoundary() {
+  return (
+    <Layout>
+      <GenericCatchBoundary />
+    </Layout>
+  );
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  return (
+    <Layout>
+      <GenericErrorBoundary error={error} />
+    </Layout>
   );
 }

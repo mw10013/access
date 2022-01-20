@@ -39,6 +39,7 @@ export const loader: LoaderFunction = async ({
     },
     rejectOnNotFound: true,
   });
+  
   return { accessUser };
 };
 
