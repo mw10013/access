@@ -56,7 +56,7 @@ function connectionStatus(heartbeatAt: AccessPoint["heartbeatAt"]) {
 
 export default function Index() {
   const { accessPoints } = useLoaderData<LoaderData>();
-  const [poll, setPoll] = React.useState(true);
+  const [poll, setPoll] = React.useState(false);
   const navigate = useNavigate();
 
   React.useEffect(() => {
