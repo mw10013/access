@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { LoaderFunction } from "remix";
-import { useLoaderData, useNavigate } from "remix";
+import { useLoaderData, useFetcher, useLocation } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
@@ -33,20 +33,18 @@ export const loader: LoaderFunction = async ({
   return { accessPoint };
 };
 
-export default function RawRoute() {
+export default function RouteComponent() {
   const data = useLoaderData<LoaderData>();
-  const [poll, setPoll] = React.useState(false);
-  const navigate = useNavigate();
+  const poll = useFetcher<LoaderData>();
+  const [isPolling, setIsPolling] = React.useState(true);
+  const location = useLocation();
 
   React.useEffect(() => {
-    if (poll) {
-      const intervalId = setInterval(
-        () => navigate(".", { replace: true }),
-        5000
-      );
+    if (isPolling) {
+      const intervalId = setInterval(() => poll.load(location.pathname), 5000);
       return () => clearInterval(intervalId);
     }
-  }, [navigate, poll]);
+  }, [location, isPolling]);
 
   return (
     <div className="p-8">
@@ -59,8 +57,8 @@ export default function RawRoute() {
               aria-describedby="comments-description"
               name="poll"
               type="checkbox"
-              checked={poll}
-              onChange={() => setPoll(!poll)}
+              checked={isPolling}
+              onChange={() => setIsPolling(!isPolling)}
               className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
             />
           </div>
@@ -72,7 +70,7 @@ export default function RawRoute() {
         </div>
       </div>
 
-      <pre className="mt-4">{JSON.stringify(data, null, 2)}</pre>
+      <pre className="mt-4">{JSON.stringify(poll.data ?? data, null, 2)}</pre>
     </div>
   );
 }
