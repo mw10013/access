@@ -230,8 +230,6 @@ function Layout({ children }: { children: React.ReactNode }) {
           </>
         )}
       </Disclosure>
-
-      
       {children}
     </div>
   );

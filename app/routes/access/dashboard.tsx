@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { LoaderFunction } from "remix";
-import { useLoaderData, Link, useNavigate } from "remix";
+import { useLoaderData, useFetcher, Link, useLocation } from "remix";
 import type { AccessPoint } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
@@ -19,7 +19,9 @@ type LoaderData = {
   }>[];
 };
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader: LoaderFunction = async ({
+  request,
+}): Promise<LoaderData> => {
   const userId = await requireUserId(request);
 
   const accessPoints = await db.accessPoint.findMany({
@@ -54,102 +56,114 @@ function connectionStatus(heartbeatAt: AccessPoint["heartbeatAt"]) {
   return "Dead";
 }
 
-export default function Index() {
+export default function RouteComponent() {
   const { accessPoints } = useLoaderData<LoaderData>();
-  const [poll, setPoll] = React.useState(false);
-  const navigate = useNavigate();
+  const poll = useFetcher<LoaderData>();
+  const [isPolling, setIsPolling] = React.useState(true);
+  const location = useLocation();
 
   React.useEffect(() => {
-    if (poll) {
-      const intervalId = setInterval(
-        () => navigate(".", { replace: true }),
-        5000
-      );
+    if (isPolling) {
+      const intervalId = setInterval(() => poll.load(location.pathname), 5000);
       return () => clearInterval(intervalId);
     }
-  }, [navigate, poll]);
+  }, [location, isPolling]);
   return (
-    <div className="p-8">
-      <div className="flex justify-between">
-        <h1 className="text-2xl font-bold leading-7 text-gray-900">
-          Dashboard
-        </h1>
-        <div className="relative flex items-start">
-          <div className="flex items-center h-5">
-            <input
-              id="poll"
-              aria-describedby="comments-description"
-              name="poll"
-              type="checkbox"
-              checked={poll}
-              onChange={() => setPoll(!poll)}
-              className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-            />
+    <>
+      <div className="py-10">
+        <header>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between">
+              <h1 className="text-3xl font-bold leading-tight text-gray-900">
+                Dashboard
+              </h1>
+              <div className="relative flex items-start">
+                <div className="flex items-center h-5">
+                  <input
+                    id="poll"
+                    aria-describedby="comments-description"
+                    name="poll"
+                    type="checkbox"
+                    checked={isPolling}
+                    onChange={() => setIsPolling(!isPolling)}
+                    className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                  />
+                </div>
+                <div className="ml-3 text-sm">
+                  <label htmlFor="poll" className="font-medium text-gray-700">
+                    Poll
+                  </label>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="ml-3 text-sm">
-            <label htmlFor="poll" className="font-medium text-gray-700">
-              Poll
-            </label>
+        </header>
+        <main>
+          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            {/* <div className="px-4 py-8 sm:px-0">
+              <div className="border-4 border-dashed border-gray-200 rounded-lg h-96" />
+            </div> */}
+            <div className="flex flex-col py-8">
+              <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                  <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            Manager
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            Name
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            Connection
+                          </th>
+                          <th scope="col" className="relative px-6 py-3">
+                            <span className="sr-only">View</span>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {(poll.data?.accessPoints ?? accessPoints).map((i) => (
+                          <tr key={i.id}>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {i.accessManager.name}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                              {i.name}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {connectionStatus(i.heartbeatAt)}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                              <Link
+                                to={`../points/${i.id}`}
+                                className="text-indigo-600 hover:text-indigo-900"
+                              >
+                                View
+                              </Link>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </main>
       </div>
-      <div className="max-w-7xl mx-auto">
-        <table className="mt-4 max-width-md divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Manager
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Name
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Connection
-              </th>
-              <th scope="col" className="relative px-6 py-3">
-                <span className="sr-only">View</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {accessPoints.map((i) => (
-              <tr key={i.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <Link
-                    to={`../managers/${i.accessManager.id}`}
-                    className="text-indigo-600 hover:text-indigo-900"
-                  >
-                    {i.accessManager.name}
-                  </Link>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {i.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {connectionStatus(i.heartbeatAt)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                  <Link
-                    to={`../points/${i.id}`}
-                    className="text-indigo-600 hover:text-indigo-900"
-                  >
-                    View
-                  </Link>{" "}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    </>
   );
 }
