@@ -32,7 +32,7 @@ export const loader: LoaderFunction = async ({
   return { accessPoint };
 };
 
-export default function Index() {
+export default function RouteComponent() {
   const navigate = useNavigate();
   const submit = useSubmit();
   const { accessPoint } = useLoaderData<LoaderData>();
@@ -116,12 +116,6 @@ export default function Index() {
                 >
                   Code
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Enabled
-                </th>
                 <th scope="col" className="relative px-6 py-3">
                   <span className="sr-only">View</span>
                 </th>
@@ -146,9 +140,6 @@ export default function Index() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {i.code}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {i.enabled ? "Enabled" : "Disabled"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                     <Link
