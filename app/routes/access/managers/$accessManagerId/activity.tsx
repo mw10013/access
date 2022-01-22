@@ -4,7 +4,7 @@ import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
 import { Table, Th } from "~/components/lib";
-import { ChevronRightIcon, LocationMarkerIcon } from "@heroicons/react/solid";
+import { ChevronRightIcon } from "@heroicons/react/solid";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");

@@ -156,7 +156,7 @@ export default function RouteComponent() {
               <p
                 className="mt-2 text-sm text-red-600"
                 role="alert"
-                id="code-error"
+                id="name-error"
               >
                 {actionData.formErrors.fieldErrors.name.join(". ")}
               </p>
@@ -190,7 +190,7 @@ export default function RouteComponent() {
               <p
                 className="mt-2 text-sm text-red-600"
                 role="alert"
-                id="code-error"
+                id="description-error"
               >
                 {actionData.formErrors.fieldErrors.description.join(". ")}
               </p>
