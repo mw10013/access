@@ -1,8 +1,9 @@
 import type { LoaderFunction } from "remix";
-import { useLoaderData, Link, useNavigate } from "remix";
+import { useLoaderData, Link } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
+import { Table, Th } from "~/components/lib";
 
 type LoaderData = {
   accessManagers: Prisma.AccessManagerGetPayload<{}>[];
@@ -12,7 +13,6 @@ export const loader: LoaderFunction = async ({
   request,
 }): Promise<LoaderData> => {
   const userId = await requireUserId(request);
-
   const accessManagers = await db.accessManager.findMany({
     where: {
       user: { id: Number(userId) },
@@ -22,73 +22,57 @@ export const loader: LoaderFunction = async ({
   return { accessManagers };
 };
 
-export default function Index() {
+export default function RouteComponent() {
   const { accessManagers } = useLoaderData<LoaderData>();
-  const navigate = useNavigate();
   return (
-    <div className="p-8">
-      <div className="flex justify-between">
-        <h1 className="text-2xl font-bold leading-7 text-gray-900">
-          Access Managers
-        </h1>
-        {/* <button
-          type="button"
-          className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
-          onClick={() => navigate("create")}
-        >
-          Create
-        </button> */}
-      </div>
-      <table className="mt-4 max-width-md divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Id
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Name
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Description
-            </th>
-            <th scope="col" className="relative px-6 py-3">
-              <span className="sr-only">View</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {accessManagers.map((i) => (
-            <tr key={i.id}>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {i.id}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {i.name}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {i.description}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                <Link
-                  to={`${i.id}`}
-                  className="text-indigo-600 hover:text-indigo-900"
-                >
-                  View
-                </Link>{" "}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="py-10">
+      <header>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between">
+            <h1 className="text-3xl font-bold leading-tight text-gray-900">
+              Managers
+            </h1>
+          </div>
+        </div>
+      </header>
+      <main>
+        <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
+          <Table
+            headers={
+              <>
+                <Th>Name</Th>
+                <Th>Id</Th>
+                <Th>Description</Th>
+                <th scope="col" className="relative px-6 py-3">
+                  <span className="sr-only">View</span>
+                </th>
+              </>
+            }
+          >
+            {accessManagers.map((i) => (
+              <tr key={i.id}>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {i.name}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {i.id}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {i.description}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <Link
+                    to={`${i.id}`}
+                    className="text-indigo-600 hover:text-indigo-900"
+                  >
+                    View
+                  </Link>{" "}
+                </td>
+              </tr>
+            ))}
+          </Table>
+        </div>
+      </main>
     </div>
   );
 }

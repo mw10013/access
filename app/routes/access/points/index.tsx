@@ -1,5 +1,5 @@
 import type { LoaderFunction } from "remix";
-import { useLoaderData, Link, useNavigate } from "remix";
+import { useLoaderData, Link } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
@@ -29,9 +29,8 @@ export const loader: LoaderFunction = async ({
   return { accessPoints };
 };
 
-export default function Index() {
+export default function RouteComponent() {
   const { accessPoints } = useLoaderData<LoaderData>();
-  const navigate = useNavigate();
   return (
     <div className="py-10">
       <header>

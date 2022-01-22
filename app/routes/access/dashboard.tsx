@@ -70,7 +70,6 @@ export default function RouteComponent() {
     }
   }, [location, isPolling]);
   return (
-    <>
       <div className="py-10">
         <header>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -100,7 +99,7 @@ export default function RouteComponent() {
           </div>
         </header>
         <main>
-          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
+          <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
             <Table
               headers={
                 <>
@@ -138,6 +137,5 @@ export default function RouteComponent() {
           </div>
         </main>
       </div>
-    </>
   );
 }
