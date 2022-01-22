@@ -1,43 +1,19 @@
 import { Fragment } from "react";
 import {
-  BriefcaseIcon,
-  CalendarIcon,
   CheckIcon,
   ChevronDownIcon,
   ChevronRightIcon,
-  CurrencyDollarIcon,
   LinkIcon,
   LocationMarkerIcon,
   PencilIcon,
-  DocumentTextIcon,
 } from "@heroicons/react/solid";
 import { Menu, Transition } from "@headlessui/react";
 import type { LoaderFunction } from "remix";
-import { useLoaderData, Link, useNavigate, useSubmit } from "remix";
+import { useLoaderData, Link, useNavigate } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
 import { Table, Th } from "~/components/lib";
-
-const payments = [
-  {
-    id: 1,
-    date: "1/1/2020",
-    datetime: "2020-01-01",
-    description: "Business Plan - Annual Billing",
-    amount: "CA$109.00",
-    href: "#",
-  },
-  {
-    id: 2,
-    date: "1/7/2020",
-    datetime: "2020-01-01",
-    description: "Business Plan ",
-    amount: "CA$10.00",
-    href: "#",
-  },
-  // More payments...
-];
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");

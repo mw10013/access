@@ -1,16 +1,3 @@
-import { Fragment } from "react";
-import {
-  BriefcaseIcon,
-  CalendarIcon,
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-  CurrencyDollarIcon,
-  LinkIcon,
-  LocationMarkerIcon,
-  PencilIcon,
-} from "@heroicons/react/solid";
-import { Menu, Transition } from "@headlessui/react";
 import type { LoaderFunction } from "remix";
 import { useLoaderData, Link } from "remix";
 import { Prisma } from "@prisma/client";
