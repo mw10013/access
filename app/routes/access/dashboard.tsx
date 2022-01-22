@@ -5,6 +5,7 @@ import type { AccessPoint } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
+import { Table, Th } from "~/components/lib";
 
 type LoaderData = {
   accessPoints: Prisma.AccessPointGetPayload<{
@@ -99,68 +100,41 @@ export default function RouteComponent() {
           </div>
         </header>
         <main>
-          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            {/* <div className="px-4 py-8 sm:px-0">
-              <div className="border-4 border-dashed border-gray-200 rounded-lg h-96" />
-            </div> */}
-            <div className="flex flex-col py-8">
-              <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                  <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Manager
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Name
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Connection
-                          </th>
-                          <th scope="col" className="relative px-6 py-3">
-                            <span className="sr-only">View</span>
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {(poll.data?.accessPoints ?? accessPoints).map((i) => (
-                          <tr key={i.id}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {i.accessManager.name}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                              {i.name}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {connectionStatus(i.heartbeatAt)}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                              <Link
-                                to={`../points/${i.id}`}
-                                className="text-indigo-600 hover:text-indigo-900"
-                              >
-                                View
-                              </Link>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
+            <Table
+              headers={
+                <>
+                  <Th>Manager</Th>
+                  <Th>Name</Th>
+                  <Th>Connection</Th>
+                  <th scope="col" className="relative px-6 py-3">
+                    <span className="sr-only">View</span>
+                  </th>
+                </>
+              }
+            >
+              {(poll.data?.accessPoints ?? accessPoints).map((i) => (
+                <tr key={i.id}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {i.accessManager.name}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {i.name}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {connectionStatus(i.heartbeatAt)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <Link
+                      to={`../points/${i.id}`}
+                      className="text-indigo-600 hover:text-indigo-900"
+                    >
+                      View
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </Table>
           </div>
         </main>
       </div>
