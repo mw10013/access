@@ -6,43 +6,11 @@ import { requireUserId } from "~/utils/session.server";
 import type { ZodError } from "zod";
 import { z } from "zod";
 import { ChevronRightIcon, PlusIcon } from "@heroicons/react/solid";
-import { RadioGroup } from "@headlessui/react";
+import { Breadcrumbs } from "~/components/lib";
 
-const team = [
-  {
-    name: "Calvin Hawkins",
-    email: "calvin.hawkins@example.com",
-    imageUrl:
-      "https://images.unsplash.com/photo-1513910367299-bce8d8a0ebf6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-  {
-    name: "Bessie Richards",
-    email: "bessie.richards@example.com",
-    imageUrl:
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-  {
-    name: "Floyd Black",
-    email: "floyd.black@example.com",
-    imageUrl:
-      "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-];
-
-const settings = [
-  {
-    name: "Public access",
-    description: "This project would be available to anyone who has the link",
-  },
-  {
-    name: "Private to Project Members",
-    description: "Only members of this project would be able to access",
-  },
-  {
-    name: "Private to you",
-    description: "You are the only one able to access this project",
-  },
-];
+export const handle = {
+  breadcrumb: "Edit",
+};
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -109,48 +77,7 @@ export default function RouteComponent() {
       <header className="p-8">
         <div className="lg:flex lg:items-center lg:justify-between">
           <div className="flex-1 min-w-0">
-            <nav className="flex" aria-label="Breadcrumb">
-              <ol role="list" className="flex items-center space-x-4">
-                <li>
-                  <div className="flex">
-                    <Link
-                      to="./../.."
-                      className="text-sm font-medium text-gray-500 hover:text-gray-700"
-                    >
-                      Managers
-                    </Link>
-                  </div>
-                </li>
-                <li>
-                  <div className="flex items-center">
-                    <ChevronRightIcon
-                      className="flex-shrink-0 h-5 w-5 text-gray-400"
-                      aria-hidden="true"
-                    />
-                    <Link
-                      to="./.."
-                      className="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
-                    >
-                      Access Manager
-                    </Link>
-                  </div>
-                </li>
-                <li>
-                  <div className="flex items-center">
-                    <ChevronRightIcon
-                      className="flex-shrink-0 h-5 w-5 text-gray-400"
-                      aria-hidden="true"
-                    />
-                    <Link
-                      to="."
-                      className="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
-                    >
-                      Edit
-                    </Link>
-                  </div>
-                </li>
-              </ol>
-            </nav>
+            <Breadcrumbs />
             {/* <h2 className="mt-2 text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
               {accessManager.name}
             </h2> */}
