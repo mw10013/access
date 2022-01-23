@@ -24,7 +24,7 @@ const navigation = [
   { name: "Dashboard", to: "dashboard" },
   { name: "Users", to: "users" },
   { name: "Managers", to: "managers" },
-  { name: "Access Points", to: "points" },
+  { name: "Points", to: "points" },
 ];
 
 function Layout({ children }: { children: React.ReactNode }) {
