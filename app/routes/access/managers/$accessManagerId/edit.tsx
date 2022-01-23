@@ -158,85 +158,96 @@ export default function RouteComponent() {
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto pb-12 px-4 lg:pb-16">
+      <main className="max-w-lg mx-auto pb-10 lg:px-8">
         <Form replace method="post">
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-lg leading-6 font-medium text-gray-900">
-                Access Manager Settings
-              </h1>
-              <p className="mt-1 text-sm text-gray-500">
-                {actionData?.formErrors?.formErrors.join(". ")}
-              </p>
-            </div>
-
-            <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Name
-              </label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  name="name"
-                  id="name"
-                  className="block w-full shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm border-gray-300 rounded-md"
-                  defaultValue={
-                    actionData?.fieldValues
-                      ? actionData.fieldValues.name
-                      : accessManager.name
-                  }
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="description"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Description
-              </label>
-              <div className="mt-1">
-                <textarea
-                  id="description"
-                  name="description"
-                  rows={3}
-                  className="block w-full shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm border border-gray-300 rounded-md"
-                  defaultValue={
-                    actionData?.fieldValues
-                      ? actionData.fieldValues.description
-                      : accessManager.description
-                  }
-                />
-              </div>
-              {actionData?.formErrors?.fieldErrors?.description ? (
-                <p
-                  className="mt-2 text-sm text-red-600"
-                  role="alert"
-                  id="description-error"
-                >
-                  {actionData.formErrors.fieldErrors.description.join(". ")}
+          <div className="shadow sm:rounded-md sm:overflow-hidden">
+            <div className="bg-white py-6 px-4 sm:p-6 space-y-6">
+              <div>
+                <h1 className="text-lg leading-6 font-medium text-gray-900">
+                  Access Manager Settings
+                </h1>
+                <p className="mt-1 text-sm text-gray-500">
+                  {actionData?.formErrors?.formErrors.join(". ")}
                 </p>
-              ) : null}
-            </div>
+              </div>
 
-            <div className="flex justify-end">
-              <button
-                type="button"
-                className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
-                onClick={() => navigate(-1)}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
-              >
-                Save
-              </button>
+              <div className="">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Name
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="text"
+                    name="name"
+                    id="name"
+                    className="block w-full shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm border-gray-300 rounded-md"
+                    defaultValue={
+                      actionData?.fieldValues
+                        ? actionData.fieldValues.name
+                        : accessManager.name
+                    }
+                  />
+                </div>
+                {actionData?.formErrors?.fieldErrors?.name ? (
+                  <p
+                    className="mt-2 text-sm text-red-600"
+                    role="alert"
+                    id="name-error"
+                  >
+                    {actionData.formErrors.fieldErrors.name.join(". ")}
+                  </p>
+                ) : null}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Description
+                </label>
+                <div className="mt-1">
+                  <textarea
+                    id="description"
+                    name="description"
+                    rows={3}
+                    className="block w-full shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm border border-gray-300 rounded-md"
+                    defaultValue={
+                      actionData?.fieldValues
+                        ? actionData.fieldValues.description
+                        : accessManager.description
+                    }
+                  />
+                </div>
+                {actionData?.formErrors?.fieldErrors?.description ? (
+                  <p
+                    className="mt-2 text-sm text-red-600"
+                    role="alert"
+                    id="description-error"
+                  >
+                    {actionData.formErrors.fieldErrors.description.join(". ")}
+                  </p>
+                ) : null}
+              </div>
+
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
+                  onClick={() => navigate(-1)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
+                >
+                  Save
+                </button>
+              </div>
             </div>
           </div>
         </Form>
