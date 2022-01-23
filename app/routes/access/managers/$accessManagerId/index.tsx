@@ -191,7 +191,7 @@ export default function RouteComponent() {
         </div>
       </header>
       <main className="max-w-7xl mx-auto sm:px-8 space-y-6 pb-8">
-        <section aria-labelledby="access-points-heading">
+        <section>
           <div className="bg-white pt-6 shadow sm:rounded-md sm:overflow-hidden">
             <div className="px-4 sm:px-6">
               <h2

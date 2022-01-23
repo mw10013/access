@@ -1,4 +1,4 @@
-import type { LoaderFunction } from "remix";
+import { LoaderFunction, useFormAction } from "remix";
 import { useLoaderData, Link, useNavigate, useSubmit } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
@@ -9,10 +9,16 @@ import {
   ChevronDownIcon,
   LinkIcon,
   LocationMarkerIcon,
+  PaperClipIcon,
   PencilIcon,
 } from "@heroicons/react/solid";
 import { Fragment } from "react";
-import { Breadcrumbs } from "~/components/lib";
+import { Breadcrumbs, Table, Th } from "~/components/lib";
+
+const attachments = [
+  { name: "resume_front_end_developer.pdf", href: "#" },
+  { name: "coverletter_front_end_developer.pdf", href: "#" },
+];
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -47,9 +53,10 @@ export const loader: LoaderFunction = async ({
 };
 
 export default function RouteComponent() {
+  const { accessPoint } = useLoaderData<LoaderData>();
   const navigate = useNavigate();
   const submit = useSubmit();
-  const { accessPoint } = useLoaderData<LoaderData>();
+  const removeFormActionBase = useFormAction("users");
   return (
     <>
       <header className="p-8">
@@ -71,7 +78,6 @@ export default function RouteComponent() {
               </div>
             ) : null}
           </div>
-
           <div className="mt-5 flex lg:mt-0 lg:ml-4">
             <span className="hidden sm:block">
               <button
@@ -162,103 +168,97 @@ export default function RouteComponent() {
           </div>
         </div>
       </header>
-      <div className="p-8">
-        <div className="flex justify-between">
-          <h1 className="text-2xl font-bold leading-7 text-gray-900">
-            Access Point
-          </h1>
-          <div className="flex space-x-2">
-            <button
-              type="button"
-              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
-              onClick={() => navigate("raw")}
-            >
-              Raw
-            </button>
-            <button
-              type="button"
-              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
-              onClick={() => navigate("edit")}
-            >
-              Edit
-            </button>
-          </div>
-        </div>
-        <div className="flex mt-1 space-x-10 text-sm text-gray-500">
-          <div className="text-gray-900">{accessPoint.name}</div>
-          <div>ID: {accessPoint.id}</div>
-          <div>
-            Manager:{" "}
-            <Link
-              to={`../managers/${accessPoint.accessManagerId}`}
-              className="text-indigo-600 hover:text-indigo-900"
-            >
-              {accessPoint.accessManager.name}
-            </Link>
-          </div>
-          <div>Position: {accessPoint.position}</div>
-          <div>{accessPoint.description}</div>
-        </div>
 
-        <div className="mt-4">
-          <div className="flex justify-between">
-            <h3 className="text-lg leading-6 font-medium text-gray-900">
-              Users With Access
-            </h3>
-            <button
-              type="button"
-              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
-              onClick={() => navigate("users/add")}
-            >
-              Add
-            </button>
+      <main className="max-w-7xl mx-auto sm:px-8 space-y-6 pb-8">
+        {/* <div className="max-w-3xl mx-auto grid grid-cols-1 gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3"> */}
+        <div className="max-w-3xl mx-auto grid grid-cols-1 gap-6 sm:px-6 ">
+          {/* <div className="space-y-6 lg:col-start-1 lg:col-span-2"> */}
+          <div className="space-y-6 ">
+            {/* Description list*/}
+            <section aria-labelledby="access-point-details">
+              <div className="bg-white shadow sm:rounded-lg">
+                <div className="border-t border-gray-200 px-6 py-5">
+                  <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+                    <div className="sm:col-span-1">
+                      <dt className="text-sm font-medium text-gray-500">
+                        Manager
+                      </dt>
+                      <dd className="mt-1 text-sm text-gray-900">
+                        {accessPoint.accessManager.name}
+                      </dd>
+                    </div>
+                    <div className="sm:col-span-1">
+                      <dt className="text-sm font-medium text-gray-500">ID</dt>
+                      <dd className="mt-1 text-sm text-gray-900">
+                        {accessPoint.id}
+                      </dd>
+                    </div>
+                    <div className="sm:col-span-1">
+                      <dt className="text-sm font-medium text-gray-500">
+                        Position
+                      </dt>
+                      <dd className="mt-1 text-sm text-gray-900">
+                        {accessPoint.position}
+                      </dd>
+                    </div>
+                    <div className="sm:col-span-1">
+                      <dt className="text-sm font-medium text-gray-500">
+                        Heartbeat
+                      </dt>
+                      <dd className="mt-1 text-sm text-gray-900">
+                        {accessPoint.heartbeatAt
+                          ? new Date(accessPoint.heartbeatAt).toLocaleString()
+                          : null}
+                      </dd>
+                    </div>
+                    <div className="sm:col-span-2">
+                      <dt className="text-sm font-medium text-gray-500">
+                        Description
+                      </dt>
+                      <dd className="mt-1 text-sm text-gray-900">
+                        {accessPoint.description}
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </section>
           </div>
-          <div className="max-w-7xl mx-auto">
-            <table className="max-width-md divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    ID
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Name
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Description
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Code
-                  </th>
-                  <th scope="col" className="relative px-6 py-3">
-                    <span className="sr-only">View</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+        </div>
+        <section>
+          <div className="bg-white pt-6 shadow sm:rounded-md sm:overflow-hidden">
+            <div className="px-4 sm:px-6 flex items-center justify-between">
+              <h2
+                id="access-points-heading"
+                className="text-lg leading-6 font-medium text-gray-900"
+              >
+                Users with Access
+              </h2>
+              <button
+                type="button"
+                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                onClick={() => navigate("users/add")}
+              >
+                Add
+              </button>
+            </div>
+            <div className="mt-6">
+              <Table
+                headers={
+                  <>
+                    <Th>Name</Th>
+                    <Th>Description</Th>
+                    <Th>Code</Th>
+                    <th scope="col" className="relative px-6 py-3">
+                      <span className="sr-only">View</span>
+                    </th>
+                  </>
+                }
+              >
                 {accessPoint.accessUsers.map((i) => (
                   <tr key={i.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm  text-gray-500">
-                      {i.id}
-                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      <Link
-                        to={`../users/${i.id}`}
-                        className="text-indigo-600 hover:text-indigo-900"
-                      >
-                        {i.name}
-                      </Link>
+                      {i.name}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {i.description}
@@ -266,7 +266,7 @@ export default function RouteComponent() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {i.code}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <Link
                         to="#"
                         className="text-indigo-600 hover:text-indigo-900"
@@ -274,7 +274,7 @@ export default function RouteComponent() {
                           e.preventDefault();
                           submit(null, {
                             method: "post",
-                            action: `/access/points/${accessPoint.id}/users/${i.id}/remove`,
+                            action: `${removeFormActionBase}/${i.id}/remove`,
                           });
                         }}
                       >
@@ -283,11 +283,11 @@ export default function RouteComponent() {
                     </td>
                   </tr>
                 ))}
-              </tbody>
-            </table>
+              </Table>
+            </div>
           </div>
-        </div>
-      </div>
+        </section>
+      </main>
     </>
   );
 }
