@@ -80,9 +80,9 @@ export function TdLink({
   children,
   to,
   onClick,
-}: { children: React.ReactNode } & RemixLinkProps) {
+}: { children: React.ReactNode } & Pick<RemixLinkProps, "to" | "onClick">) {
   return (
-    <TdProminent>
+    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
       <Link
         to={to}
         className="text-indigo-600 hover:text-indigo-900"
@@ -90,7 +90,7 @@ export function TdLink({
       >
         {children}
       </Link>
-    </TdProminent>
+    </td>
   );
 }
 

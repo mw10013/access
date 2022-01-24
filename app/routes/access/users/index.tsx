@@ -3,7 +3,7 @@ import { useLoaderData, Link, useNavigate, json } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
-import { Table, Td, TdProminent, Th, ThSr } from "~/components/lib";
+import { Table, Td, TdLink, TdProminent, Th, ThSr } from "~/components/lib";
 
 type LoaderData = {
   accessUsers: Prisma.AccessUserGetPayload<{}>[];
@@ -59,14 +59,7 @@ export default function RouteComponent() {
                 <TdProminent>{i.name}</TdProminent>
                 <Td>{i.id}</Td>
                 <Td>{i.code}</Td>
-                <TdProminent>
-                  <Link
-                    to={i.id.toString()}
-                    className="text-indigo-600 hover:text-indigo-900"
-                  >
-                    View
-                  </Link>
-                </TdProminent>
+                <TdLink to={i.id.toString()}>View</TdLink>
               </tr>
             ))}
           </Table>
