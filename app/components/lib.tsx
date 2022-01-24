@@ -1,4 +1,5 @@
 import { ChevronRightIcon } from "@heroicons/react/solid";
+import { RemixLinkProps } from "@remix-run/react/components";
 import React from "react";
 import { Link, useCatch, useMatches } from "remix";
 
@@ -47,6 +48,49 @@ export function Th({ children }: { children: React.ReactNode }) {
     >
       {children}
     </th>
+  );
+}
+
+export function ThSr({ children }: { children: React.ReactNode }) {
+  return (
+    // Tailwind comment: relative needed to work around issue on safari mobile.
+    <th scope="col" className="relative px-6 py-3">
+      <span className="sr-only">{children}</span>
+    </th>
+  );
+}
+
+export function Td({ children }: { children: React.ReactNode }) {
+  return (
+    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+      {children}
+    </td>
+  );
+}
+
+export function TdProminent({ children }: { children: React.ReactNode }) {
+  return (
+    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+      {children}
+    </td>
+  );
+}
+
+export function TdLink({
+  children,
+  to,
+  onClick,
+}: { children: React.ReactNode } & RemixLinkProps) {
+  return (
+    <TdProminent>
+      <Link
+        to={to}
+        className="text-indigo-600 hover:text-indigo-900"
+        onClick={onClick}
+      >
+        {children}
+      </Link>
+    </TdProminent>
   );
 }
 

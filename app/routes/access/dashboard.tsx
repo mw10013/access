@@ -5,7 +5,7 @@ import type { AccessPoint } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
-import { Table, Th } from "~/components/lib";
+import { Table, Td, TdLink, TdProminent, Th, ThSr } from "~/components/lib";
 
 type LoaderData = {
   accessPoints: Prisma.AccessPointGetPayload<{
@@ -70,72 +70,57 @@ export default function RouteComponent() {
     }
   }, [location, isPolling]);
   return (
-      <div className="py-10">
-        <header>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between">
-              <h1 className="text-3xl font-bold leading-tight text-gray-900">
-                Dashboard
-              </h1>
-              <div className="relative flex items-start">
-                <div className="flex items-center h-5">
-                  <input
-                    id="poll"
-                    aria-describedby="comments-description"
-                    name="poll"
-                    type="checkbox"
-                    checked={isPolling}
-                    onChange={() => setIsPolling(!isPolling)}
-                    className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                  />
-                </div>
-                <div className="ml-3 text-sm">
-                  <label htmlFor="poll" className="font-medium text-gray-700">
-                    Poll
-                  </label>
-                </div>
+    <div className="py-10">
+      <header>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between">
+            <h1 className="text-3xl font-bold leading-tight text-gray-900">
+              Dashboard
+            </h1>
+            <div className="relative flex items-start">
+              <div className="flex items-center h-5">
+                <input
+                  id="poll"
+                  aria-describedby="comments-description"
+                  name="poll"
+                  type="checkbox"
+                  checked={isPolling}
+                  onChange={() => setIsPolling(!isPolling)}
+                  className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                />
+              </div>
+              <div className="ml-3 text-sm">
+                <label htmlFor="poll" className="font-medium text-gray-700">
+                  Poll
+                </label>
               </div>
             </div>
           </div>
-        </header>
-        <main>
-          <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
-            <Table
-              headers={
-                <>
-                  <Th>Manager</Th>
-                  <Th>Name</Th>
-                  <Th>Connection</Th>
-                  <th scope="col" className="relative px-6 py-3">
-                    <span className="sr-only">View</span>
-                  </th>
-                </>
-              }
-            >
-              {(poll.data?.accessPoints ?? accessPoints).map((i) => (
-                <tr key={i.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {i.accessManager.name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {i.name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {connectionStatus(i.heartbeatAt)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <Link
-                      to={`../points/${i.id}`}
-                      className="text-indigo-600 hover:text-indigo-900"
-                    >
-                      View
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </Table>
-          </div>
-        </main>
-      </div>
+        </div>
+      </header>
+      <main>
+        <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
+          <Table
+            headers={
+              <>
+                <Th>Manager</Th>
+                <Th>Name</Th>
+                <Th>Connection</Th>
+                <ThSr>View</ThSr>
+              </>
+            }
+          >
+            {(poll.data?.accessPoints ?? accessPoints).map((i) => (
+              <tr key={i.id}>
+                <Td>{i.accessManager.name}</Td>
+                <TdProminent>{i.name}</TdProminent>
+                <Td>{connectionStatus(i.heartbeatAt)}</Td>
+                <TdLink to={`../points/${i.id}`}>View</TdLink>
+              </tr>
+            ))}
+          </Table>
+        </div>
+      </main>
+    </div>
   );
 }

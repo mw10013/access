@@ -3,7 +3,7 @@ import { useLoaderData, Link, useNavigate, json } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
-import { Table, Th } from "~/components/lib";
+import { Table, Td, TdProminent, Th, ThSr } from "~/components/lib";
 
 type LoaderData = {
   accessUsers: Prisma.AccessUserGetPayload<{}>[];
@@ -50,31 +50,23 @@ export default function RouteComponent() {
                 <Th>Name</Th>
                 <Th>Id</Th>
                 <Th>Code</Th>
-                <th scope="col" className="relative px-6 py-3">
-                  <span className="sr-only">View</span>
-                </th>
+                <ThSr>View</ThSr>
               </>
             }
           >
             {accessUsers.map((i) => (
               <tr key={i.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {i.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {i.id}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {i.code}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <TdProminent>{i.name}</TdProminent>
+                <Td>{i.id}</Td>
+                <Td>{i.code}</Td>
+                <TdProminent>
                   <Link
                     to={i.id.toString()}
                     className="text-indigo-600 hover:text-indigo-900"
                   >
                     View
                   </Link>
-                </td>
+                </TdProminent>
               </tr>
             ))}
           </Table>
