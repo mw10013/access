@@ -109,7 +109,7 @@ export default function RouteComponent() {
                     type="text"
                     name="name"
                     id="name"
-                    className="block w-full shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm border-gray-300 rounded-md"
+                    className="block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
                     defaultValue={
                       actionData?.fieldValues
                         ? actionData.fieldValues.name
@@ -140,7 +140,7 @@ export default function RouteComponent() {
                     id="description"
                     name="description"
                     rows={3}
-                    className="block w-full shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm border border-gray-300 rounded-md"
+                    className="block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
                     defaultValue={
                       actionData?.fieldValues
                         ? actionData.fieldValues.description
