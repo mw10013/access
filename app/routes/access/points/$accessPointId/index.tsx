@@ -13,7 +13,16 @@ import {
   PencilIcon,
 } from "@heroicons/react/solid";
 import { Fragment } from "react";
-import { Breadcrumbs, Table, Th } from "~/components/lib";
+import {
+  Breadcrumbs,
+  Button,
+  Table,
+  TdProminent,
+  Td,
+  Th,
+  ThSr,
+  TdLink,
+} from "~/components/lib";
 
 const attachments = [
   { name: "resume_front_end_developer.pdf", href: "#" },
@@ -80,50 +89,40 @@ export default function RouteComponent() {
           </div>
           <div className="mt-5 flex lg:mt-0 lg:ml-4">
             <span className="hidden sm:block">
-              <button
-                type="button"
-                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                onClick={() => navigate("raw")}
-              >
+              <Button variant="white" onClick={() => navigate("raw")}>
                 <CheckIcon
                   className="-ml-1 mr-2 h-5 w-5 text-gray-500"
                   aria-hidden="true"
                 />
                 Raw
-              </button>
+              </Button>
             </span>
             <span className="hidden sm:block ml-3">
-              <button
-                type="button"
-                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                onClick={() => navigate("activity")}
-              >
+              <Button variant="white" onClick={() => navigate("activity")}>
                 <LinkIcon
                   className="-ml-1 mr-2 h-5 w-5 text-gray-500"
                   aria-hidden="true"
                 />
                 Activity
-              </button>
+              </Button>
             </span>
             <span className="sm:ml-3">
-              <button
-                type="button"
-                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                onClick={() => navigate("edit")}
-              >
+              <Button onClick={() => navigate("edit")}>
                 <PencilIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
                 Edit
-              </button>
+              </Button>
             </span>
 
             {/* Dropdown */}
             <Menu as="span" className="ml-3 relative sm:hidden">
-              <Menu.Button className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                More
-                <ChevronDownIcon
-                  className="-mr-1 ml-2 h-5 w-5 text-gray-500"
-                  aria-hidden="true"
-                />
+              <Menu.Button as={Fragment}>
+                <Button variant="white">
+                  More
+                  <ChevronDownIcon
+                    className="-mr-1 ml-2 h-5 w-5 text-gray-500"
+                    aria-hidden="true"
+                  />
+                </Button>
               </Menu.Button>
 
               <Transition
@@ -234,13 +233,7 @@ export default function RouteComponent() {
               >
                 Users with Access
               </h2>
-              <button
-                type="button"
-                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                onClick={() => navigate("users/add")}
-              >
-                Add
-              </button>
+              <Button onClick={() => navigate("users/add")}>Add</Button>
             </div>
             <div className="mt-6">
               <Table
@@ -249,38 +242,27 @@ export default function RouteComponent() {
                     <Th>Name</Th>
                     <Th>Description</Th>
                     <Th>Code</Th>
-                    <th scope="col" className="relative px-6 py-3">
-                      <span className="sr-only">View</span>
-                    </th>
+                    <ThSr>View</ThSr>
                   </>
                 }
               >
                 {accessPoint.accessUsers.map((i) => (
                   <tr key={i.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {i.name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {i.description}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {i.code}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <Link
-                        to="#"
-                        className="text-indigo-600 hover:text-indigo-900"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          submit(null, {
-                            method: "post",
-                            action: `${removeFormActionBase}/${i.id}/remove`,
-                          });
-                        }}
-                      >
-                        Remove
-                      </Link>
-                    </td>
+                    <TdProminent>{i.name}</TdProminent>
+                    <Td>{i.description}</Td>
+                    <Td>{i.code}</Td>
+                    <TdLink
+                      to="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        submit(null, {
+                          method: "post",
+                          action: `${removeFormActionBase}/${i.id}/remove`,
+                        });
+                      }}
+                    >
+                      Remove
+                    </TdLink>
                   </tr>
                 ))}
               </Table>
