@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 import {
   CheckIcon,
   ChevronDownIcon,
@@ -68,7 +68,7 @@ export default function RouteComponent() {
 
           <div className="mt-5 flex lg:mt-0 lg:ml-4">
             <span className="hidden sm:block">
-              <Button onClick={() => navigate("mock")}>
+              <Button variant="white" onClick={() => navigate("mock")}>
                 <PencilIcon
                   className="-ml-1 mr-2 h-5 w-5 text-gray-500"
                   aria-hidden="true"
@@ -78,7 +78,7 @@ export default function RouteComponent() {
             </span>
 
             <span className="hidden sm:block ml-3">
-              <Button onClick={() => navigate("raw")}>
+              <Button variant="white" onClick={() => navigate("raw")}>
                 <CheckIcon
                   className="-ml-1 mr-2 h-5 w-5 text-gray-500"
                   aria-hidden="true"
@@ -87,7 +87,7 @@ export default function RouteComponent() {
               </Button>
             </span>
             <span className="hidden sm:block ml-3">
-              <Button onClick={() => navigate("activity")}>
+              <Button variant="white" onClick={() => navigate("activity")}>
                 <LinkIcon
                   className="-ml-1 mr-2 h-5 w-5 text-gray-500"
                   aria-hidden="true"
@@ -104,12 +104,14 @@ export default function RouteComponent() {
 
             {/* Dropdown */}
             <Menu as="span" className="ml-3 relative sm:hidden">
-              <Menu.Button className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                More
-                <ChevronDownIcon
-                  className="-mr-1 ml-2 h-5 w-5 text-gray-500"
-                  aria-hidden="true"
-                />
+              <Menu.Button as={React.Fragment}>
+                <Button variant="white">
+                  More
+                  <ChevronDownIcon
+                    className="-mr-1 ml-2 h-5 w-5 text-gray-500"
+                    aria-hidden="true"
+                  />
+                </Button>
               </Menu.Button>
 
               <Transition

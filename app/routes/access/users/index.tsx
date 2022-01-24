@@ -3,7 +3,15 @@ import { useLoaderData, Link, useNavigate, json } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
-import { Table, Td, TdLink, TdProminent, Th, ThSr } from "~/components/lib";
+import {
+  Button,
+  Table,
+  Td,
+  TdLink,
+  TdProminent,
+  Th,
+  ThSr,
+} from "~/components/lib";
 
 type LoaderData = {
   accessUsers: Prisma.AccessUserGetPayload<{}>[];
@@ -32,13 +40,7 @@ export default function RouteComponent() {
             <h1 className="text-3xl font-bold leading-tight text-gray-900">
               Users
             </h1>
-            <button
-              type="button"
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              onClick={() => navigate("create")}
-            >
-              Create
-            </button>
+            <Button onClick={() => navigate("create")}>Create</Button>
           </div>
         </div>
       </header>

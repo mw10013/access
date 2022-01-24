@@ -9,7 +9,7 @@ function classNames(...classes: string[]) {
 
 export function Button({
   children,
-  variant = "white",
+  variant = "primary",
   ...props
 }: {
   children: React.ReactNode;
