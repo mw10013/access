@@ -96,7 +96,7 @@ export default function RouteComponent() {
               </Button>
             </span>
             <span className="sm:ml-3">
-              <Button variant="primary" onClick={() => navigate("edit")}>
+              <Button onClick={() => navigate("edit")}>
                 <PencilIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
                 Edit
               </Button>
