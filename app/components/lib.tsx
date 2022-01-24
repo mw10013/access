@@ -76,6 +76,7 @@ export function TdProminent({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Intended for link in last column since text-right.
 export function TdLink({
   children,
   to,

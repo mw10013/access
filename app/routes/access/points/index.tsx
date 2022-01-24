@@ -3,7 +3,7 @@ import { useLoaderData, Link } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
-import { Table, Th } from "~/components/lib";
+import { Table, Td, TdLink, TdProminent, Th, ThSr } from "~/components/lib";
 
 type LoaderData = {
   accessPoints: Prisma.AccessPointGetPayload<{
@@ -32,54 +32,40 @@ export const loader: LoaderFunction = async ({
 export default function RouteComponent() {
   const { accessPoints } = useLoaderData<LoaderData>();
   return (
-    <div className="py-10">
-      <header>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between">
-            <h1 className="text-3xl font-bold leading-tight text-gray-900">
+    <>
+      <header className="p-8">
+        <div className="lg:flex lg:items-center lg:justify-between">
+          <div className="flex-1 min-w-0">
+            <h2 className="mt-2 text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
               Points
-            </h1>
+            </h2>
           </div>
         </div>
       </header>
+
       <main>
-        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto sm:px-8">
           <Table
             headers={
               <>
                 <Th>Name</Th>
                 <Th>Manager</Th>
                 <Th>Description</Th>
-                <th scope="col" className="relative px-6 py-3">
-                  <span className="sr-only">View</span>
-                </th>
+                <ThSr>View</ThSr>
               </>
             }
           >
             {accessPoints.map((i) => (
               <tr key={i.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {i.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {i.accessManager.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {i.description}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <Link
-                    to={`${i.id}`}
-                    className="text-indigo-600 hover:text-indigo-900"
-                  >
-                    View
-                  </Link>
-                </td>
+                <TdProminent>{i.name}</TdProminent>
+                <Td>{i.accessManager.name}</Td>
+                <Td>{i.description}</Td>
+                <TdLink to={`${i.id}`}>View</TdLink>
               </tr>
             ))}
           </Table>
         </div>
       </main>
-    </div>
+    </>
   );
 }
