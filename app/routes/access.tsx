@@ -1,4 +1,4 @@
-import { Link, NavLink, Outlet, useSubmit } from "remix";
+import { NavLink, Outlet, useSubmit } from "remix";
 import { GenericCatchBoundary, GenericErrorBoundary } from "~/components/lib";
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
@@ -155,9 +155,8 @@ function Layout({ children }: { children: React.ReactNode }) {
             <Disclosure.Panel className="sm:hidden">
               <div className="pt-2 pb-3 space-y-1">
                 {navigation.map((item) => (
-                  <Disclosure.Button as={Fragment}>
+                  <Disclosure.Button key={item.name} as={Fragment}>
                     <NavLink
-                      key={item.name}
                       to={item.to}
                       className={({ isActive }) =>
                         classNames(
