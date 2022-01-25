@@ -3,7 +3,15 @@ import { useLoaderData, Link } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
-import { Table, Td, TdLink, TdProminent, Th, ThSr } from "~/components/lib";
+import {
+  OverflowShadow,
+  Table,
+  Td,
+  TdLink,
+  TdProminent,
+  Th,
+  ThSr,
+} from "~/components/lib";
 
 type LoaderData = {
   accessPoints: Prisma.AccessPointGetPayload<{
@@ -45,25 +53,27 @@ export default function RouteComponent() {
 
       <main>
         <div className="max-w-7xl mx-auto sm:px-8">
-          <Table
-            headers={
-              <>
-                <Th>Name</Th>
-                <Th>Manager</Th>
-                <Th>Description</Th>
-                <ThSr>View</ThSr>
-              </>
-            }
-          >
-            {accessPoints.map((i) => (
-              <tr key={i.id}>
-                <TdProminent>{i.name}</TdProminent>
-                <Td>{i.accessManager.name}</Td>
-                <Td>{i.description}</Td>
-                <TdLink to={`${i.id}`}>View</TdLink>
-              </tr>
-            ))}
-          </Table>
+          <OverflowShadow>
+            <Table
+              headers={
+                <>
+                  <Th>Name</Th>
+                  <Th>Manager</Th>
+                  <Th>Description</Th>
+                  <ThSr>View</ThSr>
+                </>
+              }
+            >
+              {accessPoints.map((i) => (
+                <tr key={i.id}>
+                  <TdProminent>{i.name}</TdProminent>
+                  <Td>{i.accessManager.name}</Td>
+                  <Td>{i.description}</Td>
+                  <TdLink to={`${i.id}`}>View</TdLink>
+                </tr>
+              ))}
+            </Table>
+          </OverflowShadow>
         </div>
       </main>
     </>

@@ -22,6 +22,7 @@ import {
   Th,
   ThSr,
   TdLink,
+  OverflowShadow,
 } from "~/components/lib";
 
 const attachments = [
@@ -236,36 +237,38 @@ export default function RouteComponent() {
               <Button onClick={() => navigate("users/add")}>Add</Button>
             </div>
             <div className="mt-6">
-              <Table
-                headers={
-                  <>
-                    <Th>Name</Th>
-                    <Th>Description</Th>
-                    <Th>Code</Th>
-                    <ThSr>View</ThSr>
-                  </>
-                }
-              >
-                {accessPoint.accessUsers.map((i) => (
-                  <tr key={i.id}>
-                    <TdProminent>{i.name}</TdProminent>
-                    <Td>{i.description}</Td>
-                    <Td>{i.code}</Td>
-                    <TdLink
-                      to="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        submit(null, {
-                          method: "post",
-                          action: `${removeFormActionBase}/${i.id}/remove`,
-                        });
-                      }}
-                    >
-                      Remove
-                    </TdLink>
-                  </tr>
-                ))}
-              </Table>
+              <OverflowShadow>
+                <Table
+                  headers={
+                    <>
+                      <Th>Name</Th>
+                      <Th>Description</Th>
+                      <Th>Code</Th>
+                      <ThSr>View</ThSr>
+                    </>
+                  }
+                >
+                  {accessPoint.accessUsers.map((i) => (
+                    <tr key={i.id}>
+                      <TdProminent>{i.name}</TdProminent>
+                      <Td>{i.description}</Td>
+                      <Td>{i.code}</Td>
+                      <TdLink
+                        to="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          submit(null, {
+                            method: "post",
+                            action: `${removeFormActionBase}/${i.id}/remove`,
+                          });
+                        }}
+                      >
+                        Remove
+                      </TdLink>
+                    </tr>
+                  ))}
+                </Table>
+              </OverflowShadow>
             </div>
           </div>
         </section>

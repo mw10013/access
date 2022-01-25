@@ -66,6 +66,22 @@ export function Breadcrumbs() {
   );
 }
 
+export function OverflowShadow({ children }: { children: React.ReactNode }) {
+  // From Tailwind UI tables.
+  // Not sure if flex flex-col is really needed.
+  return (
+    <div className="flex flex-col">
+      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+          <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+            {children}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Th({ children }: { children: React.ReactNode }) {
   return (
     <th
@@ -128,50 +144,14 @@ export function Table({
   headers: React.ReactFragment;
   children: React.ReactNode;
 }) {
+  // From Tailwind UI table. The wrappers are in OverflowShadow component.
   return (
-    <div className="flex flex-col">
-      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-          <div className="shadow overflow-hidden border-t border-b border-gray-200 sm:rounded-lg">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  {/* <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Name
-                  </th>
-                  <th scope="col" className="relative px-6 py-3">
-                    <span className="sr-only">Edit</span>
-                  </th> */}
-                  {headers}
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {/* <tr key={person.email}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {person.name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {person.title}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <a
-                        href="#"
-                        className="text-indigo-600 hover:text-indigo-900"
-                      >
-                        Edit
-                      </a>
-                    </td>
-                  </tr> */}
-                {children}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
+    <table className="min-w-full divide-y divide-gray-200">
+      <thead className="bg-gray-50">
+        <tr>{headers}</tr>
+      </thead>
+      <tbody className="bg-white divide-y divide-gray-200">{children}</tbody>
+    </table>
   );
 }
 

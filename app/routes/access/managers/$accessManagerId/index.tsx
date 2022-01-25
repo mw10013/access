@@ -12,7 +12,17 @@ import { useLoaderData, Link, useNavigate } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
-import { Breadcrumbs, Button, Table, Th } from "~/components/lib";
+import {
+  Breadcrumbs,
+  Button,
+  OverflowShadow,
+  Table,
+  Td,
+  TdLink,
+  TdProminent,
+  Th,
+  ThSr,
+} from "~/components/lib";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -181,40 +191,27 @@ export default function RouteComponent() {
               </h2>
             </div>
             <div className="mt-6">
-              <Table
-                headers={
-                  <>
-                    <Th>Position</Th>
-                    <Th>Name</Th>
-                    <Th>Description</Th>
-                    <th scope="col" className="relative px-6 py-3">
-                      <span className="sr-only">View</span>
-                    </th>
-                  </>
-                }
-              >
-                {accessManager.accessPoints.map((i) => (
-                  <tr key={i.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {i.position}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {i.name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {i.description}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <Link
-                        to={`../points/${i.id}`}
-                        className="text-indigo-600 hover:text-indigo-900"
-                      >
-                        View
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </Table>
+              <OverflowShadow>
+                <Table
+                  headers={
+                    <>
+                      <Th>Position</Th>
+                      <Th>Name</Th>
+                      <Th>Description</Th>
+                      <ThSr>View</ThSr>
+                    </>
+                  }
+                >
+                  {accessManager.accessPoints.map((i) => (
+                    <tr key={i.id}>
+                      <Td>{i.position}</Td>
+                      <TdProminent>{i.name}</TdProminent>
+                      <Td>{i.description}</Td>
+                      <TdLink to={`./../../points/${i.id}`}>View</TdLink>
+                    </tr>
+                  ))}
+                </Table>
+              </OverflowShadow>
             </div>
           </div>
         </section>

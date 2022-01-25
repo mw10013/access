@@ -12,6 +12,7 @@ import {
   Th,
   ThSr,
 } from "~/components/lib";
+import { OverflowShadow } from "../../../components/lib";
 
 type LoaderData = {
   accessUsers: Prisma.AccessUserGetPayload<{}>[];
@@ -46,25 +47,27 @@ export default function RouteComponent() {
       </header>
       <main>
         <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
-          <Table
-            headers={
-              <>
-                <Th>Name</Th>
-                <Th>Id</Th>
-                <Th>Code</Th>
-                <ThSr>View</ThSr>
-              </>
-            }
-          >
-            {accessUsers.map((i) => (
-              <tr key={i.id}>
-                <TdProminent>{i.name}</TdProminent>
-                <Td>{i.id}</Td>
-                <Td>{i.code}</Td>
-                <TdLink to={i.id.toString()}>View</TdLink>
-              </tr>
-            ))}
-          </Table>
+          <OverflowShadow>
+            <Table
+              headers={
+                <>
+                  <Th>Name</Th>
+                  <Th>Id</Th>
+                  <Th>Code</Th>
+                  <ThSr>View</ThSr>
+                </>
+              }
+            >
+              {accessUsers.map((i) => (
+                <tr key={i.id}>
+                  <TdProminent>{i.name}</TdProminent>
+                  <Td>{i.id}</Td>
+                  <Td>{i.code}</Td>
+                  <TdLink to={i.id.toString()}>View</TdLink>
+                </tr>
+              ))}
+            </Table>
+          </OverflowShadow>
         </div>
       </main>
     </div>

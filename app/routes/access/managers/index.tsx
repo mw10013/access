@@ -1,9 +1,17 @@
 import type { LoaderFunction } from "remix";
-import { useLoaderData, Link } from "remix";
+import { useLoaderData } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
-import { Table, Td, TdLink, TdProminent, Th, ThSr } from "~/components/lib";
+import {
+  OverflowShadow,
+  Table,
+  Td,
+  TdLink,
+  TdProminent,
+  Th,
+  ThSr,
+} from "~/components/lib";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -42,25 +50,27 @@ export default function RouteComponent() {
 
       <main className="">
         <div className="max-w-7xl mx-auto sm:px-8">
-          <Table
-            headers={
-              <>
-                <Th>Name</Th>
-                <Th>Id</Th>
-                <Th>Description</Th>
-                <ThSr>View</ThSr>
-              </>
-            }
-          >
-            {accessManagers.map((i) => (
-              <tr key={i.id}>
-                <TdProminent>{i.name}</TdProminent>
-                <Td>{i.id}</Td>
-                <Td>{i.description}</Td>
-                <TdLink to={`${i.id}`}>View</TdLink>
-              </tr>
-            ))}
-          </Table>
+          <OverflowShadow>
+            <Table
+              headers={
+                <>
+                  <Th>Name</Th>
+                  <Th>Id</Th>
+                  <Th>Description</Th>
+                  <ThSr>View</ThSr>
+                </>
+              }
+            >
+              {accessManagers.map((i) => (
+                <tr key={i.id}>
+                  <TdProminent>{i.name}</TdProminent>
+                  <Td>{i.id}</Td>
+                  <Td>{i.description}</Td>
+                  <TdLink to={`${i.id}`}>View</TdLink>
+                </tr>
+              ))}
+            </Table>
+          </OverflowShadow>
         </div>
       </main>
     </>
