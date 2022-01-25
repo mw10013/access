@@ -30,7 +30,7 @@ const navigation = [
 function Layout({ children }: { children: React.ReactNode }) {
   const submit = useSubmit();
   return (
-    <div className="min-h-full bg-gray-100">
+    <div className="min-h-full">
       <Disclosure as="nav" className="bg-white border-b border-gray-200">
         {({ open }) => (
           <>
@@ -229,7 +229,7 @@ function Layout({ children }: { children: React.ReactNode }) {
           </>
         )}
       </Disclosure>
-      {children}
+      <div className="bg-gray-100">{children}</div>
     </div>
   );
 }
@@ -237,7 +237,9 @@ function Layout({ children }: { children: React.ReactNode }) {
 export default function RouteComponent() {
   return (
     <Layout>
-      <Outlet />
+      <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
+        <Outlet />
+      </div>
     </Layout>
   );
 }

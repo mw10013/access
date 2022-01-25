@@ -71,58 +71,58 @@ export default function RouteComponent() {
     }
   }, [location, isPolling]);
   return (
-    <div className="py-10">
+    <div className="py-10-">
       <header>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between">
-            <h1 className="text-3xl font-bold leading-tight text-gray-900">
-              Dashboard
-            </h1>
-            <div className="relative flex items-start">
-              <div className="flex items-center h-5">
-                <input
-                  id="poll"
-                  aria-describedby="comments-description"
-                  name="poll"
-                  type="checkbox"
-                  checked={isPolling}
-                  onChange={() => setIsPolling(!isPolling)}
-                  className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                />
-              </div>
-              <div className="ml-3 text-sm">
-                <label htmlFor="poll" className="font-medium text-gray-700">
-                  Poll
-                </label>
-              </div>
+        {/* <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> */}
+        <div className="flex justify-between">
+          <h1 className="text-3xl font-bold leading-tight text-gray-900">
+            Dashboard
+          </h1>
+          <div className="relative flex items-start">
+            <div className="flex items-center h-5">
+              <input
+                id="poll"
+                aria-describedby="comments-description"
+                name="poll"
+                type="checkbox"
+                checked={isPolling}
+                onChange={() => setIsPolling(!isPolling)}
+                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+              />
+            </div>
+            <div className="ml-3 text-sm">
+              <label htmlFor="poll" className="font-medium text-gray-700">
+                Poll
+              </label>
             </div>
           </div>
         </div>
+        {/* </div> */}
       </header>
-      <main>
-        <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
-          <OverflowShadow>
-            <Table
-              headers={
-                <>
-                  <Th>Manager</Th>
-                  <Th>Name</Th>
-                  <Th>Connection</Th>
-                  <ThSr>View</ThSr>
-                </>
-              }
-            >
-              {(poll.data?.accessPoints ?? accessPoints).map((i) => (
-                <tr key={i.id}>
-                  <Td>{i.accessManager.name}</Td>
-                  <TdProminent>{i.name}</TdProminent>
-                  <Td>{connectionStatus(i.heartbeatAt)}</Td>
-                  <TdLink to={`../points/${i.id}`}>View</TdLink>
-                </tr>
-              ))}
-            </Table>
-          </OverflowShadow>
-        </div>
+      <main className="pt-8">
+        {/* <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8"> */}
+        <OverflowShadow>
+          <Table
+            headers={
+              <>
+                <Th>Manager</Th>
+                <Th>Name</Th>
+                <Th>Connection</Th>
+                <ThSr>View</ThSr>
+              </>
+            }
+          >
+            {(poll.data?.accessPoints ?? accessPoints).map((i) => (
+              <tr key={i.id}>
+                <Td>{i.accessManager.name}</Td>
+                <TdProminent>{i.name}</TdProminent>
+                <Td>{connectionStatus(i.heartbeatAt)}</Td>
+                <TdLink to={`../points/${i.id}`}>View</TdLink>
+              </tr>
+            ))}
+          </Table>
+        </OverflowShadow>
+        {/* </div> */}
       </main>
     </div>
   );
