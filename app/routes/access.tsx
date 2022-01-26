@@ -1,15 +1,22 @@
+import { Link, useMatches } from "remix";
 import { NavLink, Outlet, useSubmit } from "remix";
 import { GenericCatchBoundary, GenericErrorBoundary } from "~/components/lib";
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
+import { HomeIcon } from "@heroicons/react/solid";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 export const handle = {
-  breadcrumb: "Home",
+  breadcrumb: (match: ReturnType<typeof useMatches>[number]) => (
+    <Link to={match.pathname} className="text-gray-400 hover:text-gray-500">
+      <HomeIcon className="flex-shrink-0 h-5 w-5" aria-hidden="true" />
+      <span className="sr-only">Home</span>
+    </Link>
+  ),
 };
 
 const user = {
