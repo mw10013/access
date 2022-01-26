@@ -42,7 +42,7 @@ export function Header({
 
 export function Main({ children }: { children: React.ReactNode }) {
   // No px-4 since tables need to extend to the edge on mobile.
-  return <main className="sm:px-6 lg:px-8 space-y-6 pb-4">{children}</main>;
+  return <main className="sm:px-6 lg:px-8 space-y-6 pb-8">{children}</main>;
 }
 
 export function Button({

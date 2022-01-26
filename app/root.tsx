@@ -21,8 +21,12 @@ export function links() {
 }
 
 function Document({ children }: { children: React.ReactNode }) {
+  // https://tailwindui.com/components/application-ui/page-examples/settings-screens
+  // With sidebar navigation and two-column form
+  // <html class="h-full bg-gray-100">
+  // <body class="h-full">
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-full bg-gray-100">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
