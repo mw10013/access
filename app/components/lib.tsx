@@ -34,9 +34,7 @@ export function PageHeader({
           </h2>
           {meta}
         </div>
-        {side ? (
-          <div className="mt-5 flex lg:mt-0 lg:ml-4">{side}</div>
-        ) : null}
+        {side ? <div className="mt-5 flex lg:mt-0 lg:ml-4">{side}</div> : null}
       </div>
     </header>
   );
@@ -106,30 +104,6 @@ export function Breadcrumbs() {
   );
 }
 
-/* tailwind UI details table
-<div className="mt-6 flex flex-col">
-  <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-    <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-      <div className="overflow-hidden border-t border-gray-200">
-        <table className="min-w-full divide-y divide-gray-200">
-*/
-
-export function OverflowShadow({ children }: { children: React.ReactNode }) {
-  // From Tailwind UI tables.
-  // Not sure if flex flex-col is really needed.
-  return (
-    <div className="flex flex-col">
-      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-          <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-            {children}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export function Th({ children }: { children: React.ReactNode }) {
   return (
     <th
@@ -188,18 +162,36 @@ export function TdLink({
 export function Table({
   headers,
   children,
+  decor = "shadow",
 }: {
   headers: React.ReactFragment;
   children: React.ReactNode;
+  decor?: "shadow" | "edge";
 }) {
-  // From Tailwind UI table. The wrappers are in OverflowShadow component.
+  // Tailwind UI table with shadow: <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+  // Tailwind UI details table: <div className="overflow-hidden border-t border-gray-200">
   return (
-    <table className="min-w-full divide-y divide-gray-200">
-      <thead className="bg-gray-50">
-        <tr>{headers}</tr>
-      </thead>
-      <tbody className="bg-white divide-y divide-gray-200">{children}</tbody>
-    </table>
+    <div className="flex flex-col">
+      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+          <div
+            className={classNames(
+              decor === "shadow" ? "shadow border-b sm:rounded-lg" : "border-t",
+              "overflow-hidden border-gray-200"
+            )}
+          >
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>{headers}</tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {children}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

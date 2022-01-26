@@ -5,6 +5,7 @@ import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
 import {
   Button,
+  Main,
   PageHeader,
   Table,
   Td,
@@ -13,7 +14,6 @@ import {
   Th,
   ThSr,
 } from "~/components/lib";
-import { OverflowShadow } from "../../../components/lib";
 
 type LoaderData = {
   accessUsers: Prisma.AccessUserGetPayload<{}>[];
@@ -40,41 +40,27 @@ export default function RouteComponent() {
         title="Users"
         side={<Button onClick={() => navigate("create")}>Create</Button>}
       />
-      <header>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between">
-            <h1 className="text-3xl font-bold leading-tight text-gray-900">
-              Users
-            </h1>
-            <Button onClick={() => navigate("create")}>Create</Button>
-          </div>
-        </div>
-      </header>
-      <main>
-        <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
-          <OverflowShadow>
-            <Table
-              headers={
-                <>
-                  <Th>Name</Th>
-                  <Th>Id</Th>
-                  <Th>Code</Th>
-                  <ThSr>View</ThSr>
-                </>
-              }
-            >
-              {accessUsers.map((i) => (
-                <tr key={i.id}>
-                  <TdProminent>{i.name}</TdProminent>
-                  <Td>{i.id}</Td>
-                  <Td>{i.code}</Td>
-                  <TdLink to={i.id.toString()}>View</TdLink>
-                </tr>
-              ))}
-            </Table>
-          </OverflowShadow>
-        </div>
-      </main>
+      <Main>
+        <Table
+          headers={
+            <>
+              <Th>Name</Th>
+              <Th>Id</Th>
+              <Th>Code</Th>
+              <ThSr>View</ThSr>
+            </>
+          }
+        >
+          {accessUsers.map((i) => (
+            <tr key={i.id}>
+              <TdProminent>{i.name}</TdProminent>
+              <Td>{i.id}</Td>
+              <Td>{i.code}</Td>
+              <TdLink to={i.id.toString()}>View</TdLink>
+            </tr>
+          ))}
+        </Table>
+      </Main>
     </>
   );
 }

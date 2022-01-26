@@ -15,7 +15,6 @@ import {
   Th,
   ThSr,
 } from "~/components/lib";
-import { OverflowShadow } from "../../components/lib";
 
 type LoaderData = {
   accessPoints: Prisma.AccessPointGetPayload<{
@@ -105,27 +104,25 @@ export default function RouteComponent() {
         }
       />
       <Main>
-        <OverflowShadow>
-          <Table
-            headers={
-              <>
-                <Th>Manager</Th>
-                <Th>Name</Th>
-                <Th>Connection</Th>
-                <ThSr>View</ThSr>
-              </>
-            }
-          >
-            {(poll.data?.accessPoints ?? accessPoints).map((i) => (
-              <tr key={i.id}>
-                <Td>{i.accessManager.name}</Td>
-                <TdProminent>{i.name}</TdProminent>
-                <Td>{connectionStatus(i.heartbeatAt)}</Td>
-                <TdLink to={`../points/${i.id}`}>View</TdLink>
-              </tr>
-            ))}
-          </Table>
-        </OverflowShadow>
+        <Table
+          headers={
+            <>
+              <Th>Manager</Th>
+              <Th>Name</Th>
+              <Th>Connection</Th>
+              <ThSr>View</ThSr>
+            </>
+          }
+        >
+          {(poll.data?.accessPoints ?? accessPoints).map((i) => (
+            <tr key={i.id}>
+              <Td>{i.accessManager.name}</Td>
+              <TdProminent>{i.name}</TdProminent>
+              <Td>{connectionStatus(i.heartbeatAt)}</Td>
+              <TdLink to={`../points/${i.id}`}>View</TdLink>
+            </tr>
+          ))}
+        </Table>
       </Main>
     </>
   );

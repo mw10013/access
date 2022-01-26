@@ -13,10 +13,8 @@ import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
 import {
-  Breadcrumbs,
   Button,
   Main,
-  OverflowShadow,
   PageHeader,
   Table,
   Td,
@@ -56,7 +54,6 @@ export const loader: LoaderFunction = async ({
 };
 
 export default function RouteComponent() {
-  const navigate = useNavigate();
   const { accessManager } = useLoaderData<LoaderData>();
   return (
     <>
@@ -189,27 +186,25 @@ export default function RouteComponent() {
               </h2>
             </div>
             <div className="mt-6">
-              <OverflowShadow>
-                <Table
-                  headers={
-                    <>
-                      <Th>Position</Th>
-                      <Th>Name</Th>
-                      <Th>Description</Th>
-                      <ThSr>View</ThSr>
-                    </>
-                  }
-                >
-                  {accessManager.accessPoints.map((i) => (
-                    <tr key={i.id}>
-                      <Td>{i.position}</Td>
-                      <TdProminent>{i.name}</TdProminent>
-                      <Td>{i.description}</Td>
-                      <TdLink to={`./../../points/${i.id}`}>View</TdLink>
-                    </tr>
-                  ))}
-                </Table>
-              </OverflowShadow>
+              <Table
+                headers={
+                  <>
+                    <Th>Position</Th>
+                    <Th>Name</Th>
+                    <Th>Description</Th>
+                    <ThSr>View</ThSr>
+                  </>
+                }
+              >
+                {accessManager.accessPoints.map((i) => (
+                  <tr key={i.id}>
+                    <Td>{i.position}</Td>
+                    <TdProminent>{i.name}</TdProminent>
+                    <Td>{i.description}</Td>
+                    <TdLink to={`./../../points/${i.id}`}>View</TdLink>
+                  </tr>
+                ))}
+              </Table>
             </div>
           </div>
         </section>
