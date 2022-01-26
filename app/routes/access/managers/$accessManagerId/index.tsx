@@ -178,7 +178,7 @@ export default function RouteComponent() {
       <Main>
         <section>
           <div className="bg-white pt-6 shadow sm:rounded-md sm:overflow-hidden">
-            <div className="px-4 sm:px-6">
+            <div className="px-4 sm:px-6 lg:px-8">
               <h2
                 id="access-points-heading"
                 className="text-lg leading-6 font-medium text-gray-900"
@@ -188,6 +188,7 @@ export default function RouteComponent() {
             </div>
             <div className="mt-6">
               <Table
+                decor="edge"
                 headers={
                   <>
                     <Th>Position</Th>
