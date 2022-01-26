@@ -16,6 +16,10 @@ import {
   ThSr,
 } from "~/components/lib";
 
+export const handle = {
+  breadcrumb: "Dashboard",
+};
+
 type LoaderData = {
   accessPoints: Prisma.AccessPointGetPayload<{
     include: {
