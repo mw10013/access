@@ -15,6 +15,7 @@ import { requireUserId } from "~/utils/session.server";
 import {
   Breadcrumbs,
   Button,
+  Main,
   OverflowShadow,
   PageHeader,
   Table,
@@ -73,7 +74,7 @@ export default function RouteComponent() {
           </div>
         }
         side={
-          <div className="mt-5 flex lg:mt-0 lg:ml-4">
+          <>
             <span className="hidden sm:block">
               <Button variant="white">
                 <PencilIcon
@@ -173,11 +174,10 @@ export default function RouteComponent() {
                 </Menu.Items>
               </Transition>
             </Menu>
-          </div>
+          </>
         }
       />
-      {/* <main className="max-w-7xl mx-auto sm:px-8 space-y-6 pb-8"> */}
-      <main className="sm:px-6 lg:px-8 space-y-6 pb-8">
+      <Main>
         <section>
           <div className="bg-white pt-6 shadow sm:rounded-md sm:overflow-hidden">
             <div className="px-4 sm:px-6">
@@ -213,7 +213,7 @@ export default function RouteComponent() {
             </div>
           </div>
         </section>
-      </main>
+      </Main>
     </>
   );
 }

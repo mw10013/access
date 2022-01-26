@@ -18,7 +18,7 @@ function classNames(...classes: Array<string | undefined>) {
 export function PageHeader({
   title,
   meta,
-  side,
+  side, // Should be fragment if more than 1 item for flex
 }: {
   title: string;
   meta?: React.ReactNode;
@@ -34,10 +34,17 @@ export function PageHeader({
           </h2>
           {meta}
         </div>
-        {side}
+        {side ? (
+          <div className="mt-5 flex lg:mt-0 lg:ml-4">{side}</div>
+        ) : null}
       </div>
     </header>
   );
+}
+
+export function Main({ children }: { children: React.ReactNode }) {
+  // No px-4 since tables need to extend to the edge on mobile.
+  return <main className="sm:px-6 lg:px-8 space-y-6 pb-4">{children}</main>;
 }
 
 export function Button({

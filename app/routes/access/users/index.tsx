@@ -5,6 +5,7 @@ import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
 import {
   Button,
+  PageHeader,
   Table,
   Td,
   TdLink,
@@ -34,7 +35,11 @@ export default function RouteComponent() {
   const { accessUsers } = useLoaderData<LoaderData>();
   const navigate = useNavigate();
   return (
-    <div className="py-10">
+    <>
+      <PageHeader
+        title="Users"
+        side={<Button onClick={() => navigate("create")}>Create</Button>}
+      />
       <header>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between">
@@ -70,6 +75,6 @@ export default function RouteComponent() {
           </OverflowShadow>
         </div>
       </main>
-    </div>
+    </>
   );
 }

@@ -6,6 +6,7 @@ import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
 import {
+  Main,
   PageHeader,
   Table,
   Td,
@@ -103,9 +104,7 @@ export default function RouteComponent() {
           </div>
         }
       />
-
-      <main className="sm:px-6 lg:px-8 pb-4">
-        {/* <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8"> */}
+      <Main>
         <OverflowShadow>
           <Table
             headers={
@@ -127,8 +126,7 @@ export default function RouteComponent() {
             ))}
           </Table>
         </OverflowShadow>
-        {/* </div> */}
-      </main>
+      </Main>
     </>
   );
 }
