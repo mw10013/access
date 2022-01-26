@@ -169,10 +169,8 @@ export default function RouteComponent() {
       <Main>
         <div className="space-y-6">
           <div className="max-w-3xl mx-auto grid grid-cols-1 gap-6 sm:px-6 ">
-            {/* <div className="space-y-6 lg:col-start-1 lg:col-span-2"> */}
             <div className="space-y-6 ">
-              {/* Description list*/}
-              <section aria-labelledby="access-point-details">
+              <section>
                 <div className="bg-white shadow sm:rounded-lg">
                   <div className="border-t border-gray-200 px-6 py-5">
                     <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
