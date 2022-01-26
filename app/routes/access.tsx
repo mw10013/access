@@ -29,8 +29,11 @@ const navigation = [
 
 function Layout({ children }: { children: React.ReactNode }) {
   const submit = useSubmit();
+  // https://tailwindui.com/components/application-ui/page-examples/detail-screens
+  // With page heading and stacked list
+  // <div className="min-h-full">
   return (
-    <>
+    <div className="min-h-full">
       <Disclosure as="nav" className="bg-white border-b border-gray-200">
         {({ open }) => (
           <>
@@ -230,7 +233,7 @@ function Layout({ children }: { children: React.ReactNode }) {
         )}
       </Disclosure>
       {children}
-    </>
+    </div>
   );
 }
 
