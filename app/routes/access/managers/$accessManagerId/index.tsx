@@ -55,6 +55,7 @@ export const loader: LoaderFunction = async ({
 
 export default function RouteComponent() {
   const { accessManager } = useLoaderData<LoaderData>();
+  const navigate = useNavigate();
   return (
     <>
       <Header
@@ -73,7 +74,7 @@ export default function RouteComponent() {
         side={
           <>
             <span className="hidden sm:block">
-              <Button variant="white">
+              <Button variant="white" onClick={() => navigate("mock")}>
                 <PencilIcon
                   className="-ml-1 mr-2 h-5 w-5 text-gray-500"
                   aria-hidden="true"
@@ -83,7 +84,7 @@ export default function RouteComponent() {
             </span>
 
             <span className="hidden sm:block ml-3">
-              <Button variant="white">
+              <Button variant="white" onClick={() => navigate("raw")}>
                 <CheckIcon
                   className="-ml-1 mr-2 h-5 w-5 text-gray-500"
                   aria-hidden="true"
@@ -92,7 +93,7 @@ export default function RouteComponent() {
               </Button>
             </span>
             <span className="hidden sm:block ml-3">
-              <Button variant="white">
+              <Button variant="white" onClick={() => navigate("activity")}>
                 <LinkIcon
                   className="-ml-1 mr-2 h-5 w-5 text-gray-500"
                   aria-hidden="true"
@@ -101,7 +102,7 @@ export default function RouteComponent() {
               </Button>
             </span>
             <span className="sm:ml-3">
-              <Button>
+              <Button onClick={() => navigate("edit")}>
                 <PencilIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
                 Edit
               </Button>
