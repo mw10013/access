@@ -3,7 +3,7 @@ import { useLoaderData } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
-import { Breadcrumbs, OverflowShadow, Table, Th } from "~/components/lib";
+import { Breadcrumbs, Table, Th } from "~/components/lib";
 import { ChevronRightIcon } from "@heroicons/react/solid";
 
 function classNames(...classes: string[]) {
@@ -77,35 +77,33 @@ export default function RouteComponent() {
               </h2>
             </div>
             <div className="mt-6">
-              <OverflowShadow>
-                <Table
-                  headers={
-                    <>
-                      <Th>At</Th>
-                      <Th>Access</Th>
-                      <Th>Code</Th>
-                      <Th>User</Th>
-                    </>
-                  }
-                >
-                  {accessEvents.map((i) => (
-                    <tr key={i.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {new Date(i.at).toLocaleString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {i.access}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {i.code}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {i.accessUser ? i.accessUser.name : null}
-                      </td>
-                    </tr>
-                  ))}
-                </Table>
-              </OverflowShadow>
+              <Table
+                headers={
+                  <>
+                    <Th>At</Th>
+                    <Th>Access</Th>
+                    <Th>Code</Th>
+                    <Th>User</Th>
+                  </>
+                }
+              >
+                {accessEvents.map((i) => (
+                  <tr key={i.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {new Date(i.at).toLocaleString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {i.access}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {i.code}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {i.accessUser ? i.accessUser.name : null}
+                    </td>
+                  </tr>
+                ))}
+              </Table>
             </div>
           </div>
         </section>

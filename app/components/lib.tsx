@@ -15,7 +15,7 @@ function classNames(...classes: Array<string | undefined>) {
   return classes.filter(Boolean).join(" ");
 }
 
-export function PageHeader({
+export function Header({
   title,
   meta,
   side, // Should be fragment if more than 1 item for flex

@@ -15,7 +15,7 @@ import { requireUserId } from "~/utils/session.server";
 import {
   Button,
   Main,
-  PageHeader,
+  Header,
   Table,
   Td,
   TdLink,
@@ -57,7 +57,7 @@ export default function RouteComponent() {
   const { accessManager } = useLoaderData<LoaderData>();
   return (
     <>
-      <PageHeader
+      <Header
         title={accessManager.name}
         meta={
           <div className="mt-1 flex flex-col sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">

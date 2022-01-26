@@ -6,7 +6,7 @@ import { requireUserId } from "~/utils/session.server";
 import {
   Button,
   Main,
-  PageHeader,
+  Header,
   Table,
   Td,
   TdLink,
@@ -36,7 +36,7 @@ export default function RouteComponent() {
   const navigate = useNavigate();
   return (
     <>
-      <PageHeader
+      <Header
         title="Users"
         side={<Button onClick={() => navigate("create")}>Create</Button>}
       />

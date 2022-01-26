@@ -7,7 +7,7 @@ import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
 import {
   Main,
-  PageHeader,
+  Header,
   Table,
   Td,
   TdLink,
@@ -80,7 +80,7 @@ export default function RouteComponent() {
   }, [location, isPolling]);
   return (
     <>
-      <PageHeader
+      <Header
         title="Dashboard"
         side={
           <div className="relative flex items-start">

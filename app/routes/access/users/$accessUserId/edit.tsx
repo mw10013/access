@@ -28,14 +28,14 @@ const FieldValues = z
     activateCodeAt: z.string(), // datetime-local string which does not have tz
     activateCodeAtHidden: z // gmt datetime string, may be empty
       .string()
-      .refine((v) => v.length === 0 || Date.parse(v) !== NaN, {
+      .refine((v) => v.length === 0 || !Number.isNaN(Date.parse(v)), {
         message: "Invalid date time",
       })
       .transform((v) => (v.length > 0 ? new Date(v) : null)),
     expireCodeAt: z.string(),
     expireCodeAtHidden: z
       .string()
-      .refine((v) => v.length === 0 || Date.parse(v) !== NaN, {
+      .refine((v) => v.length === 0 || !Number.isNaN(Date.parse(v)), {
         message: "Invalid date time",
       })
       .transform((v) => (v.length > 0 ? new Date(v) : null)),
