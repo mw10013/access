@@ -1,10 +1,43 @@
-import { ChevronRightIcon } from "@heroicons/react/solid";
+import { Menu, Transition } from "@headlessui/react";
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  LinkIcon,
+  LocationMarkerIcon,
+  PencilIcon,
+} from "@heroicons/react/solid";
 import { RemixLinkProps } from "@remix-run/react/components";
-import React from "react";
+import React, { Fragment } from "react";
 import { Link, useCatch, useMatches } from "remix";
 
 function classNames(...classes: Array<string | undefined>) {
   return classes.filter(Boolean).join(" ");
+}
+
+export function PageHeader({
+  title,
+  meta,
+  side,
+}: {
+  title: string;
+  meta?: React.ReactNode;
+  side?: React.ReactNode;
+}) {
+  return (
+    <header className="px-4 sm:px-6 lg:px-8 pb-8">
+      <div className="lg:flex lg:items-center lg:justify-between">
+        <div className="flex-1 min-w-0">
+          <Breadcrumbs />
+          <h2 className="mt-2 text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+            {title}
+          </h2>
+          {meta}
+        </div>
+        {side}
+      </div>
+    </header>
+  );
 }
 
 export function Button({
@@ -65,6 +98,14 @@ export function Breadcrumbs() {
     </nav>
   );
 }
+
+/* tailwind UI details table
+<div className="mt-6 flex flex-col">
+  <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+    <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+      <div className="overflow-hidden border-t border-gray-200">
+        <table className="min-w-full divide-y divide-gray-200">
+*/
 
 export function OverflowShadow({ children }: { children: React.ReactNode }) {
   // From Tailwind UI tables.

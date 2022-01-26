@@ -5,7 +5,15 @@ import type { AccessPoint } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
-import { Table, Td, TdLink, TdProminent, Th, ThSr } from "~/components/lib";
+import {
+  PageHeader,
+  Table,
+  Td,
+  TdLink,
+  TdProminent,
+  Th,
+  ThSr,
+} from "~/components/lib";
 import { OverflowShadow } from "../../components/lib";
 
 type LoaderData = {
@@ -71,13 +79,10 @@ export default function RouteComponent() {
     }
   }, [location, isPolling]);
   return (
-    <div className="py-10-">
-      <header>
-        {/* <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> */}
-        <div className="flex justify-between">
-          <h1 className="text-3xl font-bold leading-tight text-gray-900">
-            Dashboard
-          </h1>
+    <>
+      <PageHeader
+        title="Dashboard"
+        side={
           <div className="relative flex items-start">
             <div className="flex items-center h-5">
               <input
@@ -96,10 +101,10 @@ export default function RouteComponent() {
               </label>
             </div>
           </div>
-        </div>
-        {/* </div> */}
-      </header>
-      <main className="pt-8">
+        }
+      />
+
+      <main className="sm:px-6 lg:px-8 pb-4">
         {/* <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8"> */}
         <OverflowShadow>
           <Table
@@ -124,6 +129,6 @@ export default function RouteComponent() {
         </OverflowShadow>
         {/* </div> */}
       </main>
-    </div>
+    </>
   );
 }

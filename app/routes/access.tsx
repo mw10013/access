@@ -229,15 +229,17 @@ function Layout({ children }: { children: React.ReactNode }) {
           </>
         )}
       </Disclosure>
-      <div className="bg-gray-100">{children}</div>
+      {children}
     </div>
   );
 }
 
 export default function RouteComponent() {
   return (
+    // No px-4 since mobile needs tables going to the edge.
+    // No sm:px-6 lg:px-8. Let header and main specify
     <Layout>
-      <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto py-8 bg-gray-100">
         <Outlet />
       </div>
     </Layout>
