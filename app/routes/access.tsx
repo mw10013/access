@@ -8,6 +8,10 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
+export const handle = {
+  breadcrumb: "Home",
+};
+
 const user = {
   name: "Tom Cook",
   email: "tom@example.com",

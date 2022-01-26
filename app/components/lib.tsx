@@ -1,14 +1,6 @@
-import { Menu, Transition } from "@headlessui/react";
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-  LinkIcon,
-  LocationMarkerIcon,
-  PencilIcon,
-} from "@heroicons/react/solid";
+import { ChevronRightIcon } from "@heroicons/react/solid";
 import { RemixLinkProps } from "@remix-run/react/components";
-import React, { Fragment } from "react";
+import React from "react";
 import { Link, useCatch, useMatches } from "remix";
 
 function classNames(...classes: Array<string | undefined>) {
