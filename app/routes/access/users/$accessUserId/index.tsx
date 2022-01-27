@@ -9,6 +9,11 @@ import {
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
+import { Header, Main } from "~/components/lib";
+
+export const handle = {
+  breadcrumb: "Access User",
+};
 
 type LoaderData = {
   accessUser: Prisma.AccessUserGetPayload<{
@@ -39,7 +44,7 @@ export const loader: LoaderFunction = async ({
     },
     rejectOnNotFound: true,
   });
-  
+
   return { accessUser };
 };
 
@@ -74,7 +79,7 @@ function codeActivateExpireStatus(accessUser: LoaderData["accessUser"]) {
   return { codeStatus, activateExpireStatus };
 }
 
-export default function Index() {
+export default function RouteComponent() {
   const navigate = useNavigate();
   const submit = useSubmit();
   const removeFormActionBase = useFormAction("points");
@@ -82,7 +87,25 @@ export default function Index() {
   const { codeStatus, activateExpireStatus } =
     codeActivateExpireStatus(accessUser);
   return (
-    <div className="p-8">
+    <>
+      <Header
+        title={accessUser.name}
+        side={
+          <button
+            type="button"
+            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
+            onClick={() => navigate("edit")}
+          >
+            Edit
+          </button>
+        }
+      />
+      <Main>
+        <div className="space-y-6">
+          
+        </div>
+      </Main>
+
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold leading-7 text-gray-900">User</h1>
         <button
@@ -191,6 +214,6 @@ export default function Index() {
           </table>
         </div>
       </div>
-    </div>
+    </>
   );
 }

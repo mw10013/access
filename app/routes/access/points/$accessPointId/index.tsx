@@ -167,105 +167,124 @@ export default function RouteComponent() {
         }
       />
       <Main>
-        <div className="space-y-6">
-          <div className="max-w-3xl mx-auto grid grid-cols-1 gap-6 sm:px-6 ">
-            <div className="space-y-6 ">
-              <section>
-                <div className="bg-white shadow sm:rounded-lg">
-                  <div className="border-t border-gray-200 px-6 py-5">
-                    <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                      <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500">
-                          Manager
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900">
-                          {accessPoint.accessManager.name}
-                        </dd>
-                      </div>
-                      <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500">
-                          ID
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900">
-                          {accessPoint.id}
-                        </dd>
-                      </div>
-                      <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500">
-                          Position
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900">
-                          {accessPoint.position}
-                        </dd>
-                      </div>
-                      <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500">
-                          Heartbeat
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900">
-                          {accessPoint.heartbeatAt
-                            ? new Date(accessPoint.heartbeatAt).toLocaleString()
-                            : null}
-                        </dd>
-                      </div>
-                      <div className="sm:col-span-2">
-                        <dt className="text-sm font-medium text-gray-500">
-                          Description
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900">
-                          {accessPoint.description}
-                        </dd>
-                      </div>
-                    </dl>
-                  </div>
-                </div>
-              </section>
+        <section className="max-w-2xl mx-auto bg-white shadow sm:rounded-lg border-t border-gray-200 px-4 sm:px-6 lg:px-8 py-6">
+          <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium text-gray-500">Manager</dt>
+              <dd className="mt-1 text-sm text-gray-900">
+                {accessPoint.accessManager.name}
+              </dd>
+            </div>
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium text-gray-500">ID</dt>
+              <dd className="mt-1 text-sm text-gray-900">{accessPoint.id}</dd>
+            </div>
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium text-gray-500">Position</dt>
+              <dd className="mt-1 text-sm text-gray-900">
+                {accessPoint.position}
+              </dd>
+            </div>
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium text-gray-500">Heartbeat</dt>
+              <dd className="mt-1 text-sm text-gray-900">
+                {accessPoint.heartbeatAt
+                  ? new Date(accessPoint.heartbeatAt).toLocaleString()
+                  : null}
+              </dd>
+            </div>
+            <div className="sm:col-span-2">
+              <dt className="text-sm font-medium text-gray-500">Description</dt>
+              <dd className="mt-1 text-sm text-gray-900">
+                {accessPoint.description}
+              </dd>
+            </div>
+          </dl>
+        </section>
+        <section className="bg-white pt-6 shadow sm:rounded-md sm:overflow-hidden">
+          <div className="pb-6 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+            <h2 className="text-lg leading-6 font-medium text-gray-900">
+              Users with Access
+            </h2>
+            <Button onClick={() => navigate("users/add")}>Add</Button>
+          </div>
+          <Table
+            decor="edge"
+            headers={
+              <>
+                <Th>Name</Th>
+                <Th>Description</Th>
+                <Th>Code</Th>
+                <ThSr>View</ThSr>
+              </>
+            }
+          >
+            {accessPoint.accessUsers.map((i) => (
+              <tr key={i.id}>
+                <TdProminent>{i.name}</TdProminent>
+                <Td>{i.description}</Td>
+                <Td>{i.code}</Td>
+                <TdLink
+                  to="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    submit(null, {
+                      method: "post",
+                      action: `${removeFormActionBase}/${i.id}/remove`,
+                    });
+                  }}
+                >
+                  Remove
+                </TdLink>
+              </tr>
+            ))}
+          </Table>
+        </section>
+      </Main>
+      <Main>
+        <section>
+          <div className="bg-white pt-6 shadow sm:rounded-md sm:overflow-hidden">
+            <div className="px-4 sm:px-6 flex items-center justify-between">
+              <h2 className="text-lg leading-6 font-medium text-gray-900">
+                Users with Access
+              </h2>
+              <Button onClick={() => navigate("users/add")}>Add</Button>
+            </div>
+            <div className="mt-6">
+              <Table
+                decor="edge"
+                headers={
+                  <>
+                    <Th>Name</Th>
+                    <Th>Description</Th>
+                    <Th>Code</Th>
+                    <ThSr>View</ThSr>
+                  </>
+                }
+              >
+                {accessPoint.accessUsers.map((i) => (
+                  <tr key={i.id}>
+                    <TdProminent>{i.name}</TdProminent>
+                    <Td>{i.description}</Td>
+                    <Td>{i.code}</Td>
+                    <TdLink
+                      to="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        submit(null, {
+                          method: "post",
+                          action: `${removeFormActionBase}/${i.id}/remove`,
+                        });
+                      }}
+                    >
+                      Remove
+                    </TdLink>
+                  </tr>
+                ))}
+              </Table>
             </div>
           </div>
-          <section>
-            <div className="bg-white pt-6 shadow sm:rounded-md sm:overflow-hidden">
-              <div className="px-4 sm:px-6 flex items-center justify-between">
-                <h2 className="text-lg leading-6 font-medium text-gray-900">
-                  Users with Access
-                </h2>
-                <Button onClick={() => navigate("users/add")}>Add</Button>
-              </div>
-              <div className="mt-6">
-                <Table
-                  decor="edge"
-                  headers={
-                    <>
-                      <Th>Name</Th>
-                      <Th>Description</Th>
-                      <Th>Code</Th>
-                      <ThSr>View</ThSr>
-                    </>
-                  }
-                >
-                  {accessPoint.accessUsers.map((i) => (
-                    <tr key={i.id}>
-                      <TdProminent>{i.name}</TdProminent>
-                      <Td>{i.description}</Td>
-                      <Td>{i.code}</Td>
-                      <TdLink
-                        to="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          submit(null, {
-                            method: "post",
-                            action: `${removeFormActionBase}/${i.id}/remove`,
-                          });
-                        }}
-                      >
-                        Remove
-                      </TdLink>
-                    </tr>
-                  ))}
-                </Table>
-              </div>
-            </div>
-          </section>
-        </div>
+        </section>
       </Main>
     </>
   );

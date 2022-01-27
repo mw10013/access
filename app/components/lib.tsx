@@ -106,7 +106,7 @@ export function Th({ children }: { children: React.ReactNode }) {
   return (
     <th
       scope="col"
-      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+      className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
     >
       {children}
     </th>
@@ -116,7 +116,7 @@ export function Th({ children }: { children: React.ReactNode }) {
 export function ThSr({ children }: { children: React.ReactNode }) {
   return (
     // Tailwind comment: relative needed to work around issue on safari mobile.
-    <th scope="col" className="relative px-6 py-3">
+    <th scope="col" className="relative px-4 sm:px-6 py-3">
       <span className="sr-only">{children}</span>
     </th>
   );
@@ -124,7 +124,7 @@ export function ThSr({ children }: { children: React.ReactNode }) {
 
 export function Td({ children }: { children: React.ReactNode }) {
   return (
-    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
       {children}
     </td>
   );
@@ -132,7 +132,7 @@ export function Td({ children }: { children: React.ReactNode }) {
 
 export function TdProminent({ children }: { children: React.ReactNode }) {
   return (
-    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
       {children}
     </td>
   );
@@ -145,7 +145,7 @@ export function TdLink({
   onClick,
 }: { children: React.ReactNode } & Pick<RemixLinkProps, "to" | "onClick">) {
   return (
-    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
       <Link
         to={to}
         className="text-indigo-600 hover:text-indigo-900"
