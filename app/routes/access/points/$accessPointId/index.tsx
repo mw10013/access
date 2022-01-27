@@ -241,51 +241,7 @@ export default function RouteComponent() {
           </Table>
         </section>
       </Main>
-      <Main>
-        <section>
-          <div className="bg-white pt-6 shadow sm:rounded-md sm:overflow-hidden">
-            <div className="px-4 sm:px-6 flex items-center justify-between">
-              <h2 className="text-lg leading-6 font-medium text-gray-900">
-                Users with Access
-              </h2>
-              <Button onClick={() => navigate("users/add")}>Add</Button>
-            </div>
-            <div className="mt-6">
-              <Table
-                decor="edge"
-                headers={
-                  <>
-                    <Th>Name</Th>
-                    <Th>Description</Th>
-                    <Th>Code</Th>
-                    <ThSr>View</ThSr>
-                  </>
-                }
-              >
-                {accessPoint.accessUsers.map((i) => (
-                  <tr key={i.id}>
-                    <TdProminent>{i.name}</TdProminent>
-                    <Td>{i.description}</Td>
-                    <Td>{i.code}</Td>
-                    <TdLink
-                      to="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        submit(null, {
-                          method: "post",
-                          action: `${removeFormActionBase}/${i.id}/remove`,
-                        });
-                      }}
-                    >
-                      Remove
-                    </TdLink>
-                  </tr>
-                ))}
-              </Table>
-            </div>
-          </div>
-        </section>
-      </Main>
+      
     </>
   );
 }
