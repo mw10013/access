@@ -202,11 +202,13 @@ export default function RouteComponent() {
           </dl>
         </section>
         <section className="bg-white pt-6 shadow sm:rounded-md sm:overflow-hidden">
-          <div className="pb-6 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+          <div className="pb-6 px-4 sm:px-6 lg:px-8 sm:flex sm:items-center sm:justify-between">
             <h2 className="text-lg leading-6 font-medium text-gray-900">
               Users with Access
             </h2>
-            <Button onClick={() => navigate("users/add")}>Add</Button>
+            <div className="mt-5 flex lg:mt-0 lg:ml-4">
+              <Button onClick={() => navigate("users/add")}>Add</Button>
+            </div>
           </div>
           <Table
             decor="edge"
@@ -241,7 +243,6 @@ export default function RouteComponent() {
           </Table>
         </section>
       </Main>
-      
     </>
   );
 }
