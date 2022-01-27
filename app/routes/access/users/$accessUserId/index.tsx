@@ -127,7 +127,7 @@ export default function RouteComponent() {
           />
         </DlCard>
         <Card
-          title="Access Points"
+          title="Accessible Points"
           side={<Button onClick={() => navigate("points/add")}>Add</Button>}
         >
           <Table

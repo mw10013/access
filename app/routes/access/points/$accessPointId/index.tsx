@@ -26,6 +26,7 @@ import {
   Main,
   DlCard,
   DlCardDtDd,
+  Card,
 } from "~/components/lib";
 
 const attachments = [
@@ -193,15 +194,10 @@ export default function RouteComponent() {
             description={accessPoint.description}
           />
         </DlCard>
-        <section className="bg-white pt-6 shadow sm:rounded-md sm:overflow-hidden">
-          <div className="pb-6 px-4 sm:px-6 lg:px-8 sm:flex sm:items-center sm:justify-between">
-            <h2 className="text-lg leading-6 font-medium text-gray-900">
-              Users with Access
-            </h2>
-            <div className="mt-5 flex lg:mt-0 lg:ml-4">
-              <Button onClick={() => navigate("users/add")}>Add</Button>
-            </div>
-          </div>
+        <Card
+          title="Users With Access"
+          side={<Button onClick={() => navigate("users/add")}>Add</Button>}
+        >
           <Table
             decor="edge"
             headers={
@@ -233,7 +229,7 @@ export default function RouteComponent() {
               </tr>
             ))}
           </Table>
-        </section>
+        </Card>
       </Main>
     </>
   );
