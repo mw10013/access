@@ -9,7 +9,20 @@ import {
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
-import { Button, DlCard, DlCardDtDd, Header, Main } from "~/components/lib";
+import {
+  Button,
+  Card,
+  DlCard,
+  DlCardDtDd,
+  Header,
+  Main,
+  Table,
+  Td,
+  TdLink,
+  TdProminent,
+  Th,
+  ThSr,
+} from "~/components/lib";
 import { PencilIcon } from "@heroicons/react/solid";
 
 export const handle = {
@@ -113,89 +126,43 @@ export default function RouteComponent() {
             description={accessUser.description}
           />
         </DlCard>
-      </Main>
-
-      <div className="mt-4">
-        <div className="flex justify-between">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
-            Access Points
-          </h3>
-          <button
-            type="button"
-            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
-            onClick={() => navigate("points/add")}
+        <Card
+          title="Access Points"
+          side={<Button onClick={() => navigate("points/add")}>Add</Button>}
+        >
+          <Table
+            decor="edge"
+            headers={
+              <>
+                <Th>Name</Th>
+                <Th>Manager</Th>
+                <Th>Description</Th>
+                <ThSr>View</ThSr>
+              </>
+            }
           >
-            Add
-          </button>
-        </div>
-        <div className="mt-2 max-w-xl text-sm text-gray-500">
-          <p></p>
-        </div>
-        <div className="max-w-7xl mx-auto">
-          <table className="mt-4 max-width-md divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            {accessUser.accessPoints.map((i) => (
+              <tr key={i.id}>
+                <TdProminent>{i.name}</TdProminent>
+                <Td>{i.accessManager.name}</Td>
+                <Td>{i.description}</Td>
+                <TdLink
+                  to="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    submit(null, {
+                      method: "post",
+                      action: `${removeFormActionBase}/${i.id}/remove`,
+                    });
+                  }}
                 >
-                  Manager
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Name
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Description
-                </th>
-                <th scope="col" className="relative px-6 py-3">
-                  <span className="sr-only">View</span>
-                </th>
+                  Remove
+                </TdLink>
               </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {accessUser.accessPoints.map((i) => (
-                <tr key={i.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <Link
-                      to={`../managers/${i.accessManager.id}`}
-                      className="text-indigo-600 hover:text-indigo-900"
-                    >
-                      {i.accessManager.name}
-                    </Link>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium  text-gray-900">
-                    {i.name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {i.description}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                    <Link
-                      to="#"
-                      className="text-indigo-600 hover:text-indigo-900"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        submit(null, {
-                          method: "post",
-                          action: `${removeFormActionBase}/${i.id}/remove`,
-                        });
-                      }}
-                    >
-                      Remove
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            ))}
+          </Table>
+        </Card>
+      </Main>
     </>
   );
 }

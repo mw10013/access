@@ -246,3 +246,23 @@ export function DlCard({ children }: { children: React.ReactNode }) {
     </section>
   );
 }
+
+export function Card({
+  title,
+  side,
+  children,
+}: {
+  title: string;
+  side?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="bg-white pt-6 shadow sm:rounded-md sm:overflow-hidden">
+      <div className="pb-6 px-4 sm:px-6 lg:px-8 sm:flex sm:items-center sm:justify-between">
+        <h2 className="text-lg leading-6 font-medium text-gray-900">{title}</h2>
+        {side ? <div className="mt-5 flex lg:mt-0 lg:ml-4">{side}</div> : null}
+      </div>
+      {children}
+    </section>
+  );
+}
