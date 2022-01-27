@@ -24,6 +24,8 @@ import {
   TdLink,
   Header,
   Main,
+  DlCard,
+  DlCardDtDd,
 } from "~/components/lib";
 
 const attachments = [
@@ -167,40 +169,30 @@ export default function RouteComponent() {
         }
       />
       <Main>
-        <section className="max-w-2xl mx-auto bg-white shadow sm:rounded-lg border-t border-gray-200 px-4 sm:px-6 lg:px-8 py-6">
-          <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-            <div className="sm:col-span-1">
-              <dt className="text-sm font-medium text-gray-500">Manager</dt>
-              <dd className="mt-1 text-sm text-gray-900">
-                {accessPoint.accessManager.name}
-              </dd>
-            </div>
-            <div className="sm:col-span-1">
-              <dt className="text-sm font-medium text-gray-500">ID</dt>
-              <dd className="mt-1 text-sm text-gray-900">{accessPoint.id}</dd>
-            </div>
-            <div className="sm:col-span-1">
-              <dt className="text-sm font-medium text-gray-500">Position</dt>
-              <dd className="mt-1 text-sm text-gray-900">
-                {accessPoint.position}
-              </dd>
-            </div>
-            <div className="sm:col-span-1">
-              <dt className="text-sm font-medium text-gray-500">Heartbeat</dt>
-              <dd className="mt-1 text-sm text-gray-900">
-                {accessPoint.heartbeatAt
-                  ? new Date(accessPoint.heartbeatAt).toLocaleString()
-                  : null}
-              </dd>
-            </div>
-            <div className="sm:col-span-2">
-              <dt className="text-sm font-medium text-gray-500">Description</dt>
-              <dd className="mt-1 text-sm text-gray-900">
-                {accessPoint.description}
-              </dd>
-            </div>
-          </dl>
-        </section>
+        <DlCard>
+          <DlCardDtDd
+            term="Manager"
+            description={accessPoint.accessManager.name}
+          />
+          <DlCardDtDd term="ID" description={accessPoint.id.toString()} />
+          <DlCardDtDd
+            term="Position"
+            description={accessPoint.position.toString()}
+          />
+          <DlCardDtDd
+            term="Heartbeat"
+            description={
+              accessPoint.heartbeatAt
+                ? new Date(accessPoint.heartbeatAt).toLocaleString()
+                : ""
+            }
+          />
+          <DlCardDtDd
+            wide={true}
+            term="Description"
+            description={accessPoint.description}
+          />
+        </DlCard>
         <section className="bg-white pt-6 shadow sm:rounded-md sm:overflow-hidden">
           <div className="pb-6 px-4 sm:px-6 lg:px-8 sm:flex sm:items-center sm:justify-between">
             <h2 className="text-lg leading-6 font-medium text-gray-900">

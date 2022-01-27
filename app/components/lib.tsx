@@ -219,3 +219,30 @@ export function GenericErrorBoundary({ error }: { error: Error }) {
     </div>
   );
 }
+
+export function DlCardDtDd({
+  term,
+  description,
+  wide = false,
+}: {
+  term: string;
+  description: string;
+  wide?: boolean;
+}) {
+  return (
+    <div className={wide ? "sm:col-span-2" : "sm:col-span-1"}>
+      <dt className="text-sm font-medium text-gray-500">{term}</dt>
+      <dd className="mt-1 text-sm text-gray-900">{description}</dd>
+    </div>
+  );
+}
+
+export function DlCard({ children }: { children: React.ReactNode }) {
+  return (
+    <section className="max-w-2xl mx-auto bg-white shadow sm:rounded-lg border-t border-gray-200 px-4 sm:px-6 lg:px-8 py-6">
+      <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+        {children}
+      </dl>
+    </section>
+  );
+}
