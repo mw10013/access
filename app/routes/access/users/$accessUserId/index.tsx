@@ -9,7 +9,8 @@ import {
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
-import { Header, Main } from "~/components/lib";
+import { Button, DlCard, DlCardDtDd, Header, Main } from "~/components/lib";
+import { PencilIcon } from "@heroicons/react/solid";
 
 export const handle = {
   breadcrumb: "Access User",
@@ -91,47 +92,28 @@ export default function RouteComponent() {
       <Header
         title={accessUser.name}
         side={
-          <button
-            type="button"
-            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
-            onClick={() => navigate("edit")}
-          >
+          <Button onClick={() => navigate("edit")}>
+            <PencilIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
             Edit
-          </button>
+          </Button>
         }
       />
       <Main>
-        <div className="space-y-6">
-          
-        </div>
+        <DlCard>
+          <DlCardDtDd term="Code" description={accessUser.code} />
+          <DlCardDtDd term="Code Status" description={codeStatus} />
+          <DlCardDtDd term="ID" description={accessUser.id.toString()} />
+          <DlCardDtDd
+            term="Activate Expire Status"
+            description={activateExpireStatus}
+          />
+          <DlCardDtDd
+            wide={true}
+            term="Description"
+            description={accessUser.description}
+          />
+        </DlCard>
       </Main>
-
-      <div className="flex justify-between">
-        <h1 className="text-2xl font-bold leading-7 text-gray-900">User</h1>
-        <button
-          type="button"
-          className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-purple-500"
-          onClick={() => navigate("edit")}
-        >
-          Edit
-        </button>
-      </div>
-      <div className="flex mt-1 space-x-10 text-sm text-gray-500">
-        <div>{accessUser.name}</div>
-        <div>ID: {accessUser.id}</div>
-        <div>
-          Code:{" "}
-          {accessUser.code || (
-            <span className="font-bold">{accessUser.code}</span>
-          )}
-        </div>
-        <div>{codeStatus}</div>
-        <div>{activateExpireStatus}</div>
-      </div>
-
-      {accessUser.description ? (
-        <p className="mt-2 text-sm text-gray-500">{accessUser.description}</p>
-      ) : null}
 
       <div className="mt-4">
         <div className="flex justify-between">
