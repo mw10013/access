@@ -5,6 +5,16 @@ import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
 import type { ZodError } from "zod";
 import { z } from "zod";
+import {
+  Header,
+  Main,
+  SettingsForm,
+  SettingsFormField,
+} from "~/components/lib";
+
+export const handle = {
+  breadcrumb: "Edit",
+};
 
 type LoaderData = { accessPoint: AccessPoint };
 
@@ -71,95 +81,49 @@ export default function RouteComponent() {
   const { accessPoint } = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold leading-7 text-gray-900">
-        Edit Access Point
-      </h1>
-      <Form replace method="post">
-        <div>
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
-            {actionData?.formErrors?.formErrors.join(". ")}
-          </h3>
-          <p className="mt-1 text-sm text-gray-500"></p>
-        </div>
-
-        <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-          <div className="sm:col-span-4">
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Name
-            </label>
-
-            <div className="mt-1 flex rounded-md shadow-sm">
-              <input
-                type="text"
-                name="name"
-                id="name"
-                defaultValue={
-                  actionData?.fieldValues
-                    ? actionData.fieldValues.name
-                    : accessPoint.name
-                }
-                className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
-              />
-            </div>
-            {actionData?.formErrors?.fieldErrors.name ? (
-              <p
-                className="mt-2 text-sm text-red-600"
-                role="alert"
-                id="name-error"
-              >
-                {actionData.formErrors.fieldErrors.name.join(". ")}
-              </p>
-            ) : null}
-          </div>
-        </div>
-
-        <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-          <div className="sm:col-span-4">
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Description
-            </label>
-
-            <div className="mt-1 flex rounded-md shadow-sm">
-              <input
-                type="text"
-                name="description"
-                id="description"
-                defaultValue={
-                  actionData?.fieldValues
-                    ? actionData.fieldValues.description
-                    : accessPoint.description
-                }
-                className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
-              />
-            </div>
-            {actionData?.formErrors?.fieldErrors?.description ? (
-              <p
-                className="mt-2 text-sm text-red-600"
-                role="alert"
-                id="description-error"
-              >
-                {actionData.formErrors.fieldErrors.description.join(". ")}
-              </p>
-            ) : null}
-          </div>
-        </div>
-
-        <div className="mt-4 grid justify-items-end">
-          <button
-            type="submit"
-            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+    <>
+      <Header />
+      <Main>
+        <SettingsForm
+          replace
+          method="post"
+          title="Access Point Settings"
+          formErrors={actionData?.formErrors?.formErrors}
+        >
+          <SettingsFormField
+            id="name"
+            label="Name"
+            errors={actionData?.formErrors?.fieldErrors?.name}
           >
-            Save
-          </button>
-        </div>
-      </Form>
-    </div>
+            <input
+              type="text"
+              name="name"
+              id="name"
+              defaultValue={
+                actionData?.fieldValues
+                  ? actionData.fieldValues.name
+                  : accessPoint.name
+              }
+            />
+          </SettingsFormField>
+          <SettingsFormField
+            id="description"
+            label="Description"
+            errors={actionData?.formErrors?.fieldErrors?.description}
+          >
+            <textarea
+              name="description"
+              id="description"
+              rows={3}
+              defaultValue={
+                actionData?.fieldValues
+                  ? actionData.fieldValues.description
+                  : accessPoint.description
+              }
+            />
+          </SettingsFormField>
+        </SettingsForm>
+      </Main>
+    </>
   );
 }
