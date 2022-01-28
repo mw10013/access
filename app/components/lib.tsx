@@ -1,6 +1,6 @@
 import { ChevronRightIcon } from "@heroicons/react/solid";
 import { FormProps, RemixLinkProps } from "@remix-run/react/components";
-import React from "react";
+import React, { ButtonHTMLAttributes } from "react";
 import { Form, Link, useCatch, useMatches, useNavigate } from "remix";
 
 function classNames(...classes: Array<string | undefined>) {
@@ -19,12 +19,12 @@ export function Header({
   // https://tailwindui.com/components/application-ui/page-examples/detail-screens
   // With page heading and stacked list
   return (
-    <header className="px-4 sm:px-6 lg:px-8 py-8">
+    <header className="px-4 py-8 sm:px-6 lg:px-8">
       <div className="lg:flex lg:items-center lg:justify-between">
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           <Breadcrumbs />
           {title ? (
-            <h2 className="mt-2 text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+            <h2 className="mt-2 text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl">
               {title}
             </h2>
           ) : null}
@@ -38,7 +38,7 @@ export function Header({
 
 export function Main({ children }: { children: React.ReactNode }) {
   // No px-4 since tables need to extend to the edge on mobile.
-  return <main className="sm:px-6 lg:px-8 space-y-6 pb-8">{children}</main>;
+  return <main className="space-y-6 pb-8 sm:px-6 lg:px-8">{children}</main>;
 }
 
 export function Button({
@@ -57,10 +57,10 @@ export function Button({
       className={classNames(
         className,
         variant === "primary"
-          ? "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          ? "inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           : variant === "white"
-          ? "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          : "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-rose-600 hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          ? "inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          : "inline-flex items-center rounded-md border border-transparent bg-rose-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
       )}
       {...props}
     >
@@ -81,7 +81,7 @@ export function Breadcrumbs() {
               <div className="flex items-center">
                 {index ? (
                   <ChevronRightIcon
-                    className="flex-shrink-0 h-5 w-5 text-gray-400"
+                    className="h-5 w-5 flex-shrink-0 text-gray-400"
                     aria-hidden="true"
                   />
                 ) : null}
@@ -110,7 +110,7 @@ export function Th({ children }: { children: React.ReactNode }) {
   return (
     <th
       scope="col"
-      className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+      className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6"
     >
       {children}
     </th>
@@ -120,7 +120,7 @@ export function Th({ children }: { children: React.ReactNode }) {
 export function ThSr({ children }: { children: React.ReactNode }) {
   return (
     // Tailwind comment: relative needed to work around issue on safari mobile.
-    <th scope="col" className="relative px-4 sm:px-6 py-3">
+    <th scope="col" className="relative px-4 py-3 sm:px-6">
       <span className="sr-only">{children}</span>
     </th>
   );
@@ -128,7 +128,7 @@ export function ThSr({ children }: { children: React.ReactNode }) {
 
 export function Td({ children }: { children: React.ReactNode }) {
   return (
-    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+    <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500 sm:px-6">
       {children}
     </td>
   );
@@ -136,7 +136,7 @@ export function Td({ children }: { children: React.ReactNode }) {
 
 export function TdProminent({ children }: { children: React.ReactNode }) {
   return (
-    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+    <td className="whitespace-nowrap px-4 py-4 text-sm font-medium text-gray-900 sm:px-6">
       {children}
     </td>
   );
@@ -149,7 +149,7 @@ export function TdLink({
   onClick,
 }: { children: React.ReactNode } & Pick<RemixLinkProps, "to" | "onClick">) {
   return (
-    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+    <td className="whitespace-nowrap px-4 py-4 text-right text-sm font-medium sm:px-6">
       <Link
         to={to}
         className="text-indigo-600 hover:text-indigo-900"
@@ -175,10 +175,10 @@ export function Table({
   return (
     <div className="flex flex-col">
       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+        <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
           <div
             className={classNames(
-              decor === "shadow" ? "shadow border-b sm:rounded-lg" : "border-t",
+              decor === "shadow" ? "border-b shadow sm:rounded-lg" : "border-t",
               "overflow-hidden border-gray-200"
             )}
           >
@@ -186,7 +186,7 @@ export function Table({
               <thead className="bg-gray-50">
                 <tr>{headers}</tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 bg-white">
                 {children}
               </tbody>
             </table>
@@ -201,7 +201,7 @@ export function GenericCatchBoundary() {
   const caught = useCatch();
   return (
     <div className="py-16">
-      <div className="prose max-w-xl mx-auto px-4">
+      <div className="prose mx-auto max-w-xl px-4">
         <h1>
           {caught.status} {caught.statusText}
         </h1>
@@ -216,7 +216,7 @@ export function GenericErrorBoundary({ error }: { error: Error }) {
 
   return (
     <div className="py-16">
-      <div className="prose max-w-xl mx-auto px-4">
+      <div className="prose mx-auto max-w-xl px-4">
         <h1>Application Error</h1>
         <pre>{error.message}</pre>
       </div>
@@ -243,7 +243,7 @@ export function DlCardDtDd({
 
 export function DlCard({ children }: { children: React.ReactNode }) {
   return (
-    <section className="max-w-2xl mx-auto bg-white shadow sm:rounded-lg border-t border-gray-200 px-4 sm:px-6 lg:px-8 py-6">
+    <section className="mx-auto max-w-2xl border-t border-gray-200 bg-white px-4 py-6 shadow sm:rounded-lg sm:px-6 lg:px-8">
       <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
         {children}
       </dl>
@@ -261,9 +261,9 @@ export function Card({
   children: React.ReactNode;
 }) {
   return (
-    <section className="bg-white pt-6 shadow sm:rounded-md sm:overflow-hidden">
-      <div className="pb-6 px-4 sm:px-6 lg:px-8 sm:flex sm:items-center sm:justify-between">
-        <h2 className="text-lg leading-6 font-medium text-gray-900">{title}</h2>
+    <section className="bg-white pt-6 shadow sm:overflow-hidden sm:rounded-md">
+      <div className="px-4 pb-6 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        <h2 className="text-lg font-medium leading-6 text-gray-900">{title}</h2>
         {side ? <div className="mt-5 flex lg:mt-0 lg:ml-4">{side}</div> : null}
       </div>
       {children}
@@ -312,22 +312,36 @@ export function SettingsFormField({
 export function SettingsForm({
   title,
   formErrors,
+  submitText = "Save",
   submitOnClick,
+  leftButton,
   children,
   ...props
 }: {
   title: string;
   formErrors?: string[];
+  submitText?: string;
   submitOnClick?: React.DOMAttributes<HTMLButtonElement>["onClick"];
+  leftButton?: React.ReactNode;
   children: React.ReactNode;
 } & FormProps) {
   const navigate = useNavigate();
+  const submitCancelButtons = (
+    <div className="flex justify-end">
+      <Button variant="white" onClick={() => navigate(-1)}>
+        Cancel
+      </Button>
+      <Button type="submit" className="ml-3" onClick={submitOnClick}>
+        {submitText}
+      </Button>
+    </div>
+  );
   return (
-    <section className="max-w-lg mx-auto lg:px-8">
-      <Form className="shadow sm:rounded-md sm:overflow-hidden" {...props}>
-        <div className="bg-white py-6 px-4 sm:p-6 space-y-6">
+    <section className="mx-auto max-w-lg lg:px-8">
+      <Form className="shadow sm:overflow-hidden sm:rounded-md" {...props}>
+        <div className="space-y-6 bg-white py-6 px-4 sm:p-6">
           <div>
-            <h1 className="text-lg leading-6 font-medium text-gray-900">
+            <h1 className="text-lg font-medium leading-6 text-gray-900">
               {title}
             </h1>
             {formErrors ? (
@@ -337,14 +351,24 @@ export function SettingsForm({
             ) : null}
           </div>
           {children}
-          <div className="flex justify-end">
+
+          {leftButton ? (
+            <div className="flex justify-between">
+              {leftButton}
+              {submitCancelButtons}
+            </div>
+          ) : (
+            submitCancelButtons
+          )}
+
+          {/* <div className="flex justify-end">
             <Button variant="white" onClick={() => navigate(-1)}>
               Cancel
             </Button>
             <Button type="submit" className="ml-3" onClick={submitOnClick}>
-              Save
+              {submitText}
             </Button>
-          </div>
+          </div> */}
         </div>
       </Form>
     </section>

@@ -67,7 +67,6 @@ export const action: ActionFunction = async ({
       name,
       description,
       code,
-      enabled: !!enabled,
       userId: Number(userId),
     },
   });
@@ -84,7 +83,7 @@ export default function Create() {
       </h1>
       <Form reloadDocument replace method="post">
         <div>
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
+          <h3 className="text-lg font-medium leading-6 text-gray-900">
             {actionData?.formError}
           </h3>
           <p className="mt-1 text-sm text-gray-500"></p>
@@ -107,7 +106,7 @@ export default function Create() {
                 defaultValue={
                   actionData?.fieldValues ? actionData.fieldValues.name : ""
                 }
-                className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
+                className="block w-full min-w-0 flex-1 rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
             {actionData?.fieldErrors?.name ? (
@@ -141,7 +140,7 @@ export default function Create() {
                     ? actionData.fieldValues.description
                     : ""
                 }
-                className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
+                className="block w-full min-w-0 flex-1 rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
             {actionData?.fieldErrors?.description ? (
@@ -173,7 +172,7 @@ export default function Create() {
                 defaultValue={
                   actionData?.fieldValues ? actionData.fieldValues.code : ""
                 }
-                className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
+                className="block w-full min-w-0 flex-1 rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
             {actionData?.fieldErrors?.code ? (
@@ -190,7 +189,7 @@ export default function Create() {
 
         <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
           <div className="relative flex items-start">
-            <div className="flex items-center h-5">
+            <div className="flex h-5 items-center">
               <input
                 id="enabled"
                 name="enabled"
@@ -200,7 +199,7 @@ export default function Create() {
                     ? actionData.fieldValues.enabled
                     : true
                 }
-                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
               />
             </div>
             <div className="ml-3 text-sm">
@@ -220,7 +219,7 @@ export default function Create() {
             </button> */}
           <button
             type="submit"
-            className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           >
             Create
           </button>
