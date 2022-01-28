@@ -6,7 +6,14 @@ import { requireUserId } from "~/utils/session.server";
 import type { ZodError } from "zod";
 import { z } from "zod";
 import { ChevronRightIcon, PlusIcon } from "@heroicons/react/solid";
-import { Breadcrumbs, Button } from "~/components/lib";
+import {
+  Breadcrumbs,
+  Button,
+  Header,
+  Main,
+  SettingsForm,
+  SettingsFormField,
+} from "~/components/lib";
 
 export const handle = {
   breadcrumb: "Edit",
@@ -73,16 +80,48 @@ export default function RouteComponent() {
   const navigate = useNavigate();
   return (
     <>
-      <header className="p-8">
-        <div className="lg:flex lg:items-center lg:justify-between">
-          <div className="flex-1 min-w-0">
-            <Breadcrumbs />
-            {/* <h2 className="mt-2 text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-              {accessManager.name}
-            </h2> */}
-          </div>
-        </div>
-      </header>
+      <Header />
+      <Main>
+        <SettingsForm
+          replace
+          method="post"
+          title="Access Manager Settings"
+          formErrors={actionData?.formErrors?.formErrors}
+        >
+          <SettingsFormField
+            id="name"
+            label="Name"
+            errors={actionData?.formErrors?.fieldErrors?.name}
+          >
+            <input
+              type="text"
+              name="name"
+              id="name"
+              defaultValue={
+                actionData?.fieldValues
+                  ? actionData.fieldValues.name
+                  : accessManager.name
+              }
+            />
+          </SettingsFormField>
+          <SettingsFormField
+            id="description"
+            label="Description"
+            errors={actionData?.formErrors?.fieldErrors?.description}
+          >
+            <textarea
+              name="description"
+              id="description"
+              rows={3}
+              defaultValue={
+                actionData?.fieldValues
+                  ? actionData.fieldValues.description
+                  : accessManager.description
+              }
+            />
+          </SettingsFormField>
+        </SettingsForm>
+      </Main>
 
       <main className="max-w-lg mx-auto pb-10 lg:px-8">
         <Form replace method="post">

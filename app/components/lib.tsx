@@ -1,7 +1,7 @@
 import { ChevronRightIcon } from "@heroicons/react/solid";
-import { RemixLinkProps } from "@remix-run/react/components";
+import { FormProps, RemixLinkProps } from "@remix-run/react/components";
 import React from "react";
-import { Link, useCatch, useMatches } from "remix";
+import { Form, Link, useCatch, useMatches, useNavigate } from "remix";
 
 function classNames(...classes: Array<string | undefined>) {
   return classes.filter(Boolean).join(" ");
@@ -12,7 +12,7 @@ export function Header({
   meta,
   side, // Should be fragment if more than 1 item for flex
 }: {
-  title: string;
+  title?: string;
   meta?: React.ReactNode;
   side?: React.ReactNode;
 }) {
@@ -23,9 +23,11 @@ export function Header({
       <div className="lg:flex lg:items-center lg:justify-between">
         <div className="flex-1 min-w-0">
           <Breadcrumbs />
-          <h2 className="mt-2 text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-            {title}
-          </h2>
+          {title ? (
+            <h2 className="mt-2 text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+              {title}
+            </h2>
+          ) : null}
           {meta}
         </div>
         {side ? <div className="mt-5 flex lg:mt-0 lg:ml-4">{side}</div> : null}
@@ -263,6 +265,106 @@ export function Card({
         {side ? <div className="mt-5 flex lg:mt-0 lg:ml-4">{side}</div> : null}
       </div>
       {children}
+    </section>
+  );
+}
+
+export function SettingsFormField({
+  id,
+  label,
+  children,
+  errors,
+}: {
+  id: string;
+  label: string;
+  children: React.ReactNode;
+  errors?: string[];
+}) {
+  const child = React.Children.only(children);
+  const field = React.isValidElement(child) ? child : null;
+  return (
+    <div>
+      <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+        {label}
+      </label>
+      <div className="mt-1">
+        {field
+          ? React.cloneElement(field, {
+              className:
+                "block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md",
+            })
+          : null}
+      </div>
+      {errors ? (
+        <p
+          className="mt-2 text-sm text-red-600"
+          role="alert"
+          id={`${id}-error`}
+        >
+          {errors.join(". ")}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+export function SettingsFormInput({
+  id,
+  label,
+  errors,
+  ...props
+}: {
+  id: string;
+  label: string;
+  errors?: string[];
+} & React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <SettingsFormField id={id} label={label} errors={errors}>
+      <input
+        id={id}
+        className="block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+        {...props}
+      />
+    </SettingsFormField>
+  );
+}
+
+export function SettingsForm({
+  title,
+  formErrors,
+  children,
+  ...props
+}: {
+  title: string;
+  formErrors?: string[];
+  children: React.ReactNode;
+} & FormProps) {
+  const navigate = useNavigate();
+  return (
+    <section className="max-w-lg mx-auto pb-8 lg:px-8 shadow sm:rounded-md sm:overflow-hidden">
+      <Form {...props}>
+        <div className="bg-white py-6 px-4 sm:p-6 space-y-6">
+          <div>
+            <h1 className="text-lg leading-6 font-medium text-gray-900">
+              {title}
+            </h1>
+            {formErrors ? (
+              <p className="mt-1 text-sm text-gray-500">
+                {formErrors.join(". ")}
+              </p>
+            ) : null}
+          </div>
+          {children}
+          <div className="flex justify-end">
+            <Button variant="white" onClick={() => navigate(-1)}>
+              Cancel
+            </Button>
+            <Button type="submit" className="ml-3">
+              Save
+            </Button>
+          </div>
+        </div>
+      </Form>
     </section>
   );
 }
