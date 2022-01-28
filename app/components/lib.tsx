@@ -49,7 +49,7 @@ export function Button({
   ...props
 }: {
   children: React.ReactNode;
-  variant?: "primary" | "white";
+  variant?: "primary" | "white" | "red";
 } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
@@ -58,7 +58,9 @@ export function Button({
         className,
         variant === "primary"
           ? "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          : "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          : variant === "white"
+          ? "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          : "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-rose-600 hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
       )}
       {...props}
     >
@@ -310,11 +312,13 @@ export function SettingsFormField({
 export function SettingsForm({
   title,
   formErrors,
+  submitOnClick,
   children,
   ...props
 }: {
   title: string;
   formErrors?: string[];
+  submitOnClick?: React.DOMAttributes<HTMLButtonElement>["onClick"];
   children: React.ReactNode;
 } & FormProps) {
   const navigate = useNavigate();
@@ -337,7 +341,7 @@ export function SettingsForm({
             <Button variant="white" onClick={() => navigate(-1)}>
               Cancel
             </Button>
-            <Button type="submit" className="ml-3">
+            <Button type="submit" className="ml-3" onClick={submitOnClick}>
               Save
             </Button>
           </div>
@@ -346,3 +350,5 @@ export function SettingsForm({
     </section>
   );
 }
+
+type t = React.DOMAttributes<HTMLButtonElement>["onClick"];

@@ -25,10 +25,6 @@ import {
 } from "~/components/lib";
 import { PencilIcon } from "@heroicons/react/solid";
 
-export const handle = {
-  breadcrumb: "Access User",
-};
-
 type LoaderData = {
   accessUser: Prisma.AccessUserGetPayload<{
     include: {
