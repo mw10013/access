@@ -272,7 +272,7 @@ export function Card({
 export function SettingsFormField({
   id,
   label,
-  children,
+  children, // only 1 child.
   errors,
 }: {
   id: string;
@@ -281,15 +281,14 @@ export function SettingsFormField({
   errors?: string[];
 }) {
   const child = React.Children.only(children);
-  const field = React.isValidElement(child) ? child : null;
   return (
     <div>
       <label htmlFor={id} className="block text-sm font-medium text-gray-700">
         {label}
       </label>
       <div className="mt-1">
-        {field
-          ? React.cloneElement(field, {
+        {React.isValidElement(child)
+          ? React.cloneElement(child, {
               className:
                 "block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md",
             })
@@ -308,27 +307,6 @@ export function SettingsFormField({
   );
 }
 
-export function SettingsFormInput({
-  id,
-  label,
-  errors,
-  ...props
-}: {
-  id: string;
-  label: string;
-  errors?: string[];
-} & React.InputHTMLAttributes<HTMLInputElement>) {
-  return (
-    <SettingsFormField id={id} label={label} errors={errors}>
-      <input
-        id={id}
-        className="block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-        {...props}
-      />
-    </SettingsFormField>
-  );
-}
-
 export function SettingsForm({
   title,
   formErrors,
@@ -341,15 +319,15 @@ export function SettingsForm({
 } & FormProps) {
   const navigate = useNavigate();
   return (
-    <section className="max-w-lg mx-auto pb-8 lg:px-8 shadow sm:rounded-md sm:overflow-hidden">
-      <Form {...props}>
+    <section className="max-w-lg mx-auto lg:px-8">
+      <Form className="shadow sm:rounded-md sm:overflow-hidden" {...props}>
         <div className="bg-white py-6 px-4 sm:p-6 space-y-6">
           <div>
             <h1 className="text-lg leading-6 font-medium text-gray-900">
               {title}
             </h1>
             {formErrors ? (
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-red-600">
                 {formErrors.join(". ")}
               </p>
             ) : null}

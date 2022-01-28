@@ -1,14 +1,11 @@
-import { ActionFunction, Link, LoaderFunction, useNavigate } from "remix";
-import { useActionData, useLoaderData, Form, useSubmit, redirect } from "remix";
+import { ActionFunction, LoaderFunction, useNavigate } from "remix";
+import { useActionData, useLoaderData, redirect } from "remix";
 import type { AccessManager } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
 import type { ZodError } from "zod";
 import { z } from "zod";
-import { ChevronRightIcon, PlusIcon } from "@heroicons/react/solid";
 import {
-  Breadcrumbs,
-  Button,
   Header,
   Main,
   SettingsForm,
@@ -77,7 +74,6 @@ export const action: ActionFunction = async ({
 export default function RouteComponent() {
   const { accessManager } = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
-  const navigate = useNavigate();
   return (
     <>
       <Header />
@@ -122,94 +118,6 @@ export default function RouteComponent() {
           </SettingsFormField>
         </SettingsForm>
       </Main>
-
-      <main className="max-w-lg mx-auto pb-10 lg:px-8">
-        <Form replace method="post">
-          <div className="shadow sm:rounded-md sm:overflow-hidden">
-            <div className="bg-white py-6 px-4 sm:p-6 space-y-6">
-              <div>
-                <h1 className="text-lg leading-6 font-medium text-gray-900">
-                  Access Manager Settings
-                </h1>
-                <p className="mt-1 text-sm text-gray-500">
-                  {actionData?.formErrors?.formErrors.join(". ")}
-                </p>
-              </div>
-
-              <div className="">
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Name
-                </label>
-                <div className="mt-1">
-                  <input
-                    type="text"
-                    name="name"
-                    id="name"
-                    className="block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-                    defaultValue={
-                      actionData?.fieldValues
-                        ? actionData.fieldValues.name
-                        : accessManager.name
-                    }
-                  />
-                </div>
-                {actionData?.formErrors?.fieldErrors?.name ? (
-                  <p
-                    className="mt-2 text-sm text-red-600"
-                    role="alert"
-                    id="name-error"
-                  >
-                    {actionData.formErrors.fieldErrors.name.join(". ")}
-                  </p>
-                ) : null}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="description"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Description
-                </label>
-                <div className="mt-1">
-                  <textarea
-                    id="description"
-                    name="description"
-                    rows={3}
-                    className="block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
-                    defaultValue={
-                      actionData?.fieldValues
-                        ? actionData.fieldValues.description
-                        : accessManager.description
-                    }
-                  />
-                </div>
-                {actionData?.formErrors?.fieldErrors?.description ? (
-                  <p
-                    className="mt-2 text-sm text-red-600"
-                    role="alert"
-                    id="description-error"
-                  >
-                    {actionData.formErrors.fieldErrors.description.join(". ")}
-                  </p>
-                ) : null}
-              </div>
-
-              <div className="flex justify-end">
-                <Button variant="white" onClick={() => navigate(-1)}>
-                  Cancel
-                </Button>
-                <Button type="submit" className="ml-3">
-                  Save
-                </Button>
-              </div>
-            </div>
-          </div>
-        </Form>
-      </main>
     </>
   );
 }
