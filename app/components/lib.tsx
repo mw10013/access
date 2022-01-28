@@ -360,15 +360,6 @@ export function SettingsForm({
           ) : (
             submitCancelButtons
           )}
-
-          {/* <div className="flex justify-end">
-            <Button variant="white" onClick={() => navigate(-1)}>
-              Cancel
-            </Button>
-            <Button type="submit" className="ml-3" onClick={submitOnClick}>
-              {submitText}
-            </Button>
-          </div> */}
         </div>
       </Form>
     </section>
