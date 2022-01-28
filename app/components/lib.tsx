@@ -350,5 +350,3 @@ export function SettingsForm({
     </section>
   );
 }
-
-type t = React.DOMAttributes<HTMLButtonElement>["onClick"];
