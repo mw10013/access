@@ -91,8 +91,7 @@ export const action: ActionFunction = async ({
     return redirect("/access/users");
   }
 
-  // Node FormData get() seems to return null for empty string value.
-  // Object.fromEntries(formData): if formData.entries() has 2 entries with the same key, only 1 is taken.
+  // WARNING: Object.fromEntries(formData): if formData.entries() has 2 entries with the same key, only 1 is taken.
   const fieldValues = Object.fromEntries(await request.formData());
   const parseResult = FieldValues.safeParse(fieldValues);
   if (!parseResult.success) {

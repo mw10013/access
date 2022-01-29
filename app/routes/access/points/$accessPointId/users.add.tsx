@@ -3,7 +3,7 @@ import { useLoaderData, Form, useNavigate, redirect } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
-import { Header } from "~/components/lib";
+import { Header, Main, SettingsForm } from "~/components/lib";
 
 export const handle = {
   breadcrumb: "Add Users",
@@ -76,63 +76,44 @@ export default function RouteComponent() {
   const navigate = useNavigate();
   return (
     <>
-      <Header
-        title={`Add Users${accessPoint.name ? ` to ${accessPoint.name}` : ""}`}
-      />
-      <div className="p-8">
-        <Form method="post" className="mt-4">
-          <fieldset>
-            <legend className="text-lg font-medium text-gray-900">
-              Available Users
-            </legend>
-            <div className="mt-4 border-t border-b border-gray-200 divide-y divide-gray-200">
-              {accessUsers.map((au, auIdx) => (
-                <div key={au.id} className="relative flex items-start py-4">
-                  <div className="min-w-0 flex-1 text-sm">
-                    <label
-                      htmlFor={`accessUser-${auIdx}`}
-                      className="font-medium text-gray-700 select-none"
-                    >
-                      {au.name}
-                    </label>
-                  </div>
-                  <div className="ml-3 flex items-center h-5">
-                    <input
-                      id={`accessUser-${auIdx}`}
-                      name={`accessUser-${auIdx}`}
-                      type="checkbox"
-                      className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                    />
-                    <input
-                      id={`accessUser-${auIdx}-id`}
-                      name={`accessUser-${auIdx}-id`}
-                      type="hidden"
-                      value={au.id}
-                    />
-                  </div>
+      <Header />
+      <Main>
+        <SettingsForm
+          replace
+          method="post"
+          title={`Add Users`}
+          submitText="Add"
+        >
+          <div className="mt-4 divide-y divide-gray-200 border-t border-b border-gray-200">
+            {accessUsers.map((au, auIdx) => (
+              <div key={au.id} className="relative flex items-start py-4">
+                <div className="min-w-0 flex-1 text-sm">
+                  <label
+                    htmlFor={`accessUser-${auIdx}`}
+                    className="select-none font-medium text-gray-700"
+                  >
+                    {au.name}
+                  </label>
                 </div>
-              ))}
-            </div>
-          </fieldset>
-          <div className="pt-5">
-            <div className="flex justify-end">
-              <button
-                type="button"
-                className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                onClick={() => navigate(-1)}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Add
-              </button>
-            </div>
+                <div className="ml-3 flex h-5 items-center">
+                  <input
+                    id={`accessUser-${auIdx}`}
+                    name={`accessUser-${auIdx}`}
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <input
+                    id={`accessUser-${auIdx}-id`}
+                    name={`accessUser-${auIdx}-id`}
+                    type="hidden"
+                    value={au.id}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
-        </Form>
-      </div>
+        </SettingsForm>
+      </Main>
     </>
   );
 }
