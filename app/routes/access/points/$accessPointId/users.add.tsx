@@ -32,7 +32,7 @@ export const loader: LoaderFunction = async ({
   });
   const notIn = accessPoint.accessUsers.map((el) => el.id);
   const accessUsers = await db.accessUser.findMany({
-    where: { id: { notIn }, deletedAt: null, user: { id: Number(userId) } },
+    where: { id: { notIn }, deletedAt: new Date(0), user: { id: Number(userId) } },
   });
   return { accessPoint, accessUsers };
 };

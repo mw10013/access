@@ -43,7 +43,7 @@ export const loader: LoaderFunction = async ({
   const accessUser = await db.accessUser.findFirst({
     where: {
       id: Number(accessUserId),
-      deletedAt: null,
+      deletedAt: new Date(0),
       user: { id: Number(userId) },
     },
     include: {

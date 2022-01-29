@@ -21,20 +21,22 @@ model User {
 }
 
 model AccessUser {
-  id                Int       @id @default(autoincrement())
-  name              String    @unique
-  description       String    @default("") 
+  id                Int         @id @default(autoincrement())
+  name              String   
+  description       String      @default("") 
   code              String
   activateCodeAt    DateTime?
   expireCodeAt      DateTime?
-  user              User      @relation(fields: [userId], references: [id])
+  user              User        @relation(fields: [userId], references: [id])
   userId            Int
   accessPoints      AccessPoint[]
   accessEvents      AccessEvent[]
-  deletedAt         DateTime?
+  deletedAt         DateTime    @default("1970-01-01T00:00:00.000Z")
+  // deletedAt default indicates not deleted.
+  // Null not used since deletedAt needed in @@unique.
 
-  @@unique([name, userId])
-  @@unique([code, userId])
+  @@unique([name, userId, deletedAt])
+  @@unique([code, userId, deletedAt])
 }
 
 model AccessManager {
