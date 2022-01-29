@@ -1,8 +1,13 @@
 import type { ActionFunction, LoaderFunction } from "remix";
-import { useLoaderData, Form, useNavigate, redirect } from "remix";
+import { useLoaderData, redirect } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
+import { Header, Main, SettingsForm } from "~/components/lib";
+
+export const handle = {
+  breadcrumb: "Add Points",
+};
 
 type LoaderData = {
   accessUser: Prisma.AccessUserGetPayload<{
@@ -37,8 +42,7 @@ export const action: ActionFunction = async ({
   params: { accessUserId },
 }) => {
   const formData = await request.formData();
-  // Node FormData get() seems to return null for empty string value.
-  // Object.fromEntries(formData): if formData.entries() has 2 entries with the same key, only 1 is taken.
+  // WARNING: Object.fromEntries(formData): if formData.entries() has 2 entries with the same key, only 1 is taken.
   const fieldValues = Object.fromEntries(formData);
 
   let ids = [];
@@ -63,36 +67,30 @@ export const action: ActionFunction = async ({
   return redirect(`/access/users/${accessUserId}`);
 };
 
-export default function Add() {
+export default function RouteComponent() {
   const { accessUser, accessPoints } = useLoaderData<LoaderData>();
-  const navigate = useNavigate();
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold leading-7 text-gray-900">
-        {`Add Access Points to ${accessUser.name}`}
-      </h1>
-      <Form method="post" className="mt-4">
-        <fieldset>
-          <legend className="text-lg font-medium text-gray-900">
-            Available Access Points
-          </legend>
-          <div className="mt-4 border-t border-b border-gray-200 divide-y divide-gray-200">
+    <>
+      <Header />
+      <Main>
+        <SettingsForm replace method="post" title="Add Points" submitText="Add">
+          <div className="mt-4 divide-y divide-gray-200 border-t border-b border-gray-200">
             {accessPoints.map((ap, apIdx) => (
               <div key={ap.id} className="relative flex items-start py-4">
                 <div className="min-w-0 flex-1 text-sm">
                   <label
                     htmlFor={`accessPoint-${apIdx}`}
-                    className="font-medium text-gray-700 select-none"
+                    className="select-none font-medium text-gray-700"
                   >
                     {`${ap.accessManager.name}: ${ap.name}`}
                   </label>
                 </div>
-                <div className="ml-3 flex items-center h-5">
+                <div className="ml-3 flex h-5 items-center">
                   <input
                     id={`accessPoint-${apIdx}`}
                     name={`accessPoint-${apIdx}`}
                     type="checkbox"
-                    className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                   />
                   <input
                     id={`accessPoint-${apIdx}-id`}
@@ -104,25 +102,8 @@ export default function Add() {
               </div>
             ))}
           </div>
-        </fieldset>
-        <div className="pt-5">
-          <div className="flex justify-end">
-            <button
-              type="button"
-              className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              onClick={() => navigate(-1)}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Add
-            </button>
-          </div>
-        </div>
-      </Form>
-    </div>
+        </SettingsForm>
+      </Main>
+    </>
   );
 }
