@@ -7,6 +7,7 @@ async function seed() {
   const aunt = await db.user.create({
     data: {
       email: "aunt@genteelbnb.com",
+      role: "customer",
       // this is a hashed version of "elegant"
       passwordHash:
         "$2a$10$ll1X9ln2B/jwu2465hUBbuRb7SK3KSdL3AhMVvJv7t.M4Zr39Wnka",
@@ -15,6 +16,16 @@ async function seed() {
   const installer = await db.user.create({
     data: {
       email: "installer@install.com",
+      role: "customer",
+      // this is a hashed version of "twixrox"
+      passwordHash:
+        "$2a$10$uU.0Utt.Ne3q0Vl1Ocj0fuoiQ9Q2xcYrcWWMrzxX4o22pyLY3Fr5q",
+    },
+  });
+  const admin = await db.user.create({
+    data: {
+      email: "admin@access.com",
+      role: "admin",
       // this is a hashed version of "twixrox"
       passwordHash:
         "$2a$10$uU.0Utt.Ne3q0Vl1Ocj0fuoiQ9Q2xcYrcWWMrzxX4o22pyLY3Fr5q",

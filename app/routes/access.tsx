@@ -1,10 +1,11 @@
 import { Link, useMatches } from "remix";
-import { NavLink, Outlet, useSubmit } from "remix";
+import { NavLink, Outlet, useSubmit, EntryContext } from "remix";
 import { GenericCatchBoundary, GenericErrorBoundary } from "~/components/lib";
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import { HomeIcon } from "@heroicons/react/solid";
+import { Prisma } from "@prisma/client";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -37,6 +38,11 @@ const navigation = [
   { name: "Managers", to: "managers" },
   { name: "Points", to: "points" },
 ];
+
+type LoaderData = {
+  user: Prisma.UserGetPayload<{
+  }>;
+};
 
 function Layout({ children }: { children: React.ReactNode }) {
   const submit = useSubmit();

@@ -1,49 +1,40 @@
-import type { ActionFunction, LoaderFunction } from "remix";
-import { useActionData, useLoaderData, Form, useSubmit, redirect } from "remix";
-import type { AccessUser } from "@prisma/client";
-import { db } from "~/utils/db.server";
+import type { ActionFunction } from "remix";
+import { useActionData, Form } from "remix";
 import { signIn, createUserSession } from "~/utils/session.server";
+import { z, ZodError } from "zod";
 
-function validateEmail(email: unknown) {
-  if (typeof email !== "string" || email.length < 3) {
-    return `Email must be at least 3 characters long`;
-  }
-}
-
-function validatePassword(password: unknown) {
-  if (typeof password !== "string" || password.length < 6) {
-    return `Passwords must be at least 6 characters long`;
-  }
-}
+const FieldValues = z
+  .object({
+    email: z.string().min(1).max(50).email(),
+    password: z.string().min(6).max(100),
+  })
+  .strict();
+type FieldValues = z.infer<typeof FieldValues>;
 
 type ActionData = {
-  formError?: string;
-  fieldErrors?: { email: string | undefined; password: string | undefined };
-  fieldValues?: { email: string; password: string };
+  formErrors?: ZodError["formErrors"];
+  fieldValues?: any;
 };
 
 export const action: ActionFunction = async ({
   request,
 }): Promise<Response | ActionData> => {
-  const { email, password } = Object.fromEntries(await request.formData());
-  if (typeof email !== "string" || typeof password !== "string") {
-    return { formError: `Form not submitted correctly.` };
+  // WARNING: Object.fromEntries(formData): if formData.entries() has 2 entries with the same key, only 1 is taken.
+  const fieldValues = Object.fromEntries(await request.formData());
+  const parseResult = FieldValues.safeParse(fieldValues);
+  if (!parseResult.success) {
+    return { formErrors: parseResult.error.formErrors, fieldValues };
   }
 
-  const fieldValues = { email, password };
-  const fieldErrors = {
-    email: validateEmail(email),
-    password: validatePassword(password),
-  };
-
-  if (Object.values(fieldErrors).some(Boolean))
-    return { fieldErrors, fieldValues };
-
+  const { email, password } = parseResult.data;
   const user = await signIn({ email, password });
   if (!user) {
     return {
       fieldValues,
-      formError: `Email/Password combination is incorrect`,
+      formErrors: {
+        formErrors: [`Email/Password combination is incorrect`],
+        fieldErrors: {},
+      },
     };
   }
   return createUserSession(user.id.toString(), "/access/dashboard");
@@ -53,7 +44,7 @@ export default function SignIn() {
   const actionData = useActionData<ActionData>();
   return (
     <>
-      <div className="min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <img
             className="mx-auto h-12 w-auto"
@@ -77,14 +68,14 @@ export default function SignIn() {
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <Form replace method="post" className="space-y-6">
-              {actionData?.formError ? (
-                <div className="-mt-11 grid place-content-center">
+              {actionData?.formErrors?.formErrors ? (
+                <div className="grid place-content-center">
                   <p
                     className="text-sm text-red-600"
                     role="alert"
                     id="form-error"
                   >
-                    {actionData.formError}
+                    {actionData.formErrors.formErrors.join(". ")}
                   </p>
                 </div>
               ) : null}
@@ -100,19 +91,18 @@ export default function SignIn() {
                     id="email"
                     name="email"
                     type="email"
-                    // autoComplete="email"
-                    // required
+                    autoComplete="email"
                     defaultValue={actionData?.fieldValues?.email}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
-                {actionData?.fieldErrors?.email ? (
+                {actionData?.formErrors?.fieldErrors.email ? (
                   <p
                     className="mt-2 text-sm text-red-600"
                     role="alert"
                     id="email-error"
                   >
-                    {actionData.fieldErrors.email}
+                    {actionData.formErrors.fieldErrors.email}
                   </p>
                 ) : null}
               </div>
@@ -130,18 +120,17 @@ export default function SignIn() {
                     name="password"
                     type="password"
                     // autoComplete="current-password"
-                    // required
                     defaultValue={actionData?.fieldValues?.password}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
-                {actionData?.fieldErrors?.password ? (
+                {actionData?.formErrors?.fieldErrors?.password ? (
                   <p
                     className="mt-2 text-sm text-red-600"
                     role="alert"
                     id="password-error"
                   >
-                    {actionData.fieldErrors.password}
+                    {actionData.formErrors.fieldErrors.password}
                   </p>
                 ) : null}
               </div>
@@ -152,7 +141,7 @@ export default function SignIn() {
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
-                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                   />
                   <label
                     htmlFor="remember-me"
@@ -175,7 +164,7 @@ export default function SignIn() {
               <div>
                 <button
                   type="submit"
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                   Sign in
                 </button>

@@ -21,7 +21,9 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async ({
   request,
+  context,
 }): Promise<LoaderData> => {
+  console.log({ context });
   const userId = await requireUserId(request);
   const accessUsers = await db.accessUser.findMany({
     where: { deletedAt: new Date(0), user: { id: Number(userId) } },
