@@ -38,13 +38,15 @@ export const action: ActionFunction = async ({
       },
     };
   }
-  return createUserSession(user.id, user.email, user.role, "/access/dashboard");
+  return createUserSession(
+    user.id,
+    user.email,
+    user.role,
+    user.role === "customer" ? "/access/dashboard" : "/admin/dashboard"
+  );
 };
 
-type t = ReturnType<typeof signIn>;
-type t2 = Awaited<ReturnType<typeof signIn>>;
-
-export default function SignIn() {
+export default function RouteComponent() {
   const actionData = useActionData<ActionData>();
   return (
     <>
