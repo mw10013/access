@@ -26,7 +26,7 @@ export const loader: LoaderFunction = async ({
   console.log({ context });
   const userId = await requireUserId(request);
   const accessUsers = await db.accessUser.findMany({
-    where: { deletedAt: new Date(0), user: { id: Number(userId) } },
+    where: { deletedAt: new Date(0), user: { id: userId } },
     orderBy: { name: "asc" },
   });
 

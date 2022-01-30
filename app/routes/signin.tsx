@@ -37,8 +37,11 @@ export const action: ActionFunction = async ({
       },
     };
   }
-  return createUserSession(user.id.toString(), "/access/dashboard");
+  return createUserSession(user.id, user.email, user.role, "/access/dashboard");
 };
+
+type t = ReturnType<typeof signIn>;
+type t2 = Awaited<ReturnType<typeof signIn>>;
 
 export default function SignIn() {
   const actionData = useActionData<ActionData>();
@@ -119,7 +122,7 @@ export default function SignIn() {
                     id="password"
                     name="password"
                     type="password"
-                    // autoComplete="current-password"
+                    autoComplete="current-password"
                     defaultValue={actionData?.fieldValues?.password}
                     className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                   />

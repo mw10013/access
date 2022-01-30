@@ -28,7 +28,7 @@ export const loader: LoaderFunction = async ({
   const userId = await requireUserId(request);
   const accessManagers = await db.accessManager.findMany({
     where: {
-      user: { id: Number(userId) },
+      user: { id: userId },
     },
     orderBy: { name: "asc" },
   });

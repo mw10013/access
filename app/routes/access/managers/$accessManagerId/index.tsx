@@ -42,7 +42,7 @@ export const loader: LoaderFunction = async ({
 }): Promise<LoaderData> => {
   const userId = await requireUserId(request);
   const accessManager = await db.accessManager.findFirst({
-    where: { id: Number(accessManagerId), user: { id: Number(userId) } },
+    where: { id: Number(accessManagerId), user: { id: userId } },
     include: {
       accessPoints: {
         orderBy: { position: "asc" },
@@ -61,10 +61,10 @@ export default function RouteComponent() {
       <Header
         title={accessManager.name}
         meta={
-          <div className="mt-1 flex flex-col sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">
+          <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
             <div className="mt-2 flex items-center text-sm text-gray-500">
               <LocationMarkerIcon
-                className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                 aria-hidden="true"
               />
               {accessManager.description}
@@ -83,7 +83,7 @@ export default function RouteComponent() {
               </Button>
             </span>
 
-            <span className="hidden sm:block ml-3">
+            <span className="ml-3 hidden sm:block">
               <Button variant="white" onClick={() => navigate("raw")}>
                 <CheckIcon
                   className="-ml-1 mr-2 h-5 w-5 text-gray-500"
@@ -92,7 +92,7 @@ export default function RouteComponent() {
                 Raw
               </Button>
             </span>
-            <span className="hidden sm:block ml-3">
+            <span className="ml-3 hidden sm:block">
               <Button variant="white" onClick={() => navigate("activity")}>
                 <LinkIcon
                   className="-ml-1 mr-2 h-5 w-5 text-gray-500"
@@ -109,7 +109,7 @@ export default function RouteComponent() {
             </span>
 
             {/* Dropdown */}
-            <Menu as="span" className="ml-3 relative sm:hidden">
+            <Menu as="span" className="relative ml-3 sm:hidden">
               <Menu.Button as={React.Fragment}>
                 <Button variant="white">
                   More
@@ -129,7 +129,7 @@ export default function RouteComponent() {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="origin-top-right absolute right-0 mt-2 -mr-1 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <Menu.Items className="absolute right-0 mt-2 -mr-1 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <Menu.Item>
                     {({ active }) => (
                       <Link
@@ -177,11 +177,11 @@ export default function RouteComponent() {
       />
       <Main>
         <section>
-          <div className="bg-white pt-6 shadow sm:rounded-md sm:overflow-hidden">
+          <div className="bg-white pt-6 shadow sm:overflow-hidden sm:rounded-md">
             <div className="px-4 sm:px-6 lg:px-8">
               <h2
                 id="access-points-heading"
-                className="text-lg leading-6 font-medium text-gray-900"
+                className="text-lg font-medium leading-6 text-gray-900"
               >
                 Access Points
               </h2>

@@ -49,28 +49,28 @@ export function getUserSession(request: Request) {
 export async function getUserId(request: Request) {
   const session = await getUserSession(request);
   const userId = session.get("userId");
-  if (!userId || typeof userId !== "string") return null;
+  if (typeof userId !== "number") return null;
   return userId;
 }
 
 export async function requireUserId(request: Request) {
   const session = await getUserSession(request);
   const userId = session.get("userId");
-  if (!userId || typeof userId !== "string") throw redirect("/signin");
+  if (typeof userId !== "number") throw redirect("/signin");
   return userId;
 }
 
-export async function getUser(request: Request) {
-  const userId = await getUserId(request);
-  if (typeof userId !== "string") return null;
+// export async function getUser(request: Request) {
+//   const userId = await getUserId(request);
+//   if (typeof userId !== "number") return null;
 
-  try {
-    const user = await db.user.findUnique({ where: { id: Number(userId) } });
-    return user;
-  } catch {
-    throw signOut(request);
-  }
-}
+//   try {
+//     const user = await db.user.findUnique({ where: { id: userId } });
+//     return user;
+//   } catch {
+//     throw signOut(request);
+//   }
+// }
 
 export async function signOut(request: Request) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -79,9 +79,16 @@ export async function signOut(request: Request) {
   });
 }
 
-export async function createUserSession(userId: string, redirectTo: string) {
+export async function createUserSession(
+  userId: number,
+  email: string,
+  role: string,
+  redirectTo: string
+) {
   const session = await getSession();
   session.set("userId", userId);
+  session.set("email", email);
+  session.set("role", role);
   return redirect(redirectTo, {
     headers: { "Set-Cookie": await commitSession(session) },
   });

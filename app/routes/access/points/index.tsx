@@ -28,7 +28,7 @@ export const loader: LoaderFunction = async ({
 }): Promise<LoaderData> => {
   const userId = await requireUserId(request);
   const accessPoints = await db.accessPoint.findMany({
-    where: { accessManager: { user: { id: Number(userId) } } },
+    where: { accessManager: { user: { id: userId } } },
     orderBy: [{ accessManager: { name: "asc" } }, { name: "asc" }],
     include: {
       accessUsers: { orderBy: { name: "asc" } },

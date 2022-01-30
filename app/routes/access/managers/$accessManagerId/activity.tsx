@@ -30,7 +30,7 @@ export const loader: LoaderFunction = async ({
 }): Promise<LoaderData> => {
   const userId = await requireUserId(request);
   const accessManager = await db.accessManager.findFirst({
-    where: { id: Number(accessManagerId), user: { id: Number(userId) } },
+    where: { id: Number(accessManagerId), user: { id: userId } },
     rejectOnNotFound: true,
   });
 
@@ -57,21 +57,21 @@ export default function RouteComponent() {
     <>
       <header className="p-8">
         <div className="lg:flex lg:items-center lg:justify-between">
-          <div className="flex-1 min-w-0">
+          <div className="min-w-0 flex-1">
             <Breadcrumbs />
-            <h2 className="mt-2 text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+            <h2 className="mt-2 text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl">
               {accessManager.name}
             </h2>
           </div>
         </div>
       </header>
-      <main className="max-w-7xl mx-auto sm:px-8 space-y-6 pb-8">
+      <main className="mx-auto max-w-7xl space-y-6 pb-8 sm:px-8">
         <section aria-labelledby="access-events-heading">
-          <div className="bg-white pt-6 shadow sm:rounded-md sm:overflow-hidden">
+          <div className="bg-white pt-6 shadow sm:overflow-hidden sm:rounded-md">
             <div className="px-4 sm:px-6">
               <h2
                 id="access-events-heading"
-                className="text-lg leading-6 font-medium text-gray-900"
+                className="text-lg font-medium leading-6 text-gray-900"
               >
                 Access Events
               </h2>
@@ -89,16 +89,16 @@ export default function RouteComponent() {
               >
                 {accessEvents.map((i) => (
                   <tr key={i.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                       {new Date(i.at).toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                       {i.access}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                       {i.code}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                       {i.accessUser ? i.accessUser.name : null}
                     </td>
                   </tr>

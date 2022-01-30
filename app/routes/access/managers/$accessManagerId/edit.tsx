@@ -29,7 +29,7 @@ export const loader: LoaderFunction = async ({
   const userId = await requireUserId(request);
 
   const accessManager = await db.accessManager.findFirst({
-    where: { id: Number(accessManagerId), user: { id: Number(userId) } },
+    where: { id: Number(accessManagerId), user: { id: userId } },
     rejectOnNotFound: true,
   });
   return { accessManager };
@@ -59,7 +59,7 @@ export const action: ActionFunction = async ({
 
   const userId = await requireUserId(request);
   await db.accessManager.findFirst({
-    where: { id: Number(accessManagerId), user: { id: Number(userId) } },
+    where: { id: Number(accessManagerId), user: { id: userId } },
     rejectOnNotFound: true,
   });
   const { name, description } = parseResult.data;

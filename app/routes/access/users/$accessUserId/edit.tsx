@@ -25,7 +25,7 @@ export const loader: LoaderFunction = async ({
 }): Promise<LoaderData> => {
   const userId = await requireUserId(request);
   const accessUser = await db.accessUser.findFirst({
-    where: { id: Number(accessUserId), user: { id: Number(userId) } },
+    where: { id: Number(accessUserId), user: { id: userId } },
     rejectOnNotFound: true,
   });
   return { accessUser };
@@ -75,7 +75,7 @@ export const action: ActionFunction = async ({
 }): Promise<Response | ActionData> => {
   const userId = await requireUserId(request);
   const accessUser = await db.accessUser.findFirst({
-    where: { id: Number(accessUserId), user: { id: Number(userId) } },
+    where: { id: Number(accessUserId), user: { id: userId } },
     rejectOnNotFound: true,
   });
   if (request.method === "DELETE") {

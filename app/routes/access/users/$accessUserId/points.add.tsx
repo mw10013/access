@@ -24,13 +24,13 @@ export const loader: LoaderFunction = async ({
 }): Promise<LoaderData> => {
   const userId = await requireUserId(request);
   const accessUser = await db.accessUser.findFirst({
-    where: { id: Number(id), user: { id: Number(userId) } },
+    where: { id: Number(id), user: { id: userId } },
     include: { accessPoints: true },
     rejectOnNotFound: true,
   });
   const notIn = accessUser.accessPoints.map((el) => el.id);
   const accessPoints = await db.accessPoint.findMany({
-    where: { id: { notIn }, accessManager: { user: { id: Number(userId) } } },
+    where: { id: { notIn }, accessManager: { user: { id: userId } } },
     orderBy: [{ accessManager: { name: "asc" } }, { name: "asc" }],
     include: { accessManager: true },
   });
@@ -55,7 +55,7 @@ export const action: ActionFunction = async ({
     // TODO: validate ids of access points belong to user.
     const userId = await requireUserId(request);
     const accessUser = await db.accessUser.findFirst({
-      where: { id: Number(accessUserId), user: { id: Number(userId) } },
+      where: { id: Number(accessUserId), user: { id: userId } },
       rejectOnNotFound: true,
     });
 

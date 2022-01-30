@@ -25,14 +25,18 @@ export const loader: LoaderFunction = async ({
   const accessPoint = await db.accessPoint.findFirst({
     where: {
       id: Number(accessPointId),
-      accessManager: { user: { id: Number(userId) } },
+      accessManager: { user: { id: userId } },
     },
     include: { accessUsers: true },
     rejectOnNotFound: true,
   });
   const notIn = accessPoint.accessUsers.map((el) => el.id);
   const accessUsers = await db.accessUser.findMany({
-    where: { id: { notIn }, deletedAt: new Date(0), user: { id: Number(userId) } },
+    where: {
+      id: { notIn },
+      deletedAt: new Date(0),
+      user: { id: userId },
+    },
   });
   return { accessPoint, accessUsers };
 };
@@ -56,7 +60,7 @@ export const action: ActionFunction = async ({
     const accessPoint = await db.accessPoint.findFirst({
       where: {
         id: Number(accessPointId),
-        accessManager: { user: { id: Number(userId) } },
+        accessManager: { user: { id: userId } },
       },
       rejectOnNotFound: true,
     });

@@ -47,7 +47,7 @@ export const action: ActionFunction = async ({
       name,
       description,
       code,
-      userId: Number(userId),
+      userId: userId,
     },
   });
 

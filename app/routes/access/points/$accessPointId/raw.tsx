@@ -22,7 +22,7 @@ export const loader: LoaderFunction = async ({
   const accessPoint = await db.accessPoint.findFirst({
     where: {
       id: Number(accessPointId),
-      accessManager: { user: { id: Number(userId) } },
+      accessManager: { user: { id: userId } },
     },
     include: {
       accessUsers: { orderBy: { name: "asc" } },
@@ -51,7 +51,7 @@ export default function RouteComponent() {
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold leading-7 text-gray-900">Raw</h1>
         <div className="relative flex items-start">
-          <div className="flex items-center h-5">
+          <div className="flex h-5 items-center">
             <input
               id="poll"
               aria-describedby="comments-description"
@@ -59,7 +59,7 @@ export default function RouteComponent() {
               type="checkbox"
               checked={isPolling}
               onChange={() => setIsPolling(!isPolling)}
-              className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
             />
           </div>
           <div className="ml-3 text-sm">

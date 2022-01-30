@@ -44,7 +44,7 @@ export const loader: LoaderFunction = async ({
     where: {
       id: Number(accessUserId),
       deletedAt: new Date(0),
-      user: { id: Number(userId) },
+      user: { id: userId },
     },
     include: {
       accessPoints: {
