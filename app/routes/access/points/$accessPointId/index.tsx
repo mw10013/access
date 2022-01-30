@@ -2,7 +2,7 @@ import { LoaderFunction, useFormAction } from "remix";
 import { useLoaderData, Link, useNavigate, useSubmit } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
-import { requireUserId } from "~/utils/session.server";
+import { requireUserSession } from "~/utils/session.server";
 import { Menu, Transition } from "@headlessui/react";
 import {
   CheckIcon,
@@ -51,7 +51,7 @@ export const loader: LoaderFunction = async ({
   request,
   params: { accessPointId },
 }): Promise<LoaderData> => {
-  const userId = await requireUserId(request);
+  const { userId } = await requireUserSession(request, "customer");
   const accessPoint = await db.accessPoint.findFirst({
     where: {
       id: Number(accessPointId),

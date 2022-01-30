@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { createCookieSessionStorage, redirect } from "remix";
+import { z } from "zod";
 import { db } from "./db.server";
 
 type SignInForm = {
@@ -58,6 +59,31 @@ export async function requireUserId(request: Request) {
   const userId = session.get("userId");
   if (typeof userId !== "number") throw redirect("/signin");
   return userId;
+}
+
+const SessionData = z
+  .object({
+    userId: z.number(),
+    email: z.string().min(1),
+    role: z.string().min(1),
+  })
+  .strict();
+type SessionData = z.infer<typeof SessionData>;
+
+export async function requireUserSession(
+  request: Request,
+  role: "customer" | "admin"
+) {
+  const session = await getUserSession(request);
+  const parseResult = SessionData.safeParse(session.data);
+  if (!parseResult.success) {
+    console.error(parseResult.error);
+    throw redirect("/signin");
+  }
+  if (parseResult.data.role !== role) {
+    throw new Response("Unauthorized access.", { status: 401 });
+  }
+  return parseResult.data;
 }
 
 // export async function getUser(request: Request) {

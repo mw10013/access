@@ -7,11 +7,11 @@ import {
   PencilIcon,
 } from "@heroicons/react/solid";
 import { Menu, Transition } from "@headlessui/react";
-import { LoaderFunction, useMatches } from "remix";
+import { LoaderFunction } from "remix";
 import { useLoaderData, Link, useNavigate } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
-import { requireUserId } from "~/utils/session.server";
+import { requireUserSession } from "~/utils/session.server";
 import {
   Button,
   Main,
@@ -40,7 +40,7 @@ export const loader: LoaderFunction = async ({
   request,
   params: { accessManagerId },
 }): Promise<LoaderData> => {
-  const userId = await requireUserId(request);
+  const { userId } = await requireUserSession(request, "customer");
   const accessManager = await db.accessManager.findFirst({
     where: { id: Number(accessManagerId), user: { id: userId } },
     include: {

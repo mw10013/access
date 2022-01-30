@@ -2,7 +2,7 @@ import type { ActionFunction, LoaderFunction } from "remix";
 import { useActionData, useLoaderData, Form, useSubmit, redirect } from "remix";
 import type { AccessUser } from "@prisma/client";
 import { db } from "~/utils/db.server";
-import { requireUserId } from "~/utils/session.server";
+import { requireUserSession } from "~/utils/session.server";
 import type { ZodError } from "zod";
 import { z } from "zod";
 import {
@@ -23,7 +23,7 @@ export const loader: LoaderFunction = async ({
   request,
   params: { accessUserId },
 }): Promise<LoaderData> => {
-  const userId = await requireUserId(request);
+  const { userId } = await requireUserSession(request, "customer");
   const accessUser = await db.accessUser.findFirst({
     where: { id: Number(accessUserId), user: { id: userId } },
     rejectOnNotFound: true,
@@ -73,7 +73,7 @@ export const action: ActionFunction = async ({
   request,
   params: { accessUserId },
 }): Promise<Response | ActionData> => {
-  const userId = await requireUserId(request);
+  const { userId } = await requireUserSession(request, "customer");
   const accessUser = await db.accessUser.findFirst({
     where: { id: Number(accessUserId), user: { id: userId } },
     rejectOnNotFound: true,

@@ -1,10 +1,10 @@
 import * as React from "react";
 import type { LoaderFunction } from "remix";
-import { useLoaderData, useFetcher, Link, useLocation } from "remix";
+import { useLoaderData, useFetcher, useLocation } from "remix";
 import type { AccessPoint } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
-import { requireUserId } from "~/utils/session.server";
+import { requireUserSession } from "~/utils/session.server";
 import {
   Main,
   Header,
@@ -36,7 +36,7 @@ type LoaderData = {
 export const loader: LoaderFunction = async ({
   request,
 }): Promise<LoaderData> => {
-  const userId = await requireUserId(request);
+  const { userId } = await requireUserSession(request, "customer");
   const accessPoints = await db.accessPoint.findMany({
     where: {
       accessManager: {

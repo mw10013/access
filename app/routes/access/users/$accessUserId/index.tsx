@@ -1,14 +1,13 @@
 import type { LoaderFunction } from "remix";
 import {
   useLoaderData,
-  Link,
   useNavigate,
   useSubmit,
   useFormAction,
 } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
-import { requireUserId } from "~/utils/session.server";
+import { requireUserSession } from "~/utils/session.server";
 import {
   Button,
   Card,
@@ -39,7 +38,7 @@ export const loader: LoaderFunction = async ({
   request,
   params: { accessUserId },
 }): Promise<LoaderData> => {
-  const userId = await requireUserId(request);
+  const { userId } = await requireUserSession(request, "customer");
   const accessUser = await db.accessUser.findFirst({
     where: {
       id: Number(accessUserId),

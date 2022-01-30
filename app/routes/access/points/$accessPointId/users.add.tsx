@@ -2,7 +2,7 @@ import type { ActionFunction, LoaderFunction } from "remix";
 import { useLoaderData, Form, useNavigate, redirect } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
-import { requireUserId } from "~/utils/session.server";
+import { requireUserSession } from "~/utils/session.server";
 import { Header, Main, SettingsForm } from "~/components/lib";
 
 export const handle = {
@@ -20,7 +20,7 @@ export const loader: LoaderFunction = async ({
   request,
   params: { accessPointId },
 }): Promise<LoaderData> => {
-  const userId = await requireUserId(request);
+  const { userId } = await requireUserSession(request, "customer");
 
   const accessPoint = await db.accessPoint.findFirst({
     where: {
@@ -56,7 +56,7 @@ export const action: ActionFunction = async ({
     }
   }
   if (ids.length > 0) {
-    const userId = await requireUserId(request);
+    const { userId } = await requireUserSession(request, "customer");
     const accessPoint = await db.accessPoint.findFirst({
       where: {
         id: Number(accessPointId),

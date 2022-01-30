@@ -2,7 +2,7 @@ import type { LoaderFunction } from "remix";
 import { useLoaderData } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
-import { requireUserId } from "~/utils/session.server";
+import { requireUserSession } from "~/utils/session.server";
 import {
   Header,
   Main,
@@ -25,7 +25,7 @@ type LoaderData = {
 export const loader: LoaderFunction = async ({
   request,
 }): Promise<LoaderData> => {
-  const userId = await requireUserId(request);
+  const { userId } = await requireUserSession(request, "customer");
   const accessManagers = await db.accessManager.findMany({
     where: {
       user: { id: userId },

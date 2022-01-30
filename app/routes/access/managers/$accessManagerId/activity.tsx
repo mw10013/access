@@ -1,10 +1,9 @@
-import { Link, LoaderFunction, useMatches } from "remix";
+import { LoaderFunction, useMatches } from "remix";
 import { useLoaderData } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
-import { requireUserId } from "~/utils/session.server";
 import { Breadcrumbs, Table, Th } from "~/components/lib";
-import { ChevronRightIcon } from "@heroicons/react/solid";
+import { requireUserSession } from "~/utils/session.server";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -28,7 +27,7 @@ export const loader: LoaderFunction = async ({
   request,
   params: { accessManagerId },
 }): Promise<LoaderData> => {
-  const userId = await requireUserId(request);
+  const { userId } = await requireUserSession(request, "customer");
   const accessManager = await db.accessManager.findFirst({
     where: { id: Number(accessManagerId), user: { id: userId } },
     rejectOnNotFound: true,

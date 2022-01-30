@@ -1,6 +1,5 @@
-import * as React from "react";
 import type { ActionFunction } from "remix";
-import { useActionData, Form, redirect } from "remix";
+import { useActionData, redirect } from "remix";
 import { z, ZodError } from "zod";
 import {
   Header,
@@ -9,7 +8,7 @@ import {
   SettingsFormField,
 } from "~/components/lib";
 import { db } from "~/utils/db.server";
-import { requireUserId } from "~/utils/session.server";
+import { requireUserSession } from "~/utils/session.server";
 
 export const handle = {
   breadcrumb: "Create",
@@ -41,7 +40,7 @@ export const action: ActionFunction = async ({
   }
 
   const { name, description, code } = parseResult.data;
-  const userId = await requireUserId(request);
+  const { userId } = await requireUserSession(request, "customer");
   const accessUser = await db.accessUser.create({
     data: {
       name,

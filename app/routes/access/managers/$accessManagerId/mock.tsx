@@ -4,7 +4,7 @@ import { useLoaderData } from "remix";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { QueryClient, QueryClientProvider, useMutation } from "react-query";
-import { requireUserId } from "~/utils/session.server";
+import { requireUserSession } from "~/utils/session.server";
 
 const queryClient = new QueryClient();
 
@@ -20,7 +20,7 @@ export const loader: LoaderFunction = async ({
   request,
   params: { accessManagerId },
 }): Promise<LoaderData> => {
-  const userId = await requireUserId(request);
+  const { userId } = await requireUserSession(request, "customer");
   const accessManager = await db.accessManager.findFirst({
     where: { id: Number(accessManagerId), user: { id: userId } },
     include: {

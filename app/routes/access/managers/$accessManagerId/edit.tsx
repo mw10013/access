@@ -1,8 +1,7 @@
-import { ActionFunction, LoaderFunction, useNavigate } from "remix";
+import { ActionFunction, LoaderFunction } from "remix";
 import { useActionData, useLoaderData, redirect } from "remix";
 import type { AccessManager } from "@prisma/client";
 import { db } from "~/utils/db.server";
-import { requireUserId } from "~/utils/session.server";
 import type { ZodError } from "zod";
 import { z } from "zod";
 import {
@@ -26,8 +25,7 @@ export const loader: LoaderFunction = async ({
   request,
   params: { accessManagerId },
 }): Promise<LoaderData> => {
-  const userId = await requireUserId(request);
-
+  const { userId } = await requireUserSession(request, "customer");
   const accessManager = await db.accessManager.findFirst({
     where: { id: Number(accessManagerId), user: { id: userId } },
     rejectOnNotFound: true,
@@ -57,7 +55,7 @@ export const action: ActionFunction = async ({
     return { formErrors: parseResult.error.formErrors, fieldValues };
   }
 
-  const userId = await requireUserId(request);
+  const { userId } = await requireUserSession(request, "customer");
   await db.accessManager.findFirst({
     where: { id: Number(accessManagerId), user: { id: userId } },
     rejectOnNotFound: true,
