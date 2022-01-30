@@ -6,6 +6,8 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import { HomeIcon } from "@heroicons/react/solid";
 import { Prisma } from "@prisma/client";
+import logoHref from "~/assets/logo.svg";
+import avatarHref from "~/assets/avatar.jpg";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -14,7 +16,7 @@ function classNames(...classes: string[]) {
 export const handle = {
   breadcrumb: (match: ReturnType<typeof useMatches>[number]) => (
     <Link to={match.pathname} className="text-gray-400 hover:text-gray-500">
-      <HomeIcon className="flex-shrink-0 h-5 w-5" aria-hidden="true" />
+      <HomeIcon className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
       <span className="sr-only">Home</span>
     </Link>
   ),
@@ -23,8 +25,7 @@ export const handle = {
 const user = {
   name: "Tom Cook",
   email: "tom@example.com",
-  imageUrl:
-    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+  imageUrl: avatarHref,
 };
 const userNavigation = [
   { name: "Your Profile", href: "#" },
@@ -40,8 +41,7 @@ const navigation = [
 ];
 
 type LoaderData = {
-  user: Prisma.UserGetPayload<{
-  }>;
+  user: Prisma.UserGetPayload<{}>;
 };
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -51,21 +51,21 @@ function Layout({ children }: { children: React.ReactNode }) {
   // <div className="min-h-full">
   return (
     <div className="min-h-full">
-      <Disclosure as="nav" className="bg-white border-b border-gray-200">
+      <Disclosure as="nav" className="border-b border-gray-200 bg-white">
         {({ open }) => (
           <>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex justify-between h-16">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="flex h-16 justify-between">
                 <div className="flex">
-                  <div className="flex-shrink-0 flex items-center">
+                  <div className="flex flex-shrink-0 items-center">
                     <img
-                      className="block lg:hidden h-8 w-auto"
-                      src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
+                      className="block h-8 w-auto lg:hidden"
+                      src={logoHref}
                       alt="Workflow"
                     />
                     <img
-                      className="hidden lg:block h-8 w-auto"
-                      src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
+                      className="hidden h-8 w-auto lg:block"
+                      src={logoHref}
                       alt="Workflow"
                     />
                   </div>
@@ -79,7 +79,7 @@ function Layout({ children }: { children: React.ReactNode }) {
                             isActive
                               ? "border-indigo-500 text-gray-900"
                               : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                            "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                            "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium"
                           )
                         }
                       >
@@ -91,16 +91,16 @@ function Layout({ children }: { children: React.ReactNode }) {
                 <div className="hidden sm:ml-6 sm:flex sm:items-center">
                   <button
                     type="button"
-                    className="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                   >
                     <span className="sr-only">View notifications</span>
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
 
                   {/* Profile dropdown */}
-                  <Menu as="div" className="ml-3 relative">
+                  <Menu as="div" className="relative ml-3">
                     <div>
-                      <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                      <Menu.Button className="flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                         <span className="sr-only">Open user menu</span>
                         <img
                           className="h-8 w-8 rounded-full"
@@ -118,7 +118,7 @@ function Layout({ children }: { children: React.ReactNode }) {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         {userNavigation.map((item) => (
                           <Menu.Item key={item.name}>
                             {({ active }) => (
@@ -160,7 +160,7 @@ function Layout({ children }: { children: React.ReactNode }) {
                 </div>
                 <div className="-mr-2 flex items-center sm:hidden">
                   {/* Mobile menu button */}
-                  <Disclosure.Button className="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                  <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                     <span className="sr-only">Open main menu</span>
                     {open ? (
                       <XIcon className="block h-6 w-6" aria-hidden="true" />
@@ -173,7 +173,7 @@ function Layout({ children }: { children: React.ReactNode }) {
             </div>
 
             <Disclosure.Panel className="sm:hidden">
-              <div className="pt-2 pb-3 space-y-1">
+              <div className="space-y-1 pt-2 pb-3">
                 {navigation.map((item) => (
                   <Disclosure.Button key={item.name} as={Fragment}>
                     <NavLink
@@ -181,9 +181,9 @@ function Layout({ children }: { children: React.ReactNode }) {
                       className={({ isActive }) =>
                         classNames(
                           isActive
-                            ? "bg-indigo-50 border-indigo-500 text-indigo-700"
-                            : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800",
-                          "block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+                            ? "border-indigo-500 bg-indigo-50 text-indigo-700"
+                            : "border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800",
+                          "block border-l-4 py-2 pl-3 pr-4 text-base font-medium"
                         )
                       }
                     >
@@ -192,7 +192,7 @@ function Layout({ children }: { children: React.ReactNode }) {
                   </Disclosure.Button>
                 ))}
               </div>
-              <div className="pt-4 pb-3 border-t border-gray-200">
+              <div className="border-t border-gray-200 pt-4 pb-3">
                 <div className="flex items-center px-4">
                   <div className="flex-shrink-0">
                     <img
@@ -211,7 +211,7 @@ function Layout({ children }: { children: React.ReactNode }) {
                   </div>
                   <button
                     type="button"
-                    className="ml-auto bg-white flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                   >
                     <span className="sr-only">View notifications</span>
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
@@ -223,7 +223,7 @@ function Layout({ children }: { children: React.ReactNode }) {
                       key={item.name}
                       as="a"
                       href={item.href}
-                      className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                      className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
                     >
                       {item.name}
                     </Disclosure.Button>
@@ -231,7 +231,7 @@ function Layout({ children }: { children: React.ReactNode }) {
                   <Disclosure.Button key="signOut" as={Fragment}>
                     <a
                       href="#"
-                      className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                      className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
                       onClick={(e) => {
                         e.preventDefault();
                         submit(null, {
@@ -259,7 +259,7 @@ export default function RouteComponent() {
     // No px-4 since mobile needs tables going to the edge.
     // No sm:px-6 lg:px-8. Let header and main specify
     <Layout>
-      <div className="max-w-7xl mx-auto">
+      <div className="mx-auto max-w-7xl">
         <Outlet />
       </div>
     </Layout>

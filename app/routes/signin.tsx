@@ -2,6 +2,7 @@ import type { ActionFunction } from "remix";
 import { useActionData, Form } from "remix";
 import { signIn, createUserSession } from "~/utils/session.server";
 import { z, ZodError } from "zod";
+import logoHref from "~/assets/logo.svg";
 
 const FieldValues = z
   .object({
@@ -49,11 +50,7 @@ export default function SignIn() {
     <>
       <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <img
-            className="mx-auto h-12 w-auto"
-            src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-            alt="Workflow"
-          />
+          <img className="mx-auto h-12 w-auto" src={logoHref} alt="Logo" />
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to your account
           </h2>

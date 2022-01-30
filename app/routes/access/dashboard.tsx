@@ -37,8 +37,6 @@ export const loader: LoaderFunction = async ({
   request,
 }): Promise<LoaderData> => {
   const userId = await requireUserId(request);
-  console.log({ fn: "dashboard", userId });
-
   const accessPoints = await db.accessPoint.findMany({
     where: {
       accessManager: {
