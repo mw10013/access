@@ -74,25 +74,6 @@ export default function RouteComponent() {
         side={
           <>
             <span className="hidden sm:block">
-              <Button variant="white" onClick={() => navigate("mock")}>
-                <PencilIcon
-                  className="-ml-1 mr-2 h-5 w-5 text-gray-500"
-                  aria-hidden="true"
-                />
-                Mock
-              </Button>
-            </span>
-
-            <span className="ml-3 hidden sm:block">
-              <Button variant="white" onClick={() => navigate("raw")}>
-                <CheckIcon
-                  className="-ml-1 mr-2 h-5 w-5 text-gray-500"
-                  aria-hidden="true"
-                />
-                Raw
-              </Button>
-            </span>
-            <span className="ml-3 hidden sm:block">
               <Button variant="white" onClick={() => navigate("activity")}>
                 <LinkIcon
                   className="-ml-1 mr-2 h-5 w-5 text-gray-500"
@@ -130,32 +111,6 @@ export default function RouteComponent() {
                 leaveTo="transform opacity-0 scale-95"
               >
                 <Menu.Items className="absolute right-0 mt-2 -mr-1 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                  <Menu.Item>
-                    {({ active }) => (
-                      <Link
-                        to="mock"
-                        className={classNames(
-                          active ? "bg-gray-100" : "",
-                          "block px-4 py-2 text-sm text-gray-700"
-                        )}
-                      >
-                        Mock
-                      </Link>
-                    )}
-                  </Menu.Item>
-                  <Menu.Item>
-                    {({ active }) => (
-                      <Link
-                        to="raw"
-                        className={classNames(
-                          active ? "bg-gray-100" : "",
-                          "block px-4 py-2 text-sm text-gray-700"
-                        )}
-                      >
-                        Raw
-                      </Link>
-                    )}
-                  </Menu.Item>
                   <Menu.Item>
                     {({ active }) => (
                       <Link
