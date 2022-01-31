@@ -1,10 +1,21 @@
+.vscode/
+.DS_Store
 node_modules
 
 /.cache
 /build
+/server-build
 /public/build
+/coverage
+tsconfig.tsbuildinfo
 
 /prisma/dev.db
 .env
+.env.production
+.envrc
 
 /app/tailwind.css
+
+/cypress/videos
+/cypress/screenshots
+*.local.*

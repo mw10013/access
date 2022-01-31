@@ -42,6 +42,7 @@
 - npm add @headlessui/react
 - npm add @heroicons/react
 - npm add -D @tailwindcss/typography
+- npm install prettier -D --save-exact
 - npm add -D prettier prettier-plugin-tailwindcss
 
 # Welcome to Remix!
