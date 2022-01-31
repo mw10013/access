@@ -1,7 +1,7 @@
 import { Outlet } from "remix";
 
 export const handle = {
-  breadcrumb: "Customers",
+  breadcrumb: "Customer",
 };
 
 export default function RouteComponent() {

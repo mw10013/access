@@ -9,12 +9,10 @@ import {
   ChevronDownIcon,
   LinkIcon,
   LocationMarkerIcon,
-  PaperClipIcon,
   PencilIcon,
 } from "@heroicons/react/solid";
 import { Fragment } from "react";
 import {
-  Breadcrumbs,
   Button,
   Table,
   TdProminent,
@@ -28,11 +26,6 @@ import {
   DlCardDtDd,
   Card,
 } from "~/components/lib";
-
-const attachments = [
-  { name: "resume_front_end_developer.pdf", href: "#" },
-  { name: "coverletter_front_end_developer.pdf", href: "#" },
-];
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
