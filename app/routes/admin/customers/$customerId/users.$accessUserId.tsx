@@ -1,0 +1,9 @@
+import { Outlet } from "remix";
+
+export const handle = {
+  breadcrumb: "Access User",
+};
+
+export default function RouteComponent() {
+  return <Outlet />;
+}

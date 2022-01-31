@@ -31,7 +31,7 @@ export const loader: LoaderFunction = async ({
   await requireUserSession(request, "admin");
   const accessPoint = await db.accessPoint.findFirst({
     where: {
-      id: Number(customerId),
+      id: Number(accessPointId),
       accessManager: { user: { id: Number(customerId) } },
     },
     include: {
