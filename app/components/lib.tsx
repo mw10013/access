@@ -18,13 +18,16 @@ export function Header({
 }) {
   // https://tailwindui.com/components/application-ui/page-examples/detail-screens
   // With page heading and stacked list
+  // https://tailwindui.com/components/application-ui/headings/page-headings
+  // With meta, actions, and breadcrumbs
   return (
     <header className="px-4 py-8 sm:px-6 lg:px-8">
       <div className="lg:flex lg:items-center lg:justify-between">
         <div className="min-w-0 flex-1">
           <Breadcrumbs />
           {title ? (
-            <h2 className="mt-2 text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl">
+            // sm:leading-snug otherwise sm:truncate's overflow hidden will cut off lowercase g's
+            <h2 className="mt-2 text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:leading-snug">
               {title}
             </h2>
           ) : null}

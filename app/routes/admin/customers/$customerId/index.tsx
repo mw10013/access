@@ -1,3 +1,9 @@
+import {
+  BriefcaseIcon,
+  LocationMarkerIcon,
+  CurrencyDollarIcon,
+  CalendarIcon,
+} from "@heroicons/react/solid";
 import { Prisma } from "@prisma/client";
 import { LoaderFunction, useLoaderData } from "remix";
 import { Header } from "~/components/lib";
@@ -33,5 +39,9 @@ export const loader: LoaderFunction = async ({
 
 export default function RouteComponent() {
   const { customer } = useLoaderData<LoaderData>();
-  return <Header title={customer.email} />;
+  return (
+    <>
+      <Header title={customer.email} />
+    </>
+  );
 }
