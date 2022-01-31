@@ -16,7 +16,6 @@ import {
 import { db } from "~/utils/db.server";
 import { requireUserSession } from "~/utils/session.server";
 
-
 type LoaderData = {
   accessManager: Prisma.AccessManagerGetPayload<{
     include: {
@@ -102,7 +101,7 @@ export default function RouteComponent() {
                 <TdProminent>{i.name}</TdProminent>
                 <Td>{i.id}</Td>
                 <Td>
-                  {i.heartbeatAt && new Date(i.heartbeatAt).toLocaleString}
+                  {i.heartbeatAt && new Date(i.heartbeatAt).toLocaleString()}
                 </Td>
                 <TdLink to={`managers/${i.id}`}>View</TdLink>
               </tr>

@@ -90,10 +90,10 @@ export default function RouteComponent() {
                 <Td>{i.code}</Td>
                 <Td>
                   {i.activateCodeAt &&
-                    new Date(i.activateCodeAt).toLocaleString}
+                    new Date(i.activateCodeAt).toLocaleString()}
                 </Td>
                 <Td>
-                  {i.expireCodeAt && new Date(i.expireCodeAt).toLocaleString}
+                  {i.expireCodeAt && new Date(i.expireCodeAt).toLocaleString()}
                 </Td>
                 <TdLink to={`users/${i.id}`}>View</TdLink>
               </tr>
