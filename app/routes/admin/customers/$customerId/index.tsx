@@ -6,7 +6,17 @@ import {
 } from "@heroicons/react/solid";
 import { Prisma } from "@prisma/client";
 import { LoaderFunction, useLoaderData } from "remix";
-import { Header } from "~/components/lib";
+import {
+  Card,
+  Header,
+  Main,
+  Table,
+  Td,
+  TdLink,
+  TdProminent,
+  Th,
+  ThSr,
+} from "~/components/lib";
 import { db } from "~/utils/db.server";
 import { requireUserSession } from "~/utils/session.server";
 
@@ -42,6 +52,61 @@ export default function RouteComponent() {
   return (
     <>
       <Header title={customer.email} />
+      <Main>
+        <Card title="Access Managers">
+          <Table
+            decor="edge"
+            headers={
+              <>
+                <Th>Name</Th>
+                <Th>ID</Th>
+                <Th>Description</Th>
+                <ThSr>View</ThSr>
+              </>
+            }
+          >
+            {customer.accessManagers.map((i) => (
+              <tr key={i.id}>
+                <TdProminent>{i.name}</TdProminent>
+                <Td>{i.id}</Td>
+                <Td>{i.description}</Td>
+                <TdLink to={`managers/${i.id}`}>View</TdLink>
+              </tr>
+            ))}
+          </Table>
+        </Card>
+        <Card title="Access Users">
+          <Table
+            decor="edge"
+            headers={
+              <>
+                <Th>Name</Th>
+                <Th>ID</Th>
+                <Th>Code</Th>
+                <Th>Activate Code At</Th>
+                <Th>Expire Code At</Th>
+                <ThSr>View</ThSr>
+              </>
+            }
+          >
+            {customer.accessUsers.map((i) => (
+              <tr key={i.id}>
+                <TdProminent>{i.name}</TdProminent>
+                <Td>{i.id}</Td>
+                <Td>{i.code}</Td>
+                <Td>
+                  {i.activateCodeAt &&
+                    new Date(i.activateCodeAt).toLocaleString}
+                </Td>
+                <Td>
+                  {i.expireCodeAt && new Date(i.expireCodeAt).toLocaleString}
+                </Td>
+                <TdLink to={`users/${i.id}`}>View</TdLink>
+              </tr>
+            ))}
+          </Table>
+        </Card>
+      </Main>
     </>
   );
 }
