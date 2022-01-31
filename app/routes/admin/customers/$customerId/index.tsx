@@ -1,9 +1,3 @@
-import {
-  BriefcaseIcon,
-  LocationMarkerIcon,
-  CurrencyDollarIcon,
-  CalendarIcon,
-} from "@heroicons/react/solid";
 import { Prisma } from "@prisma/client";
 import { LoaderFunction, useLoaderData } from "remix";
 import {
