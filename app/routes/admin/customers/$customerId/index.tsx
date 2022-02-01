@@ -33,7 +33,10 @@ export const loader: LoaderFunction = async ({
       id: Number(customerId),
     },
     include: {
-      accessUsers: { orderBy: { name: "asc" } },
+      accessUsers: {
+        where: { deletedAt: new Date(0) },
+        orderBy: { name: "asc" },
+      },
       accessManagers: { orderBy: { name: "asc" } },
     },
     rejectOnNotFound: true,
