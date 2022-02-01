@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
-import { LoaderFunction, useLoaderData } from "remix";
+import { LoaderFunction, useFormAction, useLoaderData, useNavigate, useSubmit } from "remix";
 import {
+  Button,
   Card,
   Header,
   Main,
@@ -46,9 +47,22 @@ export const loader: LoaderFunction = async ({
 
 export default function RouteComponent() {
   const { customer } = useLoaderData<LoaderData>();
+  const submit = useSubmit();
+  const resetPasswordAction = useFormAction("resetpassword")
   return (
     <>
-      <Header title={customer.email} />
+      <Header
+        title={customer.email}
+        side={
+          <Button
+            onClick={() => {
+              submit(null, { method: "post", action: resetPasswordAction });
+            }}
+          >
+            Reset Password
+          </Button>
+        }
+      />
       <Main>
         <Card title="Access Managers">
           <Table

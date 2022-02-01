@@ -11,14 +11,16 @@ datasource db {
 }
 
 model User {
-  id              Int         @id @default(autoincrement())
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  email           String      @unique
-  passwordHash    String
-  role            String      // "customer" | "admin"
-  accessUsers     AccessUser[]
-  accessManagers  AccessManager[]
+  id                    Int         @id @default(autoincrement())
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+  email                 String      @unique
+  passwordHash          String
+  role                  String      // "customer" | "admin"
+  resetPasswordToken    String?
+  resetPasswordExpireAt DateTime?
+  accessUsers           AccessUser[]
+  accessManagers        AccessManager[]
 }
 
 model AccessUser {
