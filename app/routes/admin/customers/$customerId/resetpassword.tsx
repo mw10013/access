@@ -36,6 +36,7 @@ export const loader: LoaderFunction = async ({
 
 type ActionData = {
   resetPasswordHref: string;
+  resetPasswordExpireAt: Date; // JSON will serialize as string.
 };
 
 export const action: ActionFunction = async ({
@@ -44,8 +45,12 @@ export const action: ActionFunction = async ({
 }): Promise<ActionData> => {
   await requireUserSession(request, "admin");
   const { token, hash } = await generatePasswordResetTokenAndHash();
+  const resetPasswordExpireAt = new Date(Date.now() + 1000 * 60 * 1);
   const customer = await db.user.update({
-    data: { resetPasswordHash: hash },
+    data: {
+      resetPasswordHash: hash,
+      resetPasswordExpireAt,
+    },
     where: { id: Number(customerId) },
   });
 
@@ -56,20 +61,30 @@ export const action: ActionFunction = async ({
     token,
   });
   url.search = urlSearchParams.toString();
-
-  return { resetPasswordHref: url.toString() };
+  return { resetPasswordHref: url.toString(), resetPasswordExpireAt };
 };
 
 export default function RouteComponent() {
   const { customer } = useLoaderData<LoaderData>();
-  const { resetPasswordHref } = useActionData<ActionData>() ?? {};
-
+  const actionData = useActionData<ActionData>();
   return (
     <>
       <Header title={customer.email} />
       <Main>
         <Card title="Password Reset Link">
-          <div className="px-4 pb-8 sm:px-6 lg:px-8">{resetPasswordHref}</div>
+          <div className="px-4 pb-8 sm:px-6 lg:px-8">
+            {actionData ? (
+              <div>
+                <p>{actionData.resetPasswordHref}</p>
+                <p>
+                  Expires at{" "}
+                  {new Date(actionData.resetPasswordExpireAt).toLocaleString()}
+                </p>
+              </div>
+            ) : (
+              "Already generated."
+            )}
+          </div>
         </Card>
       </Main>
     </>
