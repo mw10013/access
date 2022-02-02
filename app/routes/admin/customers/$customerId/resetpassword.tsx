@@ -40,7 +40,6 @@ export const action: ActionFunction = async ({
   request,
   params: { customerId },
 }): Promise<ActionData> => {
-  console.log({ url: request.url });
   await requireUserSession(request, "admin");
   const token = "my fancy token";
   const customer = await db.user.update({
@@ -62,7 +61,6 @@ export const action: ActionFunction = async ({
 export default function RouteComponent() {
   const { customer } = useLoaderData<LoaderData>();
   const { resetPasswordHref } = useActionData<ActionData>() ?? {};
-  const { email, resetPasswordHash, resetPasswordExpireAt } = customer;
 
   return (
     <>
