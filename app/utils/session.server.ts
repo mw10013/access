@@ -117,6 +117,9 @@ export async function generatePasswordResetTokenAndHash() {
   return { token, hash };
 }
 
-export async function comparePasswordResetTokenAndHash(token: string, hash: string) {
-  return bcrypt.compare(token, hash);
+export async function comparePasswordResetTokenAndHash(
+  token: string,
+  hash: string
+) {
+  return await bcrypt.compare(token, hash);
 }

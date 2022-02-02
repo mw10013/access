@@ -45,7 +45,7 @@ export const action: ActionFunction = async ({
 }): Promise<ActionData> => {
   await requireUserSession(request, "admin");
   const { token, hash } = await generatePasswordResetTokenAndHash();
-  const resetPasswordExpireAt = new Date(Date.now() + 1000 * 60 * 1);
+  const resetPasswordExpireAt = new Date(Date.now() + 1000 * 60 * 60 * 6);
   const customer = await db.user.update({
     data: {
       resetPasswordHash: hash,

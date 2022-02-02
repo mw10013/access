@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import { LoaderFunction, useLoaderData } from "remix";
 import { db } from "~/utils/db.server";
 import { comparePasswordResetTokenAndHash } from "~/utils/session.server";
+import { Main, Card } from "~/components/lib";
 
 type LoaderData = {
   user: Prisma.UserGetPayload<{}>;
@@ -19,19 +20,32 @@ export const loader: LoaderFunction = async ({
     },
     rejectOnNotFound: true,
   });
-  console.log({ user, email, token });
   if (
+    !token ||
     !user.resetPasswordHash ||
     !user.resetPasswordExpireAt ||
     user.resetPasswordExpireAt.getTime() < Date.now() ||
-    !comparePasswordResetTokenAndHash(token, user.resetPasswordHash)
+    !(await comparePasswordResetTokenAndHash(token, user.resetPasswordHash))
   ) {
     return { user, error: "Invalid or expired password reset." };
   }
+  // console.log({token, hash: user.resetPasswordHash, compare: })
   return { user };
 };
 
 export default function RouteComponent() {
   const { user, error } = useLoaderData<LoaderData>();
-  return <div>{error ? error : user.email}</div>;
+  return (
+    <Main>
+      <div className="mt-8">
+        {error ? (
+          <Card title="Reset Password">
+            <div className="px-4 pb-8 sm:px-6 lg:px-8">{error}</div>
+          </Card>
+        ) : (
+          user.email
+        )}
+      </div>
+    </Main>
+  );
 }
