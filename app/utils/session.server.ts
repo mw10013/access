@@ -116,3 +116,7 @@ export async function generatePasswordResetTokenAndHash() {
   const hash = await bcrypt.hash(token, BCRYPT_ROUNDS);
   return { token, hash };
 }
+
+export async function comparePasswordResetTokenAndHash(token: string, hash: string) {
+  return bcrypt.compare(token, hash);
+}
