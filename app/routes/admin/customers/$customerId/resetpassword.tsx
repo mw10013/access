@@ -1,5 +1,4 @@
 import { Prisma } from "@prisma/client";
-import React from "react";
 import {
   ActionFunction,
   LoaderFunction,
@@ -8,7 +7,10 @@ import {
 } from "remix";
 import { Card, Header, Main } from "~/components/lib";
 import { db } from "~/utils/db.server";
-import { requireUserSession } from "~/utils/session.server";
+import {
+  generatePasswordResetTokenAndHash,
+  requireUserSession,
+} from "~/utils/session.server";
 
 export const handle = {
   breadcrumb: "Reset Password",
@@ -41,9 +43,9 @@ export const action: ActionFunction = async ({
   params: { customerId },
 }): Promise<ActionData> => {
   await requireUserSession(request, "admin");
-  const token = "my fancy token";
+  const { token, hash } = await generatePasswordResetTokenAndHash();
   const customer = await db.user.update({
-    data: { resetPasswordHash: `reset-token-${new Date().toLocaleString()}` },
+    data: { resetPasswordHash: hash },
     where: { id: Number(customerId) },
   });
 

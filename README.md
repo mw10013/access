@@ -37,8 +37,8 @@
 - npm add lodash
 - npm add -D @types/lodash
 - npm add zod
-- npm add bcryptjs
-- npm add -D @types/bcryptjs
+- npm add bcrypt
+- npm add -D @types/bcrypt
 - npm add @headlessui/react
 - npm add @heroicons/react
 - npm add -D @tailwindcss/typography

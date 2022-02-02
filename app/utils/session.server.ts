@@ -1,7 +1,10 @@
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import { createCookieSessionStorage, redirect } from "remix";
 import { z } from "zod";
 import { db } from "./db.server";
+import * as crypto from "crypto";
+
+const BCRYPT_ROUNDS = 10;
 
 type SignInForm = {
   email: string;
@@ -9,7 +12,7 @@ type SignInForm = {
 };
 
 export async function register({ email, password }: SignInForm) {
-  const passwordHash = await bcrypt.hash(password, 10);
+  const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
   return db.user.create({
     data: { email, passwordHash, role: "customer" },
   });
@@ -86,18 +89,6 @@ export async function requireUserSession(
   return parseResult.data;
 }
 
-// export async function getUser(request: Request) {
-//   const userId = await getUserId(request);
-//   if (typeof userId !== "number") return null;
-
-//   try {
-//     const user = await db.user.findUnique({ where: { id: userId } });
-//     return user;
-//   } catch {
-//     throw signOut(request);
-//   }
-// }
-
 export async function signOut(request: Request) {
   const session = await getSession(request.headers.get("Cookie"));
   return redirect("/", {
@@ -118,4 +109,10 @@ export async function createUserSession(
   return redirect(redirectTo, {
     headers: { "Set-Cookie": await commitSession(session) },
   });
+}
+
+export async function generatePasswordResetTokenAndHash() {
+  const token = crypto.randomBytes(32).toString("hex");
+  const hash = await bcrypt.hash(token, BCRYPT_ROUNDS);
+  return { token, hash };
 }
