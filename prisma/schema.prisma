@@ -17,7 +17,7 @@ model User {
   email                 String      @unique
   passwordHash          String
   role                  String      // "customer" | "admin"
-  resetPasswordToken    String?
+  resetPasswordHash     String?
   resetPasswordExpireAt DateTime?
   accessUsers           AccessUser[]
   accessManagers        AccessManager[]
