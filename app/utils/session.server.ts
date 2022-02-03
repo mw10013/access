@@ -11,15 +11,18 @@ type SignInForm = {
   password: string;
 };
 
+export async function hashPassword(password: string) {
+  return await bcrypt.hash(password, BCRYPT_ROUNDS);
+}
+
 export async function register({ email, password }: SignInForm) {
-  const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
+  const passwordHash = await hashPassword(password);
   return db.user.create({
     data: { email, passwordHash, role: "customer" },
   });
 }
 
 export async function signIn({ email, password }: SignInForm) {
-  // await bcrypt.hash(password, 10)
   const user = await db.user.findUnique({ where: { email } });
   if (!user) return null;
 
