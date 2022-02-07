@@ -10,6 +10,7 @@ import {
   SettingsForm,
   SettingsFormField,
 } from "~/components/lib";
+import { requireUserSession } from "~/utils/session.server";
 
 export const handle = {
   breadcrumb: "Edit",
