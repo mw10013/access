@@ -3,6 +3,21 @@ import { json } from "remix";
 import { db } from "~/utils/db.server";
 import * as _ from "lodash";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
+
+const accessUserSelect = Prisma.validator<Prisma.AccessUserArgs>()({
+  select: {
+    id: true,
+    name: true,
+    code: true,
+    activateCodeAt: true,
+    expireCodeAt: true,
+    accessPoints: {
+      select: { id: true, name: true },
+    },
+  },
+});
+type AccessUser = Prisma.AccessUserGetPayload<typeof accessUserSelect>;
 
 const HeartbeatRequestData = z.object({
   accessManager: z
@@ -27,58 +42,15 @@ const HeartbeatRequestData = z.object({
     })
     .strict(),
 });
-
-const HeartbeatRequestData_ = z
-  .object({
-    accessManager: z
-      .object({
-        id: z.number().int(),
-        accessPoints: z.array(
-          z
-            .object({
-              id: z.number().int(),
-              activity: z
-                .object({
-                  since: z.string().nonempty(),
-                  accessEvents: z.array(
-                    z
-                      .object({
-                        at: z.string().nonempty(), // JSON date
-                        access: z.literal("grant").or(z.literal("deny")),
-                        code: z.string().nonempty(),
-                        accessUserId: z.number().int().optional(),
-                      })
-                      .strict()
-                  ),
-                })
-                .strict()
-                .optional(),
-            })
-            .strict()
-        ),
-      })
-      .strict(),
-  })
-  .strict();
 type HeartbeatRequestData = z.infer<typeof HeartbeatRequestData>;
 
 type HeartbeatResponseData = {
   accessManager: {
     id: number;
-    accessPoints: {
-      id: number;
-      config: {
-        accessUsers: {
-          id: number;
-          code: string;
-          activateCodeAt: Date | null;
-          expireCodeAt: Date | null;
-        }[];
-      };
-      activity: {
-        since: string; // JSON date
-      };
-    }[];
+    accessUsers: AccessUser[];
+    activity: {
+      since: string; // JSON date
+    };
   };
 };
 
@@ -97,24 +69,9 @@ export const action: ActionFunction = async ({ request }) => {
   }
   const data = parseResult.data;
 
+  // accessEvents: { distinct: "accessPointId", orderBy: { at: "desc" } },
   const accessManager = await db.accessManager.findUnique({
     where: { id: data.accessManager.id },
-    include: {
-      accessPoints: {
-        orderBy: { position: "asc" },
-        include: {
-          accessUsers: {
-            where: {
-              OR: [
-                { expireCodeAt: null },
-                { expireCodeAt: { gt: new Date() } },
-              ],
-            },
-          },
-          accessEvents: { distinct: "accessPointId", orderBy: { at: "desc" } },
-        },
-      },
-    },
   });
   if (!accessManager) {
     return json(
@@ -128,24 +85,23 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
-  // if (
-  //   !_.isEqual(
-  //     new Set(accessManager.accessPoints.map((i) => i.id)),
-  //     new Set(data.accessManager.accessPoints.map((i) => i.id))
-  //   )
-  // ) {
-  //   return json(
-  //     {
-  //       error: {
-  //         name: "BadRequestError",
-  //         message: `Dreadful access point id's.`,
-  //       },
-  //     },
-  //     { status: 400 }
-  //   );
-  // }
-
   // TODO: check that since matches and events later than since.
+  await db.accessPoint.updateMany({
+    where: { accessManagerId: accessManager.id },
+    data: {
+      heartbeatAt: new Date(),
+    },
+  });
+  const updatedAccessManager = await db.accessManager.update({
+    where: { id: accessManager.id },
+    data: {
+      accessPoints: {
+        updateMany: {
+          data: { heartbeatAt: new Date() },
+        },
+      },
+    },
+  });
 
   // const updatedAccessManager = await db.accessManager.update({
   //   where: { id: accessManager.id },
@@ -202,16 +158,7 @@ export const action: ActionFunction = async ({ request }) => {
       OR: [{ expireCodeAt: null }, { expireCodeAt: { gt: new Date() } }],
       accessPoints: { some: { accessManager: { id: accessManager.id } } },
     },
-    select: {
-      id: true,
-      name: true,
-      code: true,
-      activateCodeAt: true,
-      expireCodeAt: true,
-      accessPoints: {
-        select: { id: true, name: true },
-      },
-    },
+    ...accessUserSelect,
   });
 
   return json({ accessUsers }, 200);
