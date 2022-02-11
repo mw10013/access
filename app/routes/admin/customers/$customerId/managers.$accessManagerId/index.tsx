@@ -90,7 +90,6 @@ export default function RouteComponent() {
                 <Th>Position</Th>
                 <Th>Name</Th>
                 <Th>ID</Th>
-                <Th>Heartbeat At</Th>
                 <ThSr>View</ThSr>
               </>
             }
@@ -100,9 +99,6 @@ export default function RouteComponent() {
                 <Td>{i.position}</Td>
                 <TdProminent>{i.name}</TdProminent>
                 <Td>{i.id}</Td>
-                <Td>
-                  {i.heartbeatAt && new Date(i.heartbeatAt).toLocaleString()}
-                </Td>
                 <TdLink to={`points/${i.id}`}>View</TdLink>
               </tr>
             ))}

@@ -1,5 +1,11 @@
 import { Prisma } from "@prisma/client";
-import { LoaderFunction, useFormAction, useLoaderData, useNavigate, useSubmit } from "remix";
+import {
+  LoaderFunction,
+  useFormAction,
+  useLoaderData,
+  useNavigate,
+  useSubmit,
+} from "remix";
 import {
   Button,
   Card,
@@ -48,7 +54,7 @@ export const loader: LoaderFunction = async ({
 export default function RouteComponent() {
   const { customer } = useLoaderData<LoaderData>();
   const submit = useSubmit();
-  const resetPasswordAction = useFormAction("resetpassword")
+  const resetPasswordAction = useFormAction("resetpassword");
   return (
     <>
       <Header
@@ -72,6 +78,7 @@ export default function RouteComponent() {
                 <Th>Name</Th>
                 <Th>ID</Th>
                 <Th>Description</Th>
+                <Th>Heartbeat At</Th>
                 <ThSr>View</ThSr>
               </>
             }
@@ -81,6 +88,9 @@ export default function RouteComponent() {
                 <TdProminent>{i.name}</TdProminent>
                 <Td>{i.id}</Td>
                 <Td>{i.description}</Td>
+                <Td>
+                  {i.heartbeatAt && new Date(i.heartbeatAt).toLocaleString()}
+                </Td>
                 <TdLink to={`managers/${i.id}`}>View</TdLink>
               </tr>
             ))}

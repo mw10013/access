@@ -19,7 +19,7 @@ import { requireUserSession } from "~/utils/session.server";
 type LoaderData = {
   accessUser: Prisma.AccessUserGetPayload<{
     include: {
-      accessPoints: true;
+      accessPoints: { include: { accessManager: true } };
     };
   }>;
 };
@@ -35,7 +35,10 @@ export const loader: LoaderFunction = async ({
       user: { id: Number(customerId) },
     },
     include: {
-      accessPoints: { orderBy: { name: "asc" } },
+      accessPoints: {
+        orderBy: { name: "asc" },
+        include: { accessManager: true },
+      },
     },
     rejectOnNotFound: true,
   });
@@ -65,7 +68,8 @@ export default function RouteComponent() {
                 <TdProminent>{i.name}</TdProminent>
                 <Td>{i.id}</Td>
                 <Td>
-                  {i.heartbeatAt && new Date(i.heartbeatAt).toLocaleString()}
+                  {i.accessManager.heartbeatAt &&
+                    new Date(i.accessManager.heartbeatAt).toLocaleString()}
                 </Td>
 
                 <TdLink

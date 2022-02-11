@@ -176,8 +176,8 @@ export default function RouteComponent() {
           <DlCardDtDd
             term="Heartbeat"
             description={
-              accessPoint.heartbeatAt
-                ? new Date(accessPoint.heartbeatAt).toLocaleString()
+              accessPoint.accessManager.heartbeatAt
+                ? new Date(accessPoint.accessManager.heartbeatAt).toLocaleString()
                 : ""
             }
           />

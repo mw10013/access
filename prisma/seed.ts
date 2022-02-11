@@ -95,7 +95,6 @@ async function seed() {
                 { id: repairId },
               ],
             },
-            heartbeatAt: new Date(),
             accessEvents: {
               create: [
                 {

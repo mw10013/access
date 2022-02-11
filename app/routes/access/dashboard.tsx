@@ -1,7 +1,7 @@
 import * as React from "react";
 import type { LoaderFunction } from "remix";
 import { useLoaderData, useFetcher, useLocation } from "remix";
-import type { AccessPoint } from "@prisma/client";
+import type { AccessManager, AccessPoint } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserSession } from "~/utils/session.server";
@@ -56,7 +56,7 @@ export const loader: LoaderFunction = async ({
   return { accessPoints };
 };
 
-function connectionStatus(heartbeatAt: AccessPoint["heartbeatAt"]) {
+function connectionStatus(heartbeatAt: AccessManager["heartbeatAt"]) {
   if (heartbeatAt) {
     const deltaMs = Date.now() - new Date(heartbeatAt).getTime();
     if (deltaMs < 5 * 1000) {
@@ -121,7 +121,7 @@ export default function RouteComponent() {
             <tr key={i.id}>
               <Td>{i.accessManager.name}</Td>
               <TdProminent>{i.name}</TdProminent>
-              <Td>{connectionStatus(i.heartbeatAt)}</Td>
+              <Td>{connectionStatus(i.accessManager.heartbeatAt)}</Td>
               <TdLink to={`../points/${i.id}`}>View</TdLink>
             </tr>
           ))}
