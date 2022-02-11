@@ -59,7 +59,19 @@ type HeartbeatResponseData = {
 };
 
 export const action: ActionFunction = async ({ request }) => {
-  const data = HeartbeatRequestData.parse(await request.json());
+  const parseResult = HeartbeatRequestData.safeParse(await request.json());
+  if (!parseResult.success) {
+    return json(
+      {
+        error: {
+          name: "BadRequestError",
+          message: `${parseResult.error.toString()}`,
+        },
+      },
+      { status: 400 }
+    );
+  }
+  const data = parseResult.data;
 
   const accessManager = await db.accessManager.findUnique({
     where: { id: data.accessManager.id },
@@ -105,7 +117,7 @@ export const action: ActionFunction = async ({ request }) => {
           message: `Dreadful access point id's.`,
         },
       },
-      { status: 404 }
+      { status: 400 }
     );
   }
 
