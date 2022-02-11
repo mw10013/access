@@ -48,24 +48,16 @@ type HeartbeatResponseData = {
   accessManager: {
     id: number;
     accessUsers: AccessUser[];
-    activity: {
-      since: string; // JSON date
-    };
+    // activity: {
+    //   since: string; // JSON date
+    // };
   };
 };
 
 export const action: ActionFunction = async ({ request }) => {
   const parseResult = HeartbeatRequestData.safeParse(await request.json());
   if (!parseResult.success) {
-    return json(
-      {
-        error: {
-          name: "BadRequestError",
-          message: `${parseResult.error.toString()}`,
-        },
-      },
-      { status: 400 }
-    );
+    return new Response(`${parseResult.error.toString()}`, { status: 400 });
   }
   const data = parseResult.data;
 
@@ -74,15 +66,9 @@ export const action: ActionFunction = async ({ request }) => {
     where: { id: data.accessManager.id },
   });
   if (!accessManager) {
-    return json(
-      {
-        error: {
-          name: "NotFoundError",
-          message: `Access manager ${data.accessManager.id} not found.`,
-        },
-      },
-      { status: 404 }
-    );
+    return new Response(`Access manager ${data.accessManager.id} not found.`, {
+      status: 404,
+    });
   }
 
   // TODO: check that since matches and events later than since.
@@ -151,6 +137,11 @@ export const action: ActionFunction = async ({ request }) => {
     ...accessUserSelect,
   });
 
-  return json({ accessUsers }, 200);
-  // return json(responseData, 200);
+  const responseData: HeartbeatResponseData = {
+    accessManager: {
+      id: accessManager.id,
+      accessUsers,
+    },
+  };
+  return json(responseData, 200);
 };
