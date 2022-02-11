@@ -86,20 +86,10 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   // TODO: check that since matches and events later than since.
-  await db.accessPoint.updateMany({
-    where: { accessManagerId: accessManager.id },
-    data: {
-      heartbeatAt: new Date(),
-    },
-  });
   const updatedAccessManager = await db.accessManager.update({
     where: { id: accessManager.id },
     data: {
-      accessPoints: {
-        updateMany: {
-          data: { heartbeatAt: new Date() },
-        },
-      },
+      heartbeatAt: new Date(),
     },
   });
 
