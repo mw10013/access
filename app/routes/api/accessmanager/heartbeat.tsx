@@ -4,7 +4,31 @@ import { db } from "~/utils/db.server";
 import * as _ from "lodash";
 import { z } from "zod";
 
-const HeartbeatRequestData = z
+const HeartbeatRequestData = z.object({
+  accessManager: z
+    .object({
+      id: z.number().int(),
+      activity: z
+        .object({
+          since: z.string().min(1), // JSON date
+          accessEvents: z.array(
+            z
+              .object({
+                at: z.string().min(1), // JSON date
+                access: z.literal("grant").or(z.literal("deny")),
+                code: z.string().nonempty(),
+                accessUserId: z.number().int().optional(),
+              })
+              .strict()
+          ),
+        })
+        .strict()
+        .optional(),
+    })
+    .strict(),
+});
+
+const HeartbeatRequestData_ = z
   .object({
     accessManager: z
       .object({
@@ -104,73 +128,92 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
-  if (
-    !_.isEqual(
-      new Set(accessManager.accessPoints.map((i) => i.id)),
-      new Set(data.accessManager.accessPoints.map((i) => i.id))
-    )
-  ) {
-    return json(
-      {
-        error: {
-          name: "BadRequestError",
-          message: `Dreadful access point id's.`,
-        },
-      },
-      { status: 400 }
-    );
-  }
+  // if (
+  //   !_.isEqual(
+  //     new Set(accessManager.accessPoints.map((i) => i.id)),
+  //     new Set(data.accessManager.accessPoints.map((i) => i.id))
+  //   )
+  // ) {
+  //   return json(
+  //     {
+  //       error: {
+  //         name: "BadRequestError",
+  //         message: `Dreadful access point id's.`,
+  //       },
+  //     },
+  //     { status: 400 }
+  //   );
+  // }
 
   // TODO: check that since matches and events later than since.
 
-  const updatedAccessManager = await db.accessManager.update({
-    where: { id: accessManager.id },
-    data: {
+  // const updatedAccessManager = await db.accessManager.update({
+  //   where: { id: accessManager.id },
+  //   data: {
+  //     accessPoints: {
+  //       update: data.accessManager.accessPoints.map((i) => {
+  //         return {
+  //           where: { id: i.id },
+  //           data: {
+  //             heartbeatAt: new Date(),
+  //             accessEvents: {
+  //               create: i.activity
+  //                 ? i.activity.accessEvents.map((e) => ({
+  //                     at: e.at,
+  //                     access: e.access,
+  //                     code: e.code,
+  //                     accessUserId: e.accessUserId,
+  //                   }))
+  //                 : [],
+  //             },
+  //           },
+  //         };
+  //       }),
+  //     },
+  //   },
+  // });
+
+  // const responseData: HeartbeatResponseData = {
+  //   accessManager: {
+  //     id: accessManager.id,
+  //     accessPoints: accessManager.accessPoints.map((i) => ({
+  //       id: i.id,
+  //       config: {
+  //         accessUsers: i.accessUsers.map((u) => ({
+  //           id: u.id,
+  //           code: u.code,
+  //           activateCodeAt: u.activateCodeAt,
+  //           expireCodeAt: u.expireCodeAt,
+  //         })),
+  //       },
+  //       activity: {
+  //         since: (i.accessEvents.length === 0
+  //           ? new Date(0)
+  //           : i.accessEvents[0].at
+  //         ).toJSON(),
+  //       },
+  //     })),
+  //   },
+  // };
+
+  const accessUsers = await db.accessUser.findMany({
+    where: {
+      deletedAt: new Date(0),
+      OR: [{ expireCodeAt: null }, { expireCodeAt: { gt: new Date() } }],
+      accessPoints: { some: { accessManager: { id: accessManager.id } } },
+    },
+    select: {
+      id: true,
+      name: true,
+      code: true,
+      activateCodeAt: true,
+      expireCodeAt: true,
       accessPoints: {
-        update: data.accessManager.accessPoints.map((i) => {
-          return {
-            where: { id: i.id },
-            data: {
-              heartbeatAt: new Date(),
-              accessEvents: {
-                create: i.activity
-                  ? i.activity.accessEvents.map((e) => ({
-                      at: e.at,
-                      access: e.access,
-                      code: e.code,
-                      accessUserId: e.accessUserId,
-                    }))
-                  : [],
-              },
-            },
-          };
-        }),
+        select: { id: true, name: true },
       },
     },
   });
 
-  const responseData: HeartbeatResponseData = {
-    accessManager: {
-      id: accessManager.id,
-      accessPoints: accessManager.accessPoints.map((i) => ({
-        id: i.id,
-        config: {
-          accessUsers: i.accessUsers.map((u) => ({
-            id: u.id,
-            code: u.code,
-            activateCodeAt: u.activateCodeAt,
-            expireCodeAt: u.expireCodeAt,
-          })),
-        },
-        activity: {
-          since: (i.accessEvents.length === 0
-            ? new Date(0)
-            : i.accessEvents[0].at
-          ).toJSON(),
-        },
-      })),
-    },
-  };
-
-  return json(responseData, 200);
+  return json({ accessUsers }, 200);
+  // return json(responseData, 200);
 };
