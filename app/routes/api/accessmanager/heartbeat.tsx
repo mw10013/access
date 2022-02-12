@@ -132,7 +132,7 @@ export const action: ActionFunction = async ({ request }) => {
     where: {
       deletedAt: new Date(0),
       OR: [{ expireCodeAt: null }, { expireCodeAt: { gt: new Date() } }],
-      accessPoints: { some: { accessManager: { id: accessManager.id } } },
+      accessPoints: { every: { accessManager: { id: accessManager.id } } },
     },
     ...accessUserSelect,
   });
