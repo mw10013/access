@@ -5,21 +5,6 @@ import * as _ from "lodash";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
 
-// const accessUserSelect = Prisma.validator<Prisma.AccessUserArgs>()({
-//   select: {
-//     id: true,
-//     name: true,
-//     code: true,
-//     activateCodeAt: true,
-//     expireCodeAt: true,
-//     accessPoints: {
-//       select: { id: true, name: true },
-//       where: { accessManager: {id: 1}}
-//     },
-//   },
-// });
-// type AccessUser = Prisma.AccessUserGetPayload<typeof accessUserSelect>;
-
 const accessUserSelect = (accessManagerId: number) => {
   return Prisma.validator<Prisma.AccessUserArgs>()({
     select: {
@@ -156,13 +141,6 @@ export const action: ActionFunction = async ({ request }) => {
       accessPoints: { some: { accessManager: { id: accessManager.id } } },
     },
     ...accessUserSelect(accessManager.id),
-    // ...accessUserSelect,
-    // include: {
-    //   accessPoints: {
-    //     select: { id: true, name: true },
-    //     where: { accessManager: { id: accessManager.id } },
-    //   },
-    // },
   });
 
   const responseData: HeartbeatResponseData = {
@@ -171,6 +149,5 @@ export const action: ActionFunction = async ({ request }) => {
       accessUsers,
     },
   };
-  console.log({ accessUsers, point: accessUsers[0].accessPoints[0] });
   return json(responseData, 200);
 };
