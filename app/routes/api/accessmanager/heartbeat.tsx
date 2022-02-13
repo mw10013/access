@@ -5,19 +5,40 @@ import * as _ from "lodash";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
 
-const accessUserSelect = Prisma.validator<Prisma.AccessUserArgs>()({
-  select: {
-    id: true,
-    name: true,
-    code: true,
-    activateCodeAt: true,
-    expireCodeAt: true,
-    accessPoints: {
-      select: { id: true, name: true },
+// const accessUserSelect = Prisma.validator<Prisma.AccessUserArgs>()({
+//   select: {
+//     id: true,
+//     name: true,
+//     code: true,
+//     activateCodeAt: true,
+//     expireCodeAt: true,
+//     accessPoints: {
+//       select: { id: true, name: true },
+//       where: { accessManager: {id: 1}}
+//     },
+//   },
+// });
+// type AccessUser = Prisma.AccessUserGetPayload<typeof accessUserSelect>;
+
+const accessUserSelect = (accessManagerId: number) => {
+  return Prisma.validator<Prisma.AccessUserArgs>()({
+    select: {
+      id: true,
+      name: true,
+      code: true,
+      activateCodeAt: true,
+      expireCodeAt: true,
+      accessPoints: {
+        select: { id: true, name: true },
+        where: { accessManager: { id: accessManagerId } },
+      },
     },
-  },
-});
-type AccessUser = Prisma.AccessUserGetPayload<typeof accessUserSelect>;
+  });
+};
+
+type AccessUser = Prisma.AccessUserGetPayload<
+  ReturnType<typeof accessUserSelect>
+>;
 
 const HeartbeatRequestData = z.object({
   accessManager: z
@@ -132,9 +153,16 @@ export const action: ActionFunction = async ({ request }) => {
     where: {
       deletedAt: new Date(0),
       OR: [{ expireCodeAt: null }, { expireCodeAt: { gt: new Date() } }],
-      accessPoints: { every: { accessManager: { id: accessManager.id } } },
+      accessPoints: { some: { accessManager: { id: accessManager.id } } },
     },
-    ...accessUserSelect,
+    ...accessUserSelect(accessManager.id),
+    // ...accessUserSelect,
+    // include: {
+    //   accessPoints: {
+    //     select: { id: true, name: true },
+    //     where: { accessManager: { id: accessManager.id } },
+    //   },
+    // },
   });
 
   const responseData: HeartbeatResponseData = {
@@ -143,5 +171,6 @@ export const action: ActionFunction = async ({ request }) => {
       accessUsers,
     },
   };
+  console.log({ accessUsers, point: accessUsers[0].accessPoints[0] });
   return json(responseData, 200);
 };
