@@ -72,7 +72,6 @@ export const action: ActionFunction = async ({ request }) => {
   }
   const data = parseResult.data;
 
-  // accessEvents: { distinct: "accessPointId", orderBy: { at: "desc" } },
   const accessManager = await db.accessManager.findUnique({
     where: { id: data.accessManager.id },
   });
@@ -82,7 +81,10 @@ export const action: ActionFunction = async ({ request }) => {
     });
   }
 
-  // TODO: check that since matches and events later than since.
+  // TODO: check that cloudLastAccessEventAt not null and  matches and validate events:
+  // later than cloudLastAccessEventAt, grants have user id, 
+  // access user and point id's belong to user
+  // Write events
   const updatedAccessManager = await db.accessManager.update({
     where: { id: accessManager.id },
     data: {

@@ -95,27 +95,27 @@ async function seed() {
                 { id: repairId },
               ],
             },
-            accessEvents: {
-              create: [
-                {
-                  at: new Date(Date.now() - 30 * DAY_MS),
-                  access: "deny",
-                  code: "5555555",
-                },
-                {
-                  at: new Date(Date.now() - 28 * DAY_MS),
-                  access: "grant",
-                  code: "666666",
-                  accessUserId: masterId,
-                },
-                {
-                  at: new Date(Date.now() - 25 * DAY_MS),
-                  access: "grant",
-                  code: "111",
-                  accessUserId: brooklynGuest1Id,
-                },
-              ],
-            },
+            // accessEvents: {
+            //   create: [
+            //     {
+            //       at: new Date(Date.now() - 30 * DAY_MS),
+            //       access: "deny",
+            //       code: "5555555",
+            //     },
+            //     {
+            //       at: new Date(Date.now() - 28 * DAY_MS),
+            //       access: "grant",
+            //       code: "666666",
+            //       accessUserId: masterId,
+            //     },
+            //     {
+            //       at: new Date(Date.now() - 25 * DAY_MS),
+            //       access: "grant",
+            //       code: "111",
+            //       accessUserId: brooklynGuest1Id,
+            //     },
+            //   ],
+            // },
           },
           {
             name: "Back Door",
