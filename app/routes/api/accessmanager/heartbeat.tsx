@@ -55,23 +55,25 @@ const HeartbeatRequestData = z.object({
       id: z.number().int(),
       cloudLastAccessEventAt: z // JSON date
         .string()
+        .min(1)
         .nullable()
-        .refine((v) => !v || v.length === 0 || !Number.isNaN(Date.parse(v)), {
+        .refine((v) => !v || !Number.isNaN(Date.parse(v)), {
           message: "Invalid date time",
         })
-        .transform((v) => (v && v.length > 0 ? new Date(v) : null)),
+        .transform((v) => (v ? new Date(v) : null)),
       accessEvents: z.array(
         z
           .object({
             at: z // JSON Date
               .string()
-              .refine((v) => v.length === 0 || !Number.isNaN(Date.parse(v)), {
+              .min(1)
+              .refine((v) => !Number.isNaN(Date.parse(v)), {
                 message: "Invalid date time",
               })
               .transform((v) => new Date(v)),
             access: z.literal("grant").or(z.literal("deny")),
             code: z.string().min(1),
-            accessUserId: z.number().int().optional(),
+            accessUserId: z.number().int().nullable(),
             accessPointId: z.number().int(),
           })
           .strict()
@@ -167,13 +169,13 @@ export const action: ActionFunction = async ({ request }) => {
       }
       accessPointIdEventsMap.get(accessEvent.accessPointId)?.push(accessEvent);
     }
-    console.log(
-      JSON.stringify(
-        { accessPointIdEventsMap: [...accessPointIdEventsMap] },
-        null,
-        2
-      )
-    );
+    // console.log(
+    //   JSON.stringify(
+    //     { accessPointIdEventsMap: [...accessPointIdEventsMap] },
+    //     null,
+    //     2
+    //   )
+    // );
   }
 
   const updatedAccessManager = await db.accessManager.update({
@@ -181,79 +183,19 @@ export const action: ActionFunction = async ({ request }) => {
     data: {
       heartbeatAt: new Date(),
       accessPoints: {
-        update: [
-          {
-            where: { id: 1 },
-            data: {
-              accessEvents: {
-                create: [
-                  { at: new Date(), access: "grant", code: "135" },
-                  { at: new Date(), access: "deny", code: "135" },
-                ],
-              },
+        update: [...accessPointIdEventsMap].map(([id, accessEvents]) => ({
+          where: { id },
+          data: {
+            accessEvents: {
+              create: accessEvents.map(
+                ({ accessPointId, ...accessEvent }) => accessEvent
+              ),
             },
           },
-          {
-            where: { id: 2 },
-            data: {
-              accessEvents: {
-                create: [{ at: new Date(), access: "deny", code: "666" }],
-              },
-            },
-          },
-        ],
+        })),
       },
     },
   });
-
-  // const updatedAccessManager = await db.accessManager.update({
-  //   where: { id: accessManager.id },
-  //   data: {
-  //     accessPoints: {
-  //       update: data.accessManager.accessPoints.map((i) => {
-  //         return {
-  //           where: { id: i.id },
-  //           data: {
-  //             heartbeatAt: new Date(),
-  //             accessEvents: {
-  //               create: i.activity
-  //                 ? i.activity.accessEvents.map((e) => ({
-  //                     at: e.at,
-  //                     access: e.access,
-  //                     code: e.code,
-  //                     accessUserId: e.accessUserId,
-  //                   }))
-  //                 : [],
-  //             },
-  //           },
-  //         };
-  //       }),
-  //     },
-  //   },
-  // });
-
-  // const responseData: HeartbeatResponseData = {
-  //   accessManager: {
-  //     id: accessManager.id,
-  //     accessPoints: accessManager.accessPoints.map((i) => ({
-  //       id: i.id,
-  //       config: {
-  //         accessUsers: i.accessUsers.map((u) => ({
-  //           id: u.id,
-  //           code: u.code,
-  //           activateCodeAt: u.activateCodeAt,
-  //           expireCodeAt: u.expireCodeAt,
-  //         })),
-  //       },
-  //       activity: {
-  //         since: (i.accessEvents.length === 0
-  //           ? new Date(0)
-  //           : i.accessEvents[0].at
-  //         ).toJSON(),
-  //       },
-  //     })),
-  //   },
-  // };
 
   const accessUsers = await db.accessUser.findMany({
     where: {
