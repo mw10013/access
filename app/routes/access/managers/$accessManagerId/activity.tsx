@@ -57,9 +57,10 @@ export default function RouteComponent() {
             headers={
               <>
                 <Th>At</Th>
+                <Th>Point</Th>
                 <Th>Access</Th>
-                <Th>Code</Th>
                 <Th>User</Th>
+                <Th>Code</Th>
               </>
             }
           >
@@ -69,13 +70,16 @@ export default function RouteComponent() {
                   {new Date(i.at).toLocaleString()}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                  {i.accessPoint.name}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                   {i.access}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {i.code}
+                  {i.accessUser ? i.accessUser.name : null}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {i.accessUser ? i.accessUser.name : null}
+                  {i.code}
                 </td>
               </tr>
             ))}
