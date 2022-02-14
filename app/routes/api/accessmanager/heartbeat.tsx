@@ -29,22 +29,29 @@ const HeartbeatRequestData = z.object({
   accessManager: z
     .object({
       id: z.number().int(),
-      activity: z
-        .object({
-          since: z.string().min(1), // JSON date
-          accessEvents: z.array(
-            z
-              .object({
-                at: z.string().min(1), // JSON date
-                access: z.literal("grant").or(z.literal("deny")),
-                code: z.string().nonempty(),
-                accessUserId: z.number().int().optional(),
-              })
-              .strict()
-          ),
+      cloudLastAccessEventAt: z // JSON date
+        .string()
+        .nullable()
+        .refine((v) => !v || v.length === 0 || !Number.isNaN(Date.parse(v)), {
+          message: "Invalid date time",
         })
-        .strict()
-        .optional(),
+        .transform((v) => (v && v.length > 0 ? new Date(v) : null)),
+      accessEvents: z.array(
+        z
+          .object({
+            at: z // JSON Date
+              .string()
+              .refine((v) => v.length === 0 || !Number.isNaN(Date.parse(v)), {
+                message: "Invalid date time",
+              })
+              .transform((v) => new Date(v)),
+            access: z.literal("grant").or(z.literal("deny")),
+            code: z.string().min(1),
+            accessUserId: z.number().int().optional(),
+            accessPointId: z.number().int(),
+          })
+          .strict()
+      ),
     })
     .strict(),
 });
@@ -53,10 +60,8 @@ type HeartbeatRequestData = z.infer<typeof HeartbeatRequestData>;
 type HeartbeatResponseData = {
   accessManager: {
     id: number;
+    cloudLastAccessEventAt: string; // JSON date
     accessUsers: AccessUser[];
-    // activity: {
-    //   since: string; // JSON date
-    // };
   };
 };
 
@@ -82,6 +87,15 @@ export const action: ActionFunction = async ({ request }) => {
     where: { id: accessManager.id },
     data: {
       heartbeatAt: new Date(),
+    },
+  });
+
+  const lastAccessEvent = await db.accessEvent.findFirst({
+    where: {
+      accessPoint: { accessManager: { id: accessManager.id } },
+    },
+    orderBy: {
+      at: "desc",
     },
   });
 
@@ -146,6 +160,10 @@ export const action: ActionFunction = async ({ request }) => {
   const responseData: HeartbeatResponseData = {
     accessManager: {
       id: accessManager.id,
+      cloudLastAccessEventAt: (lastAccessEvent
+        ? lastAccessEvent.at
+        : new Date(0)
+      ).toJSON(),
       accessUsers,
     },
   };
