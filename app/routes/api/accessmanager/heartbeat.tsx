@@ -40,6 +40,7 @@ const accessUserSelect = (accessManagerId: number) => {
       accessPoints: {
         select: { id: true, name: true },
         where: { accessManager: { id: accessManagerId } },
+        orderBy: { id: "desc" },
       },
     },
   });
@@ -138,7 +139,7 @@ export const action: ActionFunction = async ({ request }) => {
       accessManager.user.accessUsers.map((v) => v.id)
     );
     for (const accessEvent of accessEvents) {
-      // console.log(accessEvent);
+      console.log(accessEvent);
       if (accessEvent.at.getTime() <= cloudLastAccessEventAt.getTime()) {
         throw new Error(
           `Access event at <= cloudLastAccessEventAt: ${accessEvent.at.toLocaleString()} <= ${cloudLastAccessEventAt.toLocaleDateString()}`
