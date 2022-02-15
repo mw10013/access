@@ -40,7 +40,6 @@ const accessUserSelect = (accessManagerId: number) => {
       accessPoints: {
         select: { id: true, name: true },
         where: { accessManager: { id: accessManagerId } },
-        orderBy: { id: "desc" },
       },
     },
   });
