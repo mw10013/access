@@ -13,7 +13,7 @@ export const handle = {
 const queryClient = new QueryClient();
 
 type LoaderData = {
-  accessManager: Prisma.AccessManagerGetPayload<{
+  accessHub: Prisma.AccessHubGetPayload<{
     include: {
       accessPoints: true;
     };
@@ -22,11 +22,11 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async ({
   request,
-  params: { customerId, accessManagerId },
+  params: { customerId, accessHubId },
 }): Promise<LoaderData> => {
   await requireUserSession(request, "admin");
-  const accessManager = await db.accessManager.findFirst({
-    where: { id: Number(accessManagerId), user: { id: Number(customerId) } },
+  const accessHub = await db.accessHub.findFirst({
+    where: { id: Number(accessHubId), user: { id: Number(customerId) } },
     include: {
       accessPoints: {
         orderBy: { position: "asc" },
@@ -34,20 +34,20 @@ export const loader: LoaderFunction = async ({
     },
     rejectOnNotFound: true,
   });
-  return { accessManager };
+  return { accessHub };
 };
 
 function Heartbeat({
-  accessManager,
+  accessHub,
 }: {
-  accessManager: LoaderData["accessManager"];
+  accessHub: LoaderData["accessHub"];
 }) {
   const [data, setData] = React.useState<string>(() =>
     JSON.stringify(
       {
-        accessManager: {
-          id: accessManager.id,
-          accessPoints: accessManager.accessPoints.map((i) => ({
+        accessHub: {
+          id: accessHub.id,
+          accessPoints: accessHub.accessPoints.map((i) => ({
             id: i.id,
           })),
         },
@@ -58,7 +58,7 @@ function Heartbeat({
   );
   const mutation = useMutation<unknown, Error, string>((data) =>
     fetch(
-      new Request(`/api/accessmanager/heartbeat`, {
+      new Request(`/api/accessHub/heartbeat`, {
         method: "POST",
         body: data,
       })
@@ -126,12 +126,12 @@ function Heartbeat({
 }
 
 export default function RouteComponent() {
-  const { accessManager } = useLoaderData<LoaderData>();
+  const { accessHub } = useLoaderData<LoaderData>();
   return (
     <QueryClientProvider client={queryClient}>
-      <Header title={accessManager.name} />
+      <Header title={accessHub.name} />
       <Main>
-        <Heartbeat accessManager={accessManager} />
+        <Heartbeat accessHub={accessHub} />
       </Main>
     </QueryClientProvider>
   );

@@ -5,7 +5,7 @@ import * as _ from "lodash";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
 
-const accessManagerSelect = Prisma.validator<Prisma.AccessManagerArgs>()({
+const accessHubSelect = Prisma.validator<Prisma.AccessHubArgs>()({
   select: {
     id: true,
     name: true,
@@ -29,7 +29,7 @@ const accessManagerSelect = Prisma.validator<Prisma.AccessManagerArgs>()({
   },
 });
 
-const accessUserSelect = (accessManagerId: number) => {
+const accessUserSelect = (accessHubId: number) => {
   return Prisma.validator<Prisma.AccessUserArgs>()({
     select: {
       id: true,
@@ -39,7 +39,7 @@ const accessUserSelect = (accessManagerId: number) => {
       expireCodeAt: true,
       accessPoints: {
         select: { id: true, name: true },
-        where: { accessManager: { id: accessManagerId } },
+        where: { accessHub: { id: accessHubId } },
       },
     },
   });
@@ -50,7 +50,7 @@ type AccessUser = Prisma.AccessUserGetPayload<
 >;
 
 const HeartbeatRequestData = z.object({
-  accessManager: z
+  accessHub: z
     .object({
       id: z.number().int(),
       cloudLastAccessEventAt: z // JSON date
@@ -84,7 +84,7 @@ const HeartbeatRequestData = z.object({
 type HeartbeatRequestData = z.infer<typeof HeartbeatRequestData>;
 
 type HeartbeatResponseData = {
-  accessManager: {
+  accessHub: {
     id: number;
     cloudLastAccessEventAt: string; // JSON date
     accessUsers: AccessUser[];
@@ -92,10 +92,10 @@ type HeartbeatResponseData = {
 };
 
 // Returns new Date(0) if no access events.
-async function lastAccessEventAt(accessManagerId: number) {
+async function lastAccessEventAt(accessHubId: number) {
   const lastAccessEvent = await db.accessEvent.findFirst({
     where: {
-      accessPoint: { accessManager: { id: accessManagerId } },
+      accessPoint: { accessHub: { id: accessHubId } },
     },
     orderBy: {
       at: "desc",
@@ -114,29 +114,26 @@ export const action: ActionFunction = async ({ request }) => {
   }
   const data = parseResult.data;
 
-  const accessManager = await db.accessManager.findUnique({
-    where: { id: data.accessManager.id },
-    ...accessManagerSelect,
+  const accessHub = await db.accessHub.findUnique({
+    where: { id: data.accessHub.id },
+    ...accessHubSelect,
   });
-  if (!accessManager) {
-    return new Response(`Access manager ${data.accessManager.id} not found.`, {
+  if (!accessHub) {
+    return new Response(`Access hub ${data.accessHub.id} not found.`, {
       status: 404,
     });
   }
 
-  const { cloudLastAccessEventAt, accessEvents } =
-    parseResult.data.accessManager;
+  const { cloudLastAccessEventAt, accessEvents } = parseResult.data.accessHub;
   const accessPointIdEventsMap = new Map<number, typeof accessEvents>(
-    accessManager.accessPoints.map((v) => [v.id, []])
+    accessHub.accessPoints.map((v) => [v.id, []])
   );
   if (
     cloudLastAccessEventAt &&
     cloudLastAccessEventAt.getTime() ===
-      (await lastAccessEventAt(accessManager.id)).getTime()
+      (await lastAccessEventAt(accessHub.id)).getTime()
   ) {
-    const accessUserIds = new Set(
-      accessManager.user.accessUsers.map((v) => v.id)
-    );
+    const accessUserIds = new Set(accessHub.user.accessUsers.map((v) => v.id));
     for (const accessEvent of accessEvents) {
       console.log(accessEvent);
       if (accessEvent.at.getTime() <= cloudLastAccessEventAt.getTime()) {
@@ -178,8 +175,8 @@ export const action: ActionFunction = async ({ request }) => {
     // );
   }
 
-  const updatedAccessManager = await db.accessManager.update({
-    where: { id: accessManager.id },
+  const updatedAccessHub = await db.accessHub.update({
+    where: { id: accessHub.id },
     data: {
       heartbeatAt: new Date(),
       accessPoints: {
@@ -201,17 +198,15 @@ export const action: ActionFunction = async ({ request }) => {
     where: {
       deletedAt: new Date(0),
       OR: [{ expireCodeAt: null }, { expireCodeAt: { gt: new Date() } }],
-      accessPoints: { some: { accessManager: { id: accessManager.id } } },
+      accessPoints: { some: { accessHub: { id: accessHub.id } } },
     },
-    ...accessUserSelect(accessManager.id),
+    ...accessUserSelect(accessHub.id),
   });
 
   const responseData: HeartbeatResponseData = {
-    accessManager: {
-      id: accessManager.id,
-      cloudLastAccessEventAt: (
-        await lastAccessEventAt(accessManager.id)
-      ).toJSON(),
+    accessHub: {
+      id: accessHub.id,
+      cloudLastAccessEventAt: (await lastAccessEventAt(accessHub.id)).toJSON(),
       accessUsers,
     },
   };

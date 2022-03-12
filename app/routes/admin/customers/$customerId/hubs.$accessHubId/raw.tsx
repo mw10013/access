@@ -10,7 +10,7 @@ export const handle = {
 };
 
 type LoaderData = {
-  accessManager: Prisma.AccessManagerGetPayload<{
+  accessHub: Prisma.AccessHubGetPayload<{
     include: {
       accessPoints: { include: { accessUsers: true } };
     };
@@ -19,11 +19,11 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async ({
   request,
-  params: { customerId, accessManagerId },
+  params: { customerId, accessHubId },
 }): Promise<LoaderData> => {
   await requireUserSession(request, "admin");
-  const accessManager = await db.accessManager.findFirst({
-    where: { id: Number(accessManagerId), user: { id: Number(customerId) } },
+  const accessHub = await db.accessHub.findFirst({
+    where: { id: Number(accessHubId), user: { id: Number(customerId) } },
     include: {
       accessPoints: {
         include: {
@@ -34,11 +34,11 @@ export const loader: LoaderFunction = async ({
     },
     rejectOnNotFound: true,
   });
-  return { accessManager };
+  return { accessHub };
 };
 
 export default function RouteComponent() {
-  const { accessManager } = useLoaderData<LoaderData>();
+  const { accessHub } = useLoaderData<LoaderData>();
   const poll = useFetcher<LoaderData>();
   const [isPolling, setIsPolling] = React.useState(true);
   const location = useLocation();
@@ -53,7 +53,7 @@ export default function RouteComponent() {
   return (
     <>
       <Header
-        title={accessManager.name}
+        title={accessHub.name}
         side={
           <div className="relative flex items-start">
             <div className="flex h-5 items-center">
@@ -76,9 +76,7 @@ export default function RouteComponent() {
         }
       />
       <Main>
-        <pre>
-          {JSON.stringify(poll.data?.accessManager ?? accessManager, null, 2)}
-        </pre>
+        <pre>{JSON.stringify(poll.data?.accessHub ?? accessHub, null, 2)}</pre>
       </Main>
     </>
   );

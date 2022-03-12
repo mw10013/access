@@ -1,7 +1,7 @@
 import { Outlet } from "remix";
 
 export const handle = {
-  breadcrumb: "Access Manager",
+  breadcrumb: "Access Hub",
 };
 
 export default function RouteComponent() {

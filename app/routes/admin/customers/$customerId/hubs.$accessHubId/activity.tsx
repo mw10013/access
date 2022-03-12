@@ -1,8 +1,7 @@
-import { LoaderFunction } from "remix";
-import { useLoaderData } from "remix";
 import { Prisma } from "@prisma/client";
-import { db } from "~/utils/db.server";
+import { LoaderFunction, useLoaderData } from "remix";
 import { Card, Header, Main, Table, Th } from "~/components/lib";
+import { db } from "~/utils/db.server";
 import { requireUserSession } from "~/utils/session.server";
 
 export const handle = {
@@ -10,7 +9,7 @@ export const handle = {
 };
 
 type LoaderData = {
-  accessManager: Prisma.AccessManagerGetPayload<{}>;
+  accessHub: Prisma.AccessHubGetPayload<{}>;
   accessEvents: Prisma.AccessEventGetPayload<{
     include: {
       accessUser: true;
@@ -21,18 +20,18 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async ({
   request,
-  params: { accessManagerId },
+  params: { customerId, accessHubId },
 }): Promise<LoaderData> => {
-  const { userId } = await requireUserSession(request, "customer");
-  const accessManager = await db.accessManager.findFirst({
-    where: { id: Number(accessManagerId), user: { id: userId } },
+  await requireUserSession(request, "admin");
+  const accessHub = await db.accessHub.findFirst({
+    where: { id: Number(accessHubId), user: { id: Number(customerId) } },
     rejectOnNotFound: true,
   });
 
   const accessEvents = await db.accessEvent.findMany({
     where: {
       accessPoint: {
-        accessManager: { id: accessManager.id },
+        accessHub: { id: accessHub.id },
       },
     },
     orderBy: { at: "desc" },
@@ -42,14 +41,14 @@ export const loader: LoaderFunction = async ({
     },
   });
 
-  return { accessManager, accessEvents };
+  return { accessHub, accessEvents };
 };
 
 export default function RouteComponent() {
-  const { accessManager, accessEvents } = useLoaderData<LoaderData>();
+  const { accessHub, accessEvents } = useLoaderData<LoaderData>();
   return (
     <>
-      <Header title={accessManager.name} />
+      <Header title={accessHub.name} />
       <Main>
         <Card title="Access Events">
           <Table

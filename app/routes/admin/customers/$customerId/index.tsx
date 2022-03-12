@@ -25,7 +25,7 @@ type LoaderData = {
   customer: Prisma.UserGetPayload<{
     include: {
       accessUsers: true;
-      accessManagers: true;
+      accessHubs: true;
     };
   }>;
 };
@@ -44,7 +44,7 @@ export const loader: LoaderFunction = async ({
         where: { deletedAt: new Date(0) },
         orderBy: { name: "asc" },
       },
-      accessManagers: { orderBy: { name: "asc" } },
+      accessHubs: { orderBy: { name: "asc" } },
     },
     rejectOnNotFound: true,
   });
@@ -103,7 +103,7 @@ export default function RouteComponent() {
         }
       />
       <Main>
-        <Card title="Access Managers">
+        <Card title="Access Hubs">
           <Table
             decor="edge"
             headers={
@@ -116,7 +116,7 @@ export default function RouteComponent() {
               </>
             }
           >
-            {customer.accessManagers.map((i) => (
+            {customer.accessHubs.map((i) => (
               <tr key={i.id}>
                 <TdProminent>{i.name}</TdProminent>
                 <Td>{i.id}</Td>
@@ -124,7 +124,7 @@ export default function RouteComponent() {
                 <Td>
                   {i.heartbeatAt && new Date(i.heartbeatAt).toLocaleString()}
                 </Td>
-                <TdLink to={`managers/${i.id}`}>View</TdLink>
+                <TdLink to={`hubs/${i.id}`}>View</TdLink>
               </tr>
             ))}
           </Table>

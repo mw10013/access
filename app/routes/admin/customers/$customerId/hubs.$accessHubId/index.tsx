@@ -1,4 +1,4 @@
-import { PencilIcon, LinkIcon, CheckIcon } from "@heroicons/react/solid";
+import { PencilIcon, CheckIcon, LinkIcon } from "@heroicons/react/solid";
 import { Prisma } from "@prisma/client";
 import { LoaderFunction, useLoaderData, useNavigate } from "remix";
 import {
@@ -17,41 +17,50 @@ import { db } from "~/utils/db.server";
 import { requireUserSession } from "~/utils/session.server";
 
 type LoaderData = {
-  accessPoint: Prisma.AccessPointGetPayload<{
+  accessHub: Prisma.AccessHubGetPayload<{
     include: {
-      accessUsers: true;
+      accessPoints: true;
     };
   }>;
 };
 
 export const loader: LoaderFunction = async ({
   request,
-  params: { customerId, accessPointId },
+  params: { customerId, accessHubId },
 }): Promise<LoaderData> => {
   await requireUserSession(request, "admin");
-  const accessPoint = await db.accessPoint.findFirst({
+  const accessHub = await db.accessHub.findFirst({
     where: {
-      id: Number(accessPointId),
-      accessManager: { user: { id: Number(customerId) } },
+      id: Number(customerId),
+      user: { id: Number(customerId) },
     },
     include: {
-      accessUsers: { orderBy: { name: "asc" } },
+      accessPoints: { orderBy: { position: "asc" } },
     },
     rejectOnNotFound: true,
   });
-  return { accessPoint };
+  return { accessHub };
 };
 
 export default function RouteComponent() {
-  const { accessPoint } = useLoaderData<LoaderData>();
+  const { accessHub } = useLoaderData<LoaderData>();
   const navigate = useNavigate();
   return (
     <>
       <Header
-        title={accessPoint.name}
+        title={accessHub.name}
         side={
           <>
             <span className="hidden sm:block">
+              <Button variant="white" onClick={() => navigate("mock")}>
+                <PencilIcon
+                  className="-ml-1 mr-2 h-5 w-5 text-gray-500"
+                  aria-hidden="true"
+                />
+                Mock
+              </Button>
+            </span>
+            <span className="ml-3 hidden sm:block">
               <Button variant="white" onClick={() => navigate("activity")}>
                 <LinkIcon
                   className="-ml-1 mr-2 h-5 w-5 text-gray-500"
@@ -73,33 +82,24 @@ export default function RouteComponent() {
         }
       />
       <Main>
-        <Card title="Users">
+        <Card title="Points">
           <Table
             decor="edge"
             headers={
               <>
+                <Th>Position</Th>
                 <Th>Name</Th>
                 <Th>ID</Th>
-                <Th>Code</Th>
-                <Th>Activate Code At</Th>
-                <Th>Expire Code At</Th>
                 <ThSr>View</ThSr>
               </>
             }
           >
-            {accessPoint.accessUsers.map((i) => (
+            {accessHub.accessPoints.map((i) => (
               <tr key={i.id}>
+                <Td>{i.position}</Td>
                 <TdProminent>{i.name}</TdProminent>
                 <Td>{i.id}</Td>
-                <Td>{i.code}</Td>
-                <Td>
-                  {i.activateCodeAt &&
-                    new Date(i.activateCodeAt).toLocaleString()}
-                </Td>
-                <Td>
-                  {i.expireCodeAt && new Date(i.expireCodeAt).toLocaleString()}
-                </Td>
-                <TdLink to={`../../../users/${i.id}`}>View</TdLink>
+                <TdLink to={`points/${i.id}`}>View</TdLink>
               </tr>
             ))}
           </Table>
