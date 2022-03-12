@@ -37,19 +37,14 @@ export const loader: LoaderFunction = async ({
   return { accessHub };
 };
 
-function Heartbeat({
-  accessHub,
-}: {
-  accessHub: LoaderData["accessHub"];
-}) {
+function Heartbeat({ accessHub }: { accessHub: LoaderData["accessHub"] }) {
   const [data, setData] = React.useState<string>(() =>
     JSON.stringify(
       {
         accessHub: {
           id: accessHub.id,
-          accessPoints: accessHub.accessPoints.map((i) => ({
-            id: i.id,
-          })),
+          cloudLastAccessEventAt: null,
+          accessEvents: [],
         },
       },
       null,
@@ -58,7 +53,7 @@ function Heartbeat({
   );
   const mutation = useMutation<unknown, Error, string>((data) =>
     fetch(
-      new Request(`/api/accessHub/heartbeat`, {
+      new Request(`/api/accesshub/heartbeat`, {
         method: "POST",
         body: data,
       })
