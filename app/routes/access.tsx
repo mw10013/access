@@ -35,7 +35,7 @@ const userNavigation = [
 const navigation = [
   { name: "Dashboard", to: "dashboard" },
   { name: "Users", to: "users" },
-  { name: "Managers", to: "managers" },
+  { name: "Hubs", to: "hubs" },
   { name: "Points", to: "points" },
 ];
 

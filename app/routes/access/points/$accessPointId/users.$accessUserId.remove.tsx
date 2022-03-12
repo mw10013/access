@@ -11,7 +11,7 @@ export const action: ActionFunction = async ({
   const accessPoint = await db.accessPoint.findFirst({
     where: {
       id: Number(accessPointId),
-      accessManager: { user: { id: userId } },
+      accessHub: { user: { id: userId } },
     },
     rejectOnNotFound: true,
   });

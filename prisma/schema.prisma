@@ -20,7 +20,7 @@ model User {
   resetPasswordHash     String?
   resetPasswordExpireAt DateTime?
   accessUsers           AccessUser[]
-  accessManagers        AccessManager[]
+  accessHubs            AccessHub[]
 }
 
 model AccessUser {
@@ -42,9 +42,9 @@ model AccessUser {
   @@unique([code, userId, deletedAt])
 }
 
-model AccessManager {
+model AccessHub {
   id                Int            @id @default(autoincrement())
-  name              String         @default("Manager")
+  name              String         @default("Hub")
   description       String         @default("") 
   heartbeatAt       DateTime?
   accessPoints      AccessPoint[] 
@@ -57,12 +57,12 @@ model AccessPoint {
   name              String
   description       String    @default("")
   accessUsers       AccessUser[]
-  accessManager     AccessManager @relation(fields: [accessManagerId], references: [id])
-  accessManagerId   Int 
+  accessHub         AccessHub @relation(fields: [accessHubId], references: [id])
+  accessHubId       Int 
   position          Int
   accessEvents      AccessEvent[]
 
-  @@unique([accessManagerId, position])    
+  @@unique([accessHubId, position])    
 }
 
 model AccessEvent {

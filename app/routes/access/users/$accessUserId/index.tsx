@@ -28,7 +28,7 @@ type LoaderData = {
   accessUser: Prisma.AccessUserGetPayload<{
     include: {
       accessPoints: {
-        include: { accessManager: true };
+        include: { accessHub: true };
       };
     };
   }>;
@@ -47,8 +47,8 @@ export const loader: LoaderFunction = async ({
     },
     include: {
       accessPoints: {
-        orderBy: [{ accessManager: { name: "asc" } }, { name: "asc" }],
-        include: { accessManager: true },
+        orderBy: [{ accessHub: { name: "asc" } }, { name: "asc" }],
+        include: { accessHub: true },
       },
     },
     rejectOnNotFound: true,
@@ -130,7 +130,7 @@ export default function RouteComponent() {
             headers={
               <>
                 <Th>Name</Th>
-                <Th>Manager</Th>
+                <Th>Hub</Th>
                 <Th>Description</Th>
                 <ThSr>View</ThSr>
               </>
@@ -139,7 +139,7 @@ export default function RouteComponent() {
             {accessUser.accessPoints.map((i) => (
               <tr key={i.id}>
                 <TdProminent>{i.name}</TdProminent>
-                <Td>{i.accessManager.name}</Td>
+                <Td>{i.accessHub.name}</Td>
                 <Td>{i.description}</Td>
                 <TdLink
                   to="#"

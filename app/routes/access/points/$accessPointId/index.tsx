@@ -35,7 +35,7 @@ type LoaderData = {
   accessPoint: Prisma.AccessPointGetPayload<{
     include: {
       accessUsers: true;
-      accessManager: true;
+      accessHub: true;
     };
   }>;
 };
@@ -48,11 +48,11 @@ export const loader: LoaderFunction = async ({
   const accessPoint = await db.accessPoint.findFirst({
     where: {
       id: Number(accessPointId),
-      accessManager: { user: { id: userId } },
+      accessHub: { user: { id: userId } },
     },
     include: {
       accessUsers: { orderBy: { name: "asc" } },
-      accessManager: true,
+      accessHub: true,
     },
     rejectOnNotFound: true,
   });
@@ -164,10 +164,7 @@ export default function RouteComponent() {
       />
       <Main>
         <DlCard>
-          <DlCardDtDd
-            term="Manager"
-            description={accessPoint.accessManager.name}
-          />
+          <DlCardDtDd term="Hub" description={accessPoint.accessHub.name} />
           <DlCardDtDd term="ID" description={accessPoint.id.toString()} />
           <DlCardDtDd
             term="Position"
@@ -176,8 +173,8 @@ export default function RouteComponent() {
           <DlCardDtDd
             term="Heartbeat"
             description={
-              accessPoint.accessManager.heartbeatAt
-                ? new Date(accessPoint.accessManager.heartbeatAt).toLocaleString()
+              accessPoint.accessHub.heartbeatAt
+                ? new Date(accessPoint.accessHub.heartbeatAt).toLocaleString()
                 : ""
             }
           />

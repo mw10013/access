@@ -1,7 +1,7 @@
 import * as React from "react";
 import type { LoaderFunction } from "remix";
 import { useLoaderData, useFetcher, useLocation } from "remix";
-import type { AccessManager, AccessPoint } from "@prisma/client";
+import type { AccessHub, AccessPoint } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserSession } from "~/utils/session.server";
@@ -24,7 +24,7 @@ type LoaderData = {
   accessPoints: Prisma.AccessPointGetPayload<{
     include: {
       accessUsers: true;
-      accessManager: {
+      accessHub: {
         include: {
           user: true;
         };
@@ -39,24 +39,24 @@ export const loader: LoaderFunction = async ({
   const { userId } = await requireUserSession(request, "customer");
   const accessPoints = await db.accessPoint.findMany({
     where: {
-      accessManager: {
+      accessHub: {
         userId: userId,
       },
     },
     include: {
       accessUsers: true,
-      accessManager: {
+      accessHub: {
         include: {
           user: true,
         },
       },
     },
-    orderBy: [{ accessManager: { name: "asc" } }, { name: "asc" }],
+    orderBy: [{ accessHub: { name: "asc" } }, { name: "asc" }],
   });
   return { accessPoints };
 };
 
-function connectionStatus(heartbeatAt: AccessManager["heartbeatAt"]) {
+function connectionStatus(heartbeatAt: AccessHub["heartbeatAt"]) {
   if (heartbeatAt) {
     const deltaMs = Date.now() - new Date(heartbeatAt).getTime();
     if (deltaMs < 5 * 1000) {
@@ -110,7 +110,7 @@ export default function RouteComponent() {
         <Table
           headers={
             <>
-              <Th>Manager</Th>
+              <Th>Hub</Th>
               <Th>Name</Th>
               <Th>Connection</Th>
               <ThSr>View</ThSr>
@@ -119,9 +119,9 @@ export default function RouteComponent() {
         >
           {(poll.data?.accessPoints ?? accessPoints).map((i) => (
             <tr key={i.id}>
-              <Td>{i.accessManager.name}</Td>
+              <Td>{i.accessHub.name}</Td>
               <TdProminent>{i.name}</TdProminent>
-              <Td>{connectionStatus(i.accessManager.heartbeatAt)}</Td>
+              <Td>{connectionStatus(i.accessHub.heartbeatAt)}</Td>
               <TdLink to={`../points/${i.id}`}>View</TdLink>
             </tr>
           ))}

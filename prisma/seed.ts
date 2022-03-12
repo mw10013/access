@@ -77,7 +77,7 @@ async function seed() {
     data: { name: "Test", code: "333", userId: installer.id },
   });
 
-  await db.accessManager.create({
+  await db.accessHub.create({
     data: {
       name: "Brooklyn BnB",
       userId: aunt.id,
@@ -207,7 +207,7 @@ async function seed() {
     },
   });
 
-  await db.accessManager.create({
+  await db.accessHub.create({
     data: {
       name: "Staten Island BnB",
       userId: aunt.id,
@@ -237,7 +237,7 @@ async function seed() {
     },
   });
 
-  await db.accessManager.create({
+  await db.accessHub.create({
     data: {
       name: "Install Mgr",
       userId: installer.id,
