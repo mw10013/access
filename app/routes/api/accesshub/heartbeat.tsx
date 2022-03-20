@@ -113,6 +113,7 @@ export const action: ActionFunction = async ({ request }) => {
     return new Response(`${parseResult.error.toString()}`, { status: 400 });
   }
   const data = parseResult.data;
+  console.log(JSON.stringify(data, null, 2));
 
   const accessHub = await db.accessHub.findUnique({
     where: { id: data.accessHub.id },
