@@ -38,7 +38,7 @@ const accessUserSelect = (accessHubId: number) => {
       activateCodeAt: true,
       expireCodeAt: true,
       accessPoints: {
-        select: { id: true, name: true },
+        select: { id: true },
         where: { accessHub: { id: accessHubId } },
       },
     },
