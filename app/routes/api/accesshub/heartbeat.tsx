@@ -8,11 +8,9 @@ import { Prisma } from "@prisma/client";
 const accessHubSelect = Prisma.validator<Prisma.AccessHubArgs>()({
   select: {
     id: true,
-    name: true,
     accessPoints: {
       select: {
         id: true,
-        name: true,
       },
     },
     user: {
@@ -21,7 +19,6 @@ const accessHubSelect = Prisma.validator<Prisma.AccessHubArgs>()({
         accessUsers: {
           select: {
             id: true,
-            name: true,
           },
         },
       },
@@ -33,7 +30,6 @@ const accessUserSelect = (accessHubId: number) => {
   return Prisma.validator<Prisma.AccessUserArgs>()({
     select: {
       id: true,
-      name: true,
       code: true,
       activateCodeAt: true,
       expireCodeAt: true,
